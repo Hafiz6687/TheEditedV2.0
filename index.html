@@ -406,7 +406,7 @@
         .sebutan-grid-labels { display: grid; grid-template-columns: 1fr 1fr 2fr 180px; gap: 16px; align-items: end; margin-bottom: 6px; }
         .sebutan-grid-inputs { display: grid; grid-template-columns: 1fr 1fr 2fr 180px; gap: 16px; align-items: start; }
         
-        @media (max-width: 950px) {
+@media (max-width: 950px) {
             .form-group { grid-template-columns: 1fr !important; gap: 8px !important; }
             .form-group > label { text-align: left !important; margin-top: 0 !important; }
             .hide-mobile { display: none !important; }
@@ -419,6 +419,24 @@
             .sebutan-grid-inputs { grid-template-columns: 1fr; gap: 10px; }
             .sebutan-grid-inputs > div { display: flex; flex-direction: column; }
             .mobile-label { display: block; font-size: 0.85em; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+            
+            /* --- TAMBAHAN PILIHAN 1 (SUSUN ATAS & BAWAH) --- */
+            body {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .stats {
+                display: none; /* Sembunyikan alamat panjang di bawah sidebar */
+            }
         }
         @media (min-width: 951px) {
             .mobile-label { display: none; }

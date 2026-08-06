@@ -3489,6 +3489,126 @@ Portal rasmi : jtksm.mohr.gov.my
         let bilSeterusnya = (maxBil + 1).toString().padStart(4, '0');
         return `KBR/10103/2026/${bilSeterusnya}`;
     }
+     // ==========================================================================
+    // FUNGSI KEMASKINI PENDAFTARAN (BUKA KES UNTUK DIEDIT)
+    // ==========================================================================
+    function bukaKesDidaftar(index) {
+        indexKesSemasa = index;
+        isEditMode = true;
+        isSelesaiDaftar = false;
+
+        const kes = memoriSenaraiKes[index];
+        const noKesBersih = kes.noKes.split('<br>')[0].trim();
+
+        // Kosongkan dan siapkan borang (tanpa alert halangan)
+        tukarView('daftar', true);
+
+        // Set No. Kes
+        document.getElementById('noKes').value = noKesBersih;
+
+        if (kes.dataBorang) {
+            const inputs = kes.dataBorang.inputs;
+
+            // 1. Masukkan nilai input secara dinamik
+            for (let key in inputs) {
+                const el = document.getElementById(key);
+                if (el) {
+                    if (el.type === 'checkbox') {
+                        el.checked = inputs[key];
+                    } else if (el.type !== 'radio') {
+                        el.value = inputs[key];
+                    }
+                } else {
+                    // Periksa input jenis radio mengikut 'name'
+                    const radios = document.getElementsByName(key);
+                    if (radios.length > 0) {
+                        radios.forEach(r => {
+                            if (r.value === inputs[key]) r.checked = true;
+                        });
+                    }
+                }
+            }
+
+            // 2. Panggil fungsi UI untuk kemaskini paparan bertepatan dengan data
+            kemaskiniDropdownPendaftaran();
+            
+            // Re-apply dropdown values sekiranya ter-reset oleh fungsi di atas
+            if(inputs['jenisDaftarPengadu']) document.getElementById('jenisDaftarPengadu').value = inputs['jenisDaftarPengadu'];
+            if(inputs['jenisDaftarDefendan']) document.getElementById('jenisDaftarDefendan').value = inputs['jenisDaftarDefendan'];
+            
+            tukarPeranan(); 
+            if(inputs['jenisDaftarPengadu']) document.getElementById('jenisDaftarPengadu').value = inputs['jenisDaftarPengadu'];
+            if(inputs['jenisDaftarDefendan']) document.getElementById('jenisDaftarDefendan').value = inputs['jenisDaftarDefendan'];
+
+            toggleAduan();
+            kawalJenisDaftarPengadu();
+            kawalJenisDaftarDefendan();
+            toggleElaun();
+            toggleWaktuKerja();
+            toggleHariKerja();
+            toggleAlamatKerja();
+            kawalSektor();
+            semakKelayakanTuntutan();
+            semakSeksyenTuntutan();
+            semakWakilLengkap();
+
+            // 3. Status Edit Kenyataan Pengadu
+            if (inputs['isKenyataanEdited'] !== undefined) {
+                isKenyataanEdited = inputs['isKenyataanEdited'];
+            }
+
+            // 4. Kemaskini Jadual Tuntutan
+            memoriTuntutan = kes.dataBorang.tuntutanBiasa ? JSON.parse(JSON.stringify(kes.dataBorang.tuntutanBiasa)) : [];
+            memoriTuntutanKetua = kes.dataBorang.tuntutanKetua ? JSON.parse(JSON.stringify(kes.dataBorang.tuntutanKetua)) : [];
+            renderJadualTuntutan();
+
+            // 5. Kemaskini Medan Elaun Dinamik
+            const senaraiElaun = document.getElementById('senaraiElaun');
+            if (senaraiElaun) senaraiElaun.innerHTML = '';
+            if (kes.dataBorang.elaun && kes.dataBorang.elaun.length > 0) {
+                kes.dataBorang.elaun.forEach(elaun => {
+                    tambahMedanElaun();
+                    const senaraiJenis = document.querySelectorAll('.input-elaun-jenis');
+                    const senaraiJumlah = document.querySelectorAll('.input-elaun-jumlah');
+                    senaraiJenis[senaraiJenis.length - 1].value = elaun.jenis;
+                    senaraiJumlah[senaraiJumlah.length - 1].value = elaun.jumlah;
+                });
+            }
+
+            // 6. Teks Kenyataan (Manual vs Auto)
+            if (isKenyataanEdited && inputs['kenyataanAwal']) {
+                document.getElementById('kenyataanAwal').value = inputs['kenyataanAwal'];
+            } else {
+                janaKenyataanAwal();
+            }
+
+        } else {
+            // Sekiranya hanya data sedia ada/dummy yang tiada 'dataBorang'
+            document.getElementById('namaPengadu').value = kes.namaPengadu.replace(/<br>.*$/g, '');
+            document.getElementById('namaDefendan').value = kes.namaDefendan.replace(/<br>.*$/g, '');
+            if (kes.jenisAduan === 'Majikan') {
+                document.getElementById('majikan').checked = true;
+                tukarPeranan();
+            } else if (kes.jenisAduan === 'Berkumpulan') {
+                document.getElementById('aduanBerkumpulan').checked = true;
+                toggleAduan();
+            }
+        }
+
+        // 7. Aktifkan UI kunci/buka kenyataan mengikut status
+        const txt = document.getElementById('kenyataanAwal');
+        const btn = document.getElementById('btnEditKenyataan');
+        if (isKenyataanEdited) {
+            if (txt) { txt.removeAttribute('readonly'); txt.style.backgroundColor = '#ffffff'; txt.style.border = '1px solid var(--primary-blue)'; }
+            if (btn) btn.innerHTML = '🔒 Kunci Kenyataan';
+        } else {
+            if (txt) { txt.setAttribute('readonly', 'true'); txt.style.backgroundColor = '#f8fafc'; txt.style.border = '1px solid var(--border-color)'; }
+            if (btn) btn.innerHTML = '✏️ Edit Kenyataan';
+        }
+
+        // Buka field supaya boleh diedit
+        setStatusBorang(false);
+    }
 </script>
 </body>
 </html>

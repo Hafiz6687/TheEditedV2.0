@@ -2496,42 +2496,54 @@ Portal rasmi : jtksm.mohr.gov.my
         }
     }
 
-    function pergiKeTabBorang(tabId) {
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(t => t.classList.remove('active'));
-        if(tabId === 'tab1') tabs[0].classList.add('active');
-        if(tabId === 'tab2') tabs[1].classList.add('active');
-        if(tabId === 'tab3') tabs[2].classList.add('active');
-             
-        document.getElementById('tab1').style.display = 'none';
-        document.getElementById('tab2').style.display = 'none';
-        document.getElementById('tab3').style.display = 'none';
-        document.getElementById(tabId).style.display = 'grid';
+function pergiKeTabBorang(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    if(tabId === 'tab1') tabs[0].classList.add('active');
+    if(tabId === 'tab2') tabs[1].classList.add('active');
+    if(tabId === 'tab3') tabs[2].classList.add('active');
+         
+    document.getElementById('tab1').style.display = 'none';
+    document.getElementById('tab2').style.display = 'none';
+    document.getElementById('tab3').style.display = 'none';
+    document.getElementById(tabId).style.display = 'grid';
 
-        kawalPaparanTab3(tabId); 
-        if (tabId === 'tab2') {
-            janaKenyataanAwal();
-            setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    kawalPaparanTab3(tabId); 
+    if (tabId === 'tab2') {
+        // --- TAMBAHAN BARU DI SINI ---
+        const kronologi = document.getElementById('kronologiKes');
+        if (kronologi && kronologi.value.trim() === '') {
+            kronologi.value = 'Masalahnya, ';
         }
-        document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+        // -----------------------------
+        janaKenyataanAwal();
+        setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
     }
+    document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+}
 
-    function bukaTab(tabId, elemenTab) {
-        document.getElementById('tab1').style.display = 'none';
-        document.getElementById('tab2').style.display = 'none';
-        document.getElementById('tab3').style.display = 'none';
-        const senaraiTab = document.querySelectorAll('.tab');
-        senaraiTab.forEach(tab => tab.classList.remove('active'));
-        document.getElementById(tabId).style.display = 'grid'; 
-        elemenTab.classList.add('active');
+function bukaTab(tabId, elemenTab) {
+    document.getElementById('tab1').style.display = 'none';
+    document.getElementById('tab2').style.display = 'none';
+    document.getElementById('tab3').style.display = 'none';
+    const senaraiTab = document.querySelectorAll('.tab');
+    senaraiTab.forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).style.display = 'grid'; 
+    elemenTab.classList.add('active');
 
-        kawalPaparanTab3(tabId); 
-        if (tabId === 'tab2') {
-            janaKenyataanAwal();
-            setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    kawalPaparanTab3(tabId); 
+    if (tabId === 'tab2') {
+        // --- TAMBAHAN BARU DI SINI ---
+        const kronologi = document.getElementById('kronologiKes');
+        if (kronologi && kronologi.value.trim() === '') {
+            kronologi.value = 'Masalahnya, ';
         }
-        document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+        // -----------------------------
+        janaKenyataanAwal();
+        setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
     }
+    document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+}
 
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
@@ -3531,11 +3543,17 @@ Portal rasmi : jtksm.mohr.gov.my
             for (let key in inputs) {
                 const el = document.getElementById(key);
                 if (el) {
-                    if (el.type === 'checkbox') {
-                        el.checked = inputs[key];
-                    } else if (el.type !== 'radio') {
+if (el.type === 'checkbox') {
+                    el.checked = inputs[key];
+                } else if (el.type !== 'radio') {
+                    // --- TAMBAHAN BARU DI SINI ---
+                    if (key === 'kronologiKes' && (!inputs[key] || inputs[key].trim() === '')) {
+                        el.value = 'Masalahnya, ';
+                    } else {
                         el.value = inputs[key];
                     }
+                    // -----------------------------
+                }
                 } else {
                     // Periksa input jenis radio mengikut 'name'
                     const radios = document.getElementsByName(key);

@@ -1134,17 +1134,21 @@ Portal rasmi : jtksm.mohr.gov.my
 
 <!-- KAD 3: TUNTUTAN KETUA PENGADU (Hanya Muncul Jika Berkumpulan) -->
 <div class="card full-width" id="kad3_ketua" style="order: 3; display: none;"> <!-- TAG INI PERLU ADA DI SINI -->
+    
+    <!-- HEADER BARU YANG DIBUNGKUS -->
     <div class="card-header">
-        Maklumat Tuntutan Ketua Pengadu
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span>Maklumat Tuntutan</span>
+            <span style="font-size: 0.75em; font-weight: 500; color: var(--primary-blue); font-style: italic; text-transform: none;">
+                * Sila isi sekurang-kurangnya SATU tuntutan untuk semua Pengadu.
+            </span>
+        </div>
         
         <!-- Butang Dropdown Action (G1) -->
         <div class="action-dropdown-container" style="margin-left: auto; position: relative; display: flex; align-items: center;">
-            
-            <!-- Butang Segi Empat Tepat Kelabu Gelap -->
             <button type="button" style="width: 46px; height: 30px; background-color: #334155; color: white; border: none; border-radius: 6px; font-size: 24px; font-weight: 900; box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 0; padding-bottom: 6px; transition: all 0.2s ease;" onclick="document.getElementById('dropdownG1').classList.toggle('show')" title="Tindakan" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.2)';">
                 ⋯
             </button>
-            
             <div id="dropdownG1" class="dropdown-menu" style="top: 100%; right: 0; min-width: 160px; margin-top: 10px; font-weight: normal;">
                 <a href="#" onclick="document.getElementById('dropdownG1').classList.remove('show'); bukaPreviewPDF('G1 Ketua');">📄 G1 Ketua</a>
                 <a href="#" onclick="document.getElementById('dropdownG1').classList.remove('show'); bukaPreviewPDF('G1 Borang');">📄 G1 Borang</a>
@@ -1152,25 +1156,45 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
     
-    <!-- Kandungan Ketua (Sembunyi sehingga Sektor & Jenis Perniagaan diisi) -->
+<!-- Kandungan Ketua -->
     <div class="card-body" id="kandunganTuntutanKetua" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -5px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-            <p class="note" style="margin: 0; color: var(--primary-blue);">* Sila isi sekurang-kurangnya SATU tuntutan untuk Ketua Pengadu</p>
-            <button class="btn-add btn-terapung" style="margin: 0; background-color: #0284c7; white-space: nowrap;" onclick="bukaModalTuntutan('ketua')">+ Tambah Tuntutan Ketua</button>
+        
+        <!-- BUNGKUSAN MAKLUMAT KETUA PENGADU (FORMAT SAMA SEPERTI PENGADU TAMBAHAN) -->
+        <div style="margin-bottom: 5px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+            
+            <!-- Fungsi Togol Inline untuk Buka/Tutup -->
+            <div class="togol-header" style="background: #f0f9ff; padding: 12px 15px; margin-bottom: 0; border-bottom: 1px solid var(--border-color);" onclick="const k = document.getElementById('kandunganKetuaBungkus'); const l = document.getElementById('labelTogolKetua'); if(k.style.display==='none'){ k.style.display='block'; l.innerHTML='▲ Sembunyi'; l.style.backgroundColor='#eff6ff'; l.style.color='var(--primary-blue)'; } else { k.style.display='none'; l.innerHTML='▼ Buka'; l.style.backgroundColor='#e2e8f0'; l.style.color='var(--text-muted)'; }">
+                <h5 style="margin: 0; color: var(--primary-blue); font-size: 1.05em;">Maklumat Ketua Pengadu</h5>
+                <span id="labelTogolKetua" style="color: var(--primary-blue); font-size: 0.85em; font-weight: 600; background: #eff6ff; padding: 4px 12px; border-radius: 20px;">▲ Sembunyi</span>
+            </div>
+            
+            <div id="kandunganKetuaBungkus" style="display: block; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h6 style="color: var(--text-main); margin: 0; font-size: 0.95em;">Jadual Tuntutan Ketua Pengadu</h6>
+                    <!-- WARNA BUTANG DIKEKALKAN SEPERTI ASAL (#0284c7) -->
+                    <button type="button" class="btn-add btn-terapung" style="margin: 0; background-color: #0284c7; white-space: nowrap; padding: 8px 15px; font-size: 0.85em;" onclick="bukaModalTuntutan('ketua')">+ Tambah Tuntutan Ketua</button>
+                </div>
+                
+                <table id="jadualTuntutanKetua" style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
+                    <thead style="background-color: var(--card-header-bg);">
+                        <tr>
+                            <th style="width: 5%; text-align: center; border-bottom: 1px solid var(--border-color);">Bil.</th>
+                            <th style="width: 25%; border-bottom: 1px solid var(--border-color);">Jenis Tuntutan</th>
+                            <th style="width: 35%; border-bottom: 1px solid var(--border-color);">Keterangan Tuntutan</th>
+                            <th style="width: 15%; text-align: right; border-bottom: 1px solid var(--border-color);">Jumlah (RM)</th>
+                            <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Kemaskini</th>
+                            <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Hapus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="empty-row" style="text-align: center; padding: 12px;">Tiada maklumat tuntutan direkodkan.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        
-<table id="jadualTuntutanKetua">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">Bil.</th><th style="width: 25%;">Jenis Tuntutan</th><th style="width: 35%;">Keterangan Tuntutan</th>
-                    <th style="width: 15%;">Jumlah (RM)</th><th style="width: 10%;">Kemaskini</th><th style="width: 10%;">Hapus</th>
-                </tr>
-            </thead>
-            <tbody><tr><td colspan="6" class="empty-row">Tiada maklumat tuntutan direkodkan.</td></tr></tbody>
-        </table>
-        
+
         <!-- +++ TAMBAHAN BARU: BEKAS UNTUK PENGADU TAMBAHAN +++ -->
-        <div id="ruanganPengaduTambahan" style="margin-top: 15px;"></div>
+        <div id="ruanganPengaduTambahan" style="margin-top: 20px;"></div>
         <!-- +++++++++++++++++++++++++++++++++++++++++++++++ -->
         
     </div>
@@ -1493,8 +1517,7 @@ function bukaMaklumatKes(index) {
             const p_tel = dataSistem['telPengadu'] || "-";
             const p_hp = dataSistem['hpPengadu'] || "-";
             const p_emel = dataSistem['emelPengadu'] || "-";
-            const p_bil_pengadu = dataSistem['bilanganPengadu'] ? dataSistem['bilanganPengadu'] + " Orang" : "-";
-
+            const p_bil_pengadu = dataSistem['bilPengadu'] ? dataSistem['bilPengadu'] + " Orang" : "-";
             const d_nama = kes.namaDefendan;
             const d_id = dataSistem['noPendDefendan'] || "-";
             
@@ -1798,6 +1821,15 @@ function tindakanSebutan() {
                 const inputs = kes.dataBorang.inputs;
                 const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
                 
+                // --- PENAMBAHBAIKAN: EKSTRAK BILANGAN UNTUK KES BERKUMPULAN ---
+                let teksPihak = "merupakan pihak Pengadu";
+                if (inputs['aduan'] === 'Berkumpulan' && !isMajikan) {
+                    let totalPengadu = parseInt(inputs['bilPengadu']) || 1;
+                    let bilDiwakili = totalPengadu > 1 ? totalPengadu - 1 : 0;
+                    teksPihak = `merupakan pihak Ketua Pengadu yang mewakili ${bilDiwakili} orang yang lain`;
+                }
+                // ---------------------------------------------------------------
+                
                 if (isMajikan) {
                     let namaWakil = inputs['namaWakilMajikan'] || '[NAMA WAKIL]';
                     let kpWakil = inputs['noMyKadWakil'] || '_________________________';
@@ -1824,7 +1856,8 @@ function tindakanSebutan() {
                     
                     namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
 
-                    perengganPengenalan = `Bahawasanya saya, <strong>${namaP.toUpperCase()}</strong> (${jenisId}: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, merupakan pihak Pengadu yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
+                    // --- MENGGUNAKAN teksPihak YANG TELAH DIPROSES DI ATAS ---
+                    perengganPengenalan = `Bahawasanya saya, <strong>${namaP.toUpperCase()}</strong> (${jenisId}: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, ${teksPihak} yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
                     
                     namaTandatangan = namaP.toUpperCase();
                     kpTandatangan = kpP;
@@ -1834,29 +1867,30 @@ function tindakanSebutan() {
                 kpP = "_________________________";
                 alamatP = "____________________________________________________";
                 namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
-                perengganPengenalan = `Bahawasanya saya, <strong>${namaP}</strong> (No. Kad Pengenalan / Pasport / Pendaftaran: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP}</strong>, merupakan pihak Pengadu yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD}</strong> (selepas ini dirujuk sebagai "Defendan").`;
+                
+                // Fallback sekiranya ia adalah fail dummy lama
+                let teksPihak = kes.jenisAduan === 'Berkumpulan' ? 
+                                `merupakan pihak Ketua Pengadu yang mewakili pengadu-pengadu yang lain` : 
+                                `merupakan pihak Pengadu`;
+
+                perengganPengenalan = `Bahawasanya saya, <strong>${namaP}</strong> (No. Kad Pengenalan / Pasport / Pendaftaran: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP}</strong>, ${teksPihak} yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD}</strong> (selepas ini dirujuk sebagai "Defendan").`;
                 namaTandatangan = namaP;
                 kpTandatangan = kpP;
             }
 
-            // --- KOD AUTO EXTRACT BAHARU ---
             // 1. Tarikh Hari Ini
             const t = new Date();
             const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
             const tarikhHariIniFormat = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
             
-            // 2. Tempat Lalai
-            const tempatDaftar = "Pejabat Tenaga Kerja Kluang";
-
-            // 3. Nama Pegawai (Tarik dari profil sidebar)
+            // 2. Nama Pegawai (Tarik dari profil sidebar)
             let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
             const namaPegawai = namaPegawaiRaw.toUpperCase();
             
-            // 4. Jawatan Pegawai
+            // 3. Jawatan Pegawai
             const jawatanPegawai = "Pegawai Tenaga Kerja";
-            // ---------------------------------
 
-            // Stuktur HTML Rasmi Akuan Penarikan Balik Kes
+            // Struktur HTML Rasmi Akuan Penarikan Balik Kes
             const htmlTarikBalik = `
                 <style>
                     @media print {
@@ -1921,27 +1955,21 @@ function tindakanSebutan() {
             document.getElementById('previewContent').innerHTML = htmlTarikBalik;
             document.getElementById('printArea').innerHTML = htmlTarikBalik;
             
-            // --- FUNGSI BARU: Auto-Tukar Label MyKad atau Passport ---
             const labelPreview = document.querySelector('#previewContent #labelIdTandatangan');
             const labelPrint = document.querySelector('#printArea #labelIdTandatangan');
-            
-            // Kita semak terus menggunakan data kpTandatangan sedia ada
             const teksLabel = kpTandatangan.includes('-') ? 'No. MyKad:' : 'No. Passport:';
 
             if (labelPreview) labelPreview.innerHTML = teksLabel;
             if (labelPrint) labelPrint.innerHTML = teksLabel;
-            // ---------------------------------------------------------
 
             // Konfigurasi butang Action Dropdown di penjuru atas kanan
             document.getElementById('menuCetakAkuan').style.display = 'none';
             document.getElementById('menuCetakKenyataan').style.display = 'none';
             document.getElementById('menuDaftar').style.display = 'none';
             
-            // Manipulasi butang G1 yang sedia ada untuk menjadi butang Cetak Akuan
             const menuCetakG1 = document.getElementById('menuCetakG1');
             menuCetakG1.style.display = 'flex';
             menuCetakG1.innerHTML = '🖨️ Cetak Akuan Penarikan';
-            // Pastikan keadaan butang lalai apabila modal baru dibuka
             document.getElementById('menuKemaskini').style.display = 'flex';
             document.getElementById('menuBatal').style.display = 'flex';
             document.getElementById('menuSelesai').style.display = 'none';
@@ -1950,25 +1978,17 @@ function tindakanSebutan() {
                 document.getElementById('actionMenu').classList.remove('show');
                 window.print();
                 
-                // Menghilangkan butang cetak dan menukar menu selepas ditekan
                 setTimeout(() => {
                     menuCetakG1.style.display = 'none';
-                    
-                    // --- TAMBAHAN BARU: Hide Batal/Kemaskini, Show Selesai ---
                     document.getElementById('menuKemaskini').style.display = 'none';
                     document.getElementById('menuBatal').style.display = 'none';
                     document.getElementById('menuSelesai').style.display = 'flex';
-                    // ---------------------------------------------------------
                 }, 500);
             };
 
-            // Tambahkan alert di sini sebelum modal dipaparkan
             alert("Dokumen Akuan Penarikan Balik Kes sedia untuk dijana dan dicetak.");
-
-            // Tampilkan Modal Preview
             document.getElementById('modalPreview').style.display = 'flex';
         }
-
 
         function toggleWakilMajikan() {
             const kandungan = document.getElementById('kandunganWakilMajikan');
@@ -2286,78 +2306,79 @@ function kemaskiniDropdownPendaftaran() {
                 janaJadualPengaduTambahan(0); // Kosongkan jika kotak dibiarkan kosong
             }
         }
-// --- FUNGSI DIKEMASKINI: Ditambah logik memadam memori jika user kurangkan bilangan pengadu ---
-        function janaJadualPengaduTambahan(bilangan) {
-            const container = document.getElementById('ruanganPengaduTambahan');
-            if (!container) return;
-            
-            container.innerHTML = ''; 
-            let bilanganTambahan = bilangan > 1 ? bilangan - 1 : 0;
-            
-            // HAPUSKAN memori pengadu yang terbatal jika user tiba-tiba kurangkan bilangan (Cth: dari 5 ke 2)
-            for (let key in memoriTuntutanTambahan) {
-                if (parseInt(key) > bilanganTambahan) {
-                    delete memoriTuntutanTambahan[key];
-                }
-            }
-            // Auto-kira supaya jadual bawah juga turut membuang tuntutan pengadu yang terbatal
-            autoKiraTuntutanBerkumpulan();
-            renderJadualTuntutan();
-            
-            if (bilangan > 1) {
-                for (let i = 1; i <= bilanganTambahan; i++) {
-                    if (!memoriTuntutanTambahan[i]) memoriTuntutanTambahan[i] = [];
-
-                    const pengaduDiv = document.createElement('div');
-                    pengaduDiv.style.marginTop = '20px';
-                    pengaduDiv.style.border = '1px solid var(--border-color)';
-                    pengaduDiv.style.borderRadius = '8px';
-                    pengaduDiv.style.overflow = 'hidden';
-                    pengaduDiv.style.backgroundColor = '#ffffff';
-                    
-                    pengaduDiv.innerHTML = `
-                        <div class="togol-header" style="background: #f8fafc; padding: 12px 15px; margin-bottom: 0; border-bottom: 1px solid var(--border-color);" onclick="togglePengaduTambahan(${i})">
-                            <h5 style="margin: 0; color: var(--primary-blue); font-size: 1.05em;">Maklumat Pengadu ${i}</h5>
-                            <span id="labelTogolPengadu${i}" style="color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #e2e8f0; padding: 4px 12px; border-radius: 20px;">▼ Buka</span>
-                        </div>
-                        
-                        <div id="kandunganPengadu${i}" style="display: none; padding: 20px;">
-                            <div class="grid-2">
-                                <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
-                                    <label style="text-align: left; margin: 0;">Nama Pengadu <span>*</span></label>
-                                    <input type="text" id="namaPengaduTambahan${i}" placeholder="Nama penuh Pengadu ${i}" oninput="hurufBesarSetiapPerkataan(this)">
-                                </div>
-                                <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
-                                    <label style="text-align: left; margin: 0;">No. MyKad / Pasport <span>*</span></label>
-                                    <input type="text" id="kpPengaduTambahan${i}" placeholder="Contoh: 880101-01-1234" oninput="formatMyKadTambahan(this)">
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                                <h6 style="color: var(--text-main); margin: 0; font-size: 0.95em;">Jadual Tuntutan Pengadu ${i}</h6>
-                                <button type="button" class="btn-add btn-terapung" style="margin: 0; background-color: #0ea5e9; white-space: nowrap; padding: 8px 15px; font-size: 0.85em;" onclick="bukaModalTuntutan('tambahan_${i}')">+ Tambah Tuntutan Pengadu ${i}</button>
-                            </div>
-
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
-                                <thead style="background-color: var(--card-header-bg);">
-                                    <tr>
-                                        <th style="width: 5%; text-align: center; border-bottom: 1px solid var(--border-color);">Bil.</th>
-                                        <th style="width: 25%; border-bottom: 1px solid var(--border-color);">Jenis Tuntutan</th>
-                                        <th style="width: 35%; border-bottom: 1px solid var(--border-color);">Keterangan Tuntutan</th>
-                                        <th style="width: 15%; text-align: right; border-bottom: 1px solid var(--border-color);">Jumlah (RM)</th>
-                                        <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Kemaskini</th>
-                                        <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Hapus</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bodyTuntutanTambahan${i}"></tbody>
-                            </table>
-                        </div>
-                    `;
-                    container.appendChild(pengaduDiv);
-                    renderJadualTuntutanTambahan(i);
-                }
-            }
+// --- FUNGSI DIKEMASKINI: Tukar penomboran bermula dari Pengadu 2 ---
+function janaJadualPengaduTambahan(bilangan) {
+    const container = document.getElementById('ruanganPengaduTambahan');
+    if (!container) return;
+    
+    container.innerHTML = ''; 
+    
+    // HAPUSKAN memori pengadu yang terbatal jika user tiba-tiba kurangkan bilangan (Cth: dari 5 ke 3)
+    for (let key in memoriTuntutanTambahan) {
+        // Kerana index sekarang bermula dari 2 hingga bilangan, kita buang key yang lebih dari 'bilangan'
+        if (parseInt(key) > bilangan) {
+            delete memoriTuntutanTambahan[key];
         }
+    }
+    // Auto-kira supaya jadual bawah juga turut membuang tuntutan pengadu yang terbatal
+    autoKiraTuntutanBerkumpulan();
+    renderJadualTuntutan();
+    
+    if (bilangan > 1) {
+        // MULA DARI INDEX 2 (kerana Index 1 adalah Ketua Pengadu)
+        for (let i = 2; i <= bilangan; i++) {
+            if (!memoriTuntutanTambahan[i]) memoriTuntutanTambahan[i] = [];
+
+            const pengaduDiv = document.createElement('div');
+            pengaduDiv.style.marginTop = '20px';
+            pengaduDiv.style.border = '1px solid var(--border-color)';
+            pengaduDiv.style.borderRadius = '8px';
+            pengaduDiv.style.overflow = 'hidden';
+            pengaduDiv.style.backgroundColor = '#ffffff';
+            
+            pengaduDiv.innerHTML = `
+                <div class="togol-header" style="background: #f8fafc; padding: 12px 15px; margin-bottom: 0; border-bottom: 1px solid var(--border-color);" onclick="togglePengaduTambahan(${i})">
+                    <h5 style="margin: 0; color: var(--primary-blue); font-size: 1.05em;">Maklumat Pengadu ${i}</h5>
+                    <span id="labelTogolPengadu${i}" style="color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #e2e8f0; padding: 4px 12px; border-radius: 20px;">▼ Buka</span>
+                </div>
+                
+                <div id="kandunganPengadu${i}" style="display: none; padding: 20px;">
+                    <div class="grid-2">
+                        <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+                            <label style="text-align: left; margin: 0;">Nama Pengadu <span>*</span></label>
+                            <input type="text" id="namaPengaduTambahan${i}" placeholder="Nama penuh Pengadu ${i}" oninput="hurufBesarSetiapPerkataan(this)">
+                        </div>
+                        <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+                            <label style="text-align: left; margin: 0;">No. MyKad / Pasport <span>*</span></label>
+                            <input type="text" id="kpPengaduTambahan${i}" placeholder="Contoh: 880101-01-1234" oninput="formatMyKadTambahan(this)">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h6 style="color: var(--text-main); margin: 0; font-size: 0.95em;">Jadual Tuntutan Pengadu ${i}</h6>
+                        <button type="button" class="btn-add btn-terapung" style="margin: 0; background-color: #0ea5e9; white-space: nowrap; padding: 8px 15px; font-size: 0.85em;" onclick="bukaModalTuntutan('tambahan_${i}')">+ Tambah Tuntutan Pengadu ${i}</button>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
+                        <thead style="background-color: var(--card-header-bg);">
+                            <tr>
+                                <th style="width: 5%; text-align: center; border-bottom: 1px solid var(--border-color);">Bil.</th>
+                                <th style="width: 25%; border-bottom: 1px solid var(--border-color);">Jenis Tuntutan</th>
+                                <th style="width: 35%; border-bottom: 1px solid var(--border-color);">Keterangan Tuntutan</th>
+                                <th style="width: 15%; text-align: right; border-bottom: 1px solid var(--border-color);">Jumlah (RM)</th>
+                                <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Kemaskini</th>
+                                <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Hapus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyTuntutanTambahan${i}"></tbody>
+                    </table>
+                </div>
+            `;
+            container.appendChild(pengaduDiv);
+            renderJadualTuntutanTambahan(i);
+        }
+    }
+}
 // --- FUNGSI BARU: Papar memori jadual tuntutan tambahan ke dalam skrin ---
         function renderJadualTuntutanTambahan(idx) {
             const tbody = document.getElementById(`bodyTuntutanTambahan${idx}`);
@@ -2698,46 +2719,152 @@ function janaKenyataanAwal() {
         }
 
 function pergiKeTabBorang(tabId) {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            if(tabId === 'tab1') tabs[0].classList.add('active');
-            if(tabId === 'tab2') tabs[1].classList.add('active');
-            if(tabId === 'tab3') tabs[2].classList.add('active');
-                 
-            document.getElementById('tab1').style.display = 'none';
-            document.getElementById('tab2').style.display = 'none';
-            document.getElementById('tab3').style.display = 'none';
-            
-            document.getElementById(tabId).style.display = 'grid';
-
-            kawalPaparanTab3(tabId); 
-
-            if (tabId === 'tab2') {
-                janaKenyataanAwal();
-                setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    // === TAMBAHAN KOD VALIDASI TUNTUTAN ===
+    if (document.getElementById('tab1').style.display !== 'none' && (tabId === 'tab2' || tabId === 'tab3')) {
+        const isBerkumpulan = document.getElementById('aduanBerkumpulan')?.checked;
+        const isMajikan = document.getElementById('majikan')?.checked;
+        
+        if (isBerkumpulan && !isMajikan) {
+            // 1. Semak tuntutan Ketua Pengadu
+            if (memoriTuntutanKetua.length === 0) {
+                alert("Sila isi sekurang-kurangnya SATU tuntutan untuk Ketua Pengadu sebelum meneruskan ke langkah seterusnya.");
+                document.getElementById('kad3_ketua').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Hentikan pertukaran tab
             }
-            document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+
+            // 2. Semak tuntutan Pengadu Tambahan (Pengadu 2, 3...)
+            const bilPengaduInput = document.getElementById('bilPengadu')?.value;
+            const bilangan = parseInt(bilPengaduInput) || 1;
+            
+            for (let i = 2; i <= bilangan; i++) {
+                if (!memoriTuntutanTambahan[i] || memoriTuntutanTambahan[i].length === 0) {
+                    alert(`Sila isi sekurang-kurangnya SATU tuntutan untuk Pengadu ${i} sebelum meneruskan ke langkah seterusnya.`);
+                    
+                    // Buka kotak togol jika ia sedang tertutup supaya user nampak
+                    const kandungan = document.getElementById(`kandunganPengadu${i}`);
+                    const labelTogol = document.getElementById(`labelTogolPengadu${i}`);
+                    if (kandungan && kandungan.style.display === 'none') {
+                        kandungan.style.display = 'block';
+                        if (labelTogol) {
+                            labelTogol.innerHTML = '▲ Sembunyi';
+                            labelTogol.style.backgroundColor = '#eff6ff';
+                            labelTogol.style.color = 'var(--primary-blue)';
+                        }
+                    }
+                    
+                    // Skrol terus ke kotak pengadu yang tertinggal itu
+                    const pengaduDiv = document.getElementById(`kandunganPengadu${i}`)?.parentElement;
+                    if (pengaduDiv) {
+                        pengaduDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return; // Hentikan pertukaran tab
+                }
+            }
+
+        } else {
+            // Semak tuntutan biasa (untuk aduan Individu / Majikan)
+            if (memoriTuntutan.length === 0) {
+                alert("Sila isi sekurang-kurangnya SATU maklumat tuntutan sebelum meneruskan ke langkah seterusnya.");
+                document.getElementById('kad4_biasa').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Hentikan pertukaran tab
+            }
         }
+    }
+    // === TAMAT KOD VALIDASI ===
+
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    if(tabId === 'tab1') tabs[0].classList.add('active');
+    if(tabId === 'tab2') tabs[1].classList.add('active');
+    if(tabId === 'tab3') tabs[2].classList.add('active');
+         
+    document.getElementById('tab1').style.display = 'none';
+    document.getElementById('tab2').style.display = 'none';
+    document.getElementById('tab3').style.display = 'none';
+    
+    document.getElementById(tabId).style.display = 'grid';
+
+    kawalPaparanTab3(tabId); 
+
+    if (tabId === 'tab2') {
+        janaKenyataanAwal();
+        setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    }
+    document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+}
 
 function bukaTab(tabId, elemenTab) {
-            document.getElementById('tab1').style.display = 'none';
-            document.getElementById('tab2').style.display = 'none';
-            document.getElementById('tab3').style.display = 'none';
-            
-            const senaraiTab = document.querySelectorAll('.tab');
-            senaraiTab.forEach(tab => tab.classList.remove('active'));
-                     
-            document.getElementById(tabId).style.display = 'grid'; 
-            elemenTab.classList.add('active');
-
-            kawalPaparanTab3(tabId); 
-
-            if (tabId === 'tab2') {
-                janaKenyataanAwal();
-                setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    // === TAMBAHAN KOD VALIDASI TUNTUTAN ===
+    if (document.getElementById('tab1').style.display !== 'none' && (tabId === 'tab2' || tabId === 'tab3')) {
+        const isBerkumpulan = document.getElementById('aduanBerkumpulan')?.checked;
+        const isMajikan = document.getElementById('majikan')?.checked;
+        
+        if (isBerkumpulan && !isMajikan) {
+            // 1. Semak tuntutan Ketua Pengadu
+            if (memoriTuntutanKetua.length === 0) {
+                alert("Sila isi sekurang-kurangnya SATU tuntutan untuk Ketua Pengadu sebelum meneruskan ke langkah seterusnya.");
+                document.getElementById('kad3_ketua').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Hentikan pertukaran tab
             }
-            document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+
+            // 2. Semak tuntutan Pengadu Tambahan (Pengadu 2, 3...)
+            const bilPengaduInput = document.getElementById('bilPengadu')?.value;
+            const bilangan = parseInt(bilPengaduInput) || 1;
+            
+            for (let i = 2; i <= bilangan; i++) {
+                if (!memoriTuntutanTambahan[i] || memoriTuntutanTambahan[i].length === 0) {
+                    alert(`Sila isi sekurang-kurangnya SATU tuntutan untuk Pengadu ${i} sebelum meneruskan ke langkah seterusnya.`);
+                    
+                    // Buka kotak togol jika ia sedang tertutup supaya user nampak
+                    const kandungan = document.getElementById(`kandunganPengadu${i}`);
+                    const labelTogol = document.getElementById(`labelTogolPengadu${i}`);
+                    if (kandungan && kandungan.style.display === 'none') {
+                        kandungan.style.display = 'block';
+                        if (labelTogol) {
+                            labelTogol.innerHTML = '▲ Sembunyi';
+                            labelTogol.style.backgroundColor = '#eff6ff';
+                            labelTogol.style.color = 'var(--primary-blue)';
+                        }
+                    }
+                    
+                    // Skrol terus ke kotak pengadu yang tertinggal itu
+                    const pengaduDiv = document.getElementById(`kandunganPengadu${i}`)?.parentElement;
+                    if (pengaduDiv) {
+                        pengaduDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return; // Hentikan pertukaran tab
+                }
+            }
+
+        } else {
+            // Semak tuntutan biasa (untuk aduan Individu / Majikan)
+            if (memoriTuntutan.length === 0) {
+                alert("Sila isi sekurang-kurangnya SATU maklumat tuntutan sebelum meneruskan ke langkah seterusnya.");
+                document.getElementById('kad4_biasa').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Hentikan pertukaran tab
+            }
         }
+    }
+    // === TAMAT KOD VALIDASI ===
+
+    document.getElementById('tab1').style.display = 'none';
+    document.getElementById('tab2').style.display = 'none';
+    document.getElementById('tab3').style.display = 'none';
+    
+    const senaraiTab = document.querySelectorAll('.tab');
+    senaraiTab.forEach(tab => tab.classList.remove('active'));
+             
+    document.getElementById(tabId).style.display = 'grid'; 
+    elemenTab.classList.add('active');
+
+    kawalPaparanTab3(tabId); 
+
+    if (tabId === 'tab2') {
+        janaKenyataanAwal();
+        setTimeout(() => { autoResize(document.getElementById('kenyataanAwal')); autoResize(document.getElementById('kronologiKes')); }, 10);
+    }
+    document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+}
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -2880,79 +3007,6 @@ function simpanTuntutan() {
             } 
         }
 
-        // --- FUNGSI DIKEMASKINI: Ditambah logik memadam memori jika user kurangkan bilangan pengadu ---
-        function janaJadualPengaduTambahan(bilangan) {
-            const container = document.getElementById('ruanganPengaduTambahan');
-            if (!container) return;
-            
-            container.innerHTML = ''; 
-            let bilanganTambahan = bilangan > 1 ? bilangan - 1 : 0;
-            
-            // HAPUSKAN memori pengadu yang terbatal jika user tiba-tiba kurangkan bilangan (Cth: dari 5 ke 2)
-            for (let key in memoriTuntutanTambahan) {
-                if (parseInt(key) > bilanganTambahan) {
-                    delete memoriTuntutanTambahan[key];
-                }
-            }
-            // Auto-kira supaya jadual bawah juga turut membuang tuntutan pengadu yang terbatal
-            autoKiraTuntutanBerkumpulan();
-            renderJadualTuntutan();
-            
-            if (bilangan > 1) {
-                for (let i = 1; i <= bilanganTambahan; i++) {
-                    if (!memoriTuntutanTambahan[i]) memoriTuntutanTambahan[i] = [];
-
-                    const pengaduDiv = document.createElement('div');
-                    pengaduDiv.style.marginTop = '20px';
-                    pengaduDiv.style.border = '1px solid var(--border-color)';
-                    pengaduDiv.style.borderRadius = '8px';
-                    pengaduDiv.style.overflow = 'hidden';
-                    pengaduDiv.style.backgroundColor = '#ffffff';
-                    
-                    pengaduDiv.innerHTML = `
-                        <div class="togol-header" style="background: #f8fafc; padding: 12px 15px; margin-bottom: 0; border-bottom: 1px solid var(--border-color);" onclick="togglePengaduTambahan(${i})">
-                            <h5 style="margin: 0; color: var(--primary-blue); font-size: 1.05em;">Maklumat Pengadu ${i}</h5>
-                            <span id="labelTogolPengadu${i}" style="color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #e2e8f0; padding: 4px 12px; border-radius: 20px;">▼ Buka</span>
-                        </div>
-                        
-                        <div id="kandunganPengadu${i}" style="display: none; padding: 20px;">
-                            <div class="grid-2">
-                                <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
-                                    <label style="text-align: left; margin: 0;">Nama Pengadu <span>*</span></label>
-                                    <input type="text" id="namaPengaduTambahan${i}" placeholder="Nama penuh Pengadu ${i}" oninput="hurufBesarSetiapPerkataan(this)">
-                                </div>
-                                <div class="form-group" style="grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
-                                    <label style="text-align: left; margin: 0;">No. MyKad / Pasport <span>*</span></label>
-                                    <input type="text" id="kpPengaduTambahan${i}" placeholder="Contoh: 880101-01-1234" oninput="formatMyKadTambahan(this)">
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                                <h6 style="color: var(--text-main); margin: 0; font-size: 0.95em;">Jadual Tuntutan Pengadu ${i}</h6>
-                                <button type="button" class="btn-add btn-terapung" style="margin: 0; background-color: #0ea5e9; white-space: nowrap; padding: 8px 15px; font-size: 0.85em;" onclick="bukaModalTuntutan('tambahan_${i}')">+ Tambah Tuntutan Pengadu ${i}</button>
-                            </div>
-
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
-                                <thead style="background-color: var(--card-header-bg);">
-                                    <tr>
-                                        <th style="width: 5%; text-align: center; border-bottom: 1px solid var(--border-color);">Bil.</th>
-                                        <th style="width: 25%; border-bottom: 1px solid var(--border-color);">Jenis Tuntutan</th>
-                                        <th style="width: 35%; border-bottom: 1px solid var(--border-color);">Keterangan Tuntutan</th>
-                                        <th style="width: 15%; text-align: right; border-bottom: 1px solid var(--border-color);">Jumlah (RM)</th>
-                                        <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Kemaskini</th>
-                                        <th style="width: 10%; text-align: center; border-bottom: 1px solid var(--border-color);">Hapus</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bodyTuntutanTambahan${i}"></tbody>
-                            </table>
-                        </div>
-                    `;
-                    container.appendChild(pengaduDiv);
-                    renderJadualTuntutanTambahan(i);
-                }
-            }
-        }
-
 function tutupModalTuntutan() { document.getElementById('modalTuntutan').style.display = 'none'; }
        
 function renderJadualTuntutan() {
@@ -2999,12 +3053,13 @@ function renderJadualTuntutan() {
                 }
             }
 
-            // ... Kekalkan blok code untuk tbodyKetua di sini ...
+// ... Kekalkan blok code untuk tbody di atas ...
+            
             const tbodyKetua = document.querySelector("#jadualTuntutanKetua tbody");
             if (tbodyKetua) {
                 tbodyKetua.innerHTML = ""; 
                 if (memoriTuntutanKetua.length === 0) { 
-                    tbodyKetua.innerHTML = `<tr><td colspan="6" class="empty-row">Tiada maklumat tuntutan direkodkan.</td></tr>`; 
+                    tbodyKetua.innerHTML = `<tr><td colspan="6" class="empty-row" style="text-align: center; padding: 12px;">Tiada maklumat tuntutan direkodkan.</td></tr>`; 
                 } else {
                     let jumlahKeseluruhanKetua = 0; 
                     memoriTuntutanKetua.forEach((item, index) => {
@@ -3012,10 +3067,15 @@ function renderJadualTuntutan() {
                         jumlahKeseluruhanKetua += isNaN(jumlahNum) ? 0 : jumlahNum; 
                         const jumlahCantik = Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         const tr = document.createElement('tr');
+                        
+                        // DISERAGAMKAN MENGIKUT FORMAT PENGADU TAMBAHAN
                         tr.innerHTML = `
-                            <td>${index + 1}</td><td>${item.jenis}</td><td>${item.keterangan}</td><td>RM ${jumlahCantik}</td>
-                            <td><button class="btn-edit-tbl" style="background-color: #0284c7;" onclick="bukaModalTuntutan('ketua', ${index})">✏️ Edit</button></td>
-                            <td><button class="btn-delete-tbl" onclick="hapusTuntutan(${index}, 'ketua')">🗑️ Hapus</button></td>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td>${item.jenis}</td>
+                            <td>${item.keterangan}</td>
+                            <td style="text-align: right; font-weight: 500;">RM ${jumlahCantik}</td>
+                            <td style="text-align: center;"><button type="button" class="btn-edit-tbl" style="background-color: #0284c7;" onclick="bukaModalTuntutan('ketua', ${index})">✏️ Edit</button></td>
+                            <td style="text-align: center;"><button type="button" class="btn-delete-tbl" onclick="hapusTuntutan(${index}, 'ketua')">🗑️ Hapus</button></td>
                         `;
                         tbodyKetua.appendChild(tr);
                     });
@@ -3024,7 +3084,7 @@ function renderJadualTuntutan() {
                     trTotalKetua.style.fontWeight = 'bold';
                     trTotalKetua.innerHTML = `
                         <td colspan="3" style="text-align:right; padding-right: 15px; color: var(--text-main);">JUMLAH KESELURUHAN KETUA</td>
-                        <td colspan="3" style="color: #0284c7;">RM ${jumlahKeseluruhanKetua.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td colspan="3" style="color: #0284c7; text-align: left; padding-left: 16px;">RM ${jumlahKeseluruhanKetua.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     `;
                     tbodyKetua.appendChild(trTotalKetua);
                 }

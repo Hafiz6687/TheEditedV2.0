@@ -2655,12 +2655,20 @@ function kemaskiniDropdownPendaftaran() {
             }
         }
 
-        function semakBukaMaklumatPerkhidmatan() {
-            const tel = document.getElementById('telPengadu').value.trim();
-            const hp = document.getElementById('hpPengadu').value.trim();
-            const emel = document.getElementById('emelPengadu').value.trim();
-            if ((tel !== '' || hp !== '' || emel !== '')) { bukaMaklumatPerkhidmatanDalaman(); }
-        }
+function semakBukaMaklumatPerkhidmatan() {
+    const tel = document.getElementById('telPengadu').value.trim();
+    const hp = document.getElementById('hpPengadu').value.trim();
+    const emel = document.getElementById('emelPengadu').value.trim();
+    
+    // Auto-buka togol maklumat perkhidmatan seperti biasa
+    if ((tel !== '' || hp !== '' || emel !== '')) { 
+        bukaMaklumatPerkhidmatanDalaman(); 
+    }
+    
+    // TAMBAHAN BARU: Arahkan sistem semak kelayakan Jadual Tuntutan 
+    // secara "real-time" apabila ketiga-tiga kotak ini diisi/dipadam
+    semakKelayakanTuntutan();
+}
 
         function hurufBesarAyatPertama(input) {
             let start = input.selectionStart;
@@ -3491,51 +3499,70 @@ function renderJadualTuntutan() {
         }
 
 function kawalJenisAduanTuntutan() {
-            const aduanBerkumpulan = document.getElementById('aduanBerkumpulan').checked;
-            const isMajikan = document.getElementById('majikan').checked;
-            
-            const kad3Ketua = document.getElementById('kad3_ketua');
-            const kandunganKetua = document.getElementById('kandunganTuntutanKetua');
-            const tajukTuntutanSediaAda = document.getElementById('tajukTuntutanSediaAda');
-            const kandunganBiasa = document.getElementById('kandunganTuntutanSediaAda');
-            const butangSeterusnya = document.getElementById('ruanganButangSeterusnyaTab1');
-            const btnTambahTuntutanBiasa = document.getElementById('btnTambahTuntutanBiasa');
+    const aduanBerkumpulan = document.getElementById('aduanBerkumpulan').checked;
+    const isMajikan = document.getElementById('majikan').checked;
+    
+    const kad3Ketua = document.getElementById('kad3_ketua');
+    const kandunganKetua = document.getElementById('kandunganTuntutanKetua');
+    
+    const tajukTuntutanSediaAda = document.getElementById('tajukTuntutanSediaAda');
+    const kandunganBiasa = document.getElementById('kandunganTuntutanSediaAda');
+    
+    const butangSeterusnya = document.getElementById('ruanganButangSeterusnyaTab1');
 
-            const sektor = document.getElementById('sektorDefendan').value;
-            const jp = document.getElementById('jenisPerniagaan').value.trim();
-            
-            if (sektor === '' || jp === '') {
-                if (kad3Ketua) kad3Ketua.style.display = 'none';
-                if (kandunganKetua) kandunganKetua.style.display = 'none';
-                if (kandunganBiasa) kandunganBiasa.style.display = 'none';
-                if (butangSeterusnya) butangSeterusnya.style.display = 'none';
-                return; 
-            }
+    // --- KAWALAN SYARAT PAPARAN JADUAL DINAMIK ---
+    let lulusPaparan = false;
 
-            if (isMajikan) {
-                if (kad3Ketua) kad3Ketua.style.display = 'none';
-                if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan Majikan';
-                if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
-                if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
-                if (btnTambahTuntutanBiasa) btnTambahTuntutanBiasa.style.display = 'inline-block'; // SHOW
-            } else {
-                if (aduanBerkumpulan) {
-                    if (kad3Ketua) kad3Ketua.style.display = 'flex';
-                    if (kandunganKetua) kandunganKetua.style.display = 'block'; 
-                    if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan Keseluruhan (Auto-Kira)';
-                    if (kandunganBiasa) kandunganBiasa.style.display = 'block';
-                    if (butangSeterusnya) butangSeterusnya.style.display = 'block';
-                    if (btnTambahTuntutanBiasa) btnTambahTuntutanBiasa.style.display = 'none'; // HIDE
-                } else {
-                    if (kad3Ketua) kad3Ketua.style.display = 'none';
-                    if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan';
-                    if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
-                    if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
-                    if (btnTambahTuntutanBiasa) btnTambahTuntutanBiasa.style.display = 'inline-block'; // SHOW
-                }
-            }
+    if (window.paparanSemasa === 'urus') {
+        // SYARAT PENGURUSAN KES: Salah satu daripada Tel, HP, atau Emel mesti diisi
+        const tel = document.getElementById('telPengadu').value.trim();
+        const hp = document.getElementById('hpPengadu').value.trim();
+        const emel = document.getElementById('emelPengadu').value.trim();
+        
+        if (tel !== '' || hp !== '' || emel !== '') {
+            lulusPaparan = true;
         }
+    } else {
+        // SYARAT ASAL PENDAFTARAN KES: Sektor & Jenis Perniagaan mesti diisi
+        const sektor = document.getElementById('sektorDefendan').value;
+        const jp = document.getElementById('jenisPerniagaan').value.trim();
+        
+        if (sektor !== '' && jp !== '') {
+            lulusPaparan = true;
+        }
+    }
 
+    // Jika syarat TIDAK dipenuhi, sembunyikan semua jadual
+    if (!lulusPaparan) {
+        if (kad3Ketua) kad3Ketua.style.display = 'none';
+        if (kandunganKetua) kandunganKetua.style.display = 'none';
+        if (kandunganBiasa) kandunganBiasa.style.display = 'none';
+        if (butangSeterusnya) butangSeterusnya.style.display = 'none';
+        return; // Berhenti di sini
+    }
+    // ----------------------------------------------
+
+    // --- JIKA SYARAT LULUS, TERUSKAN PAPARAN ASAL ---
+    if (isMajikan) {
+        if (kad3Ketua) kad3Ketua.style.display = 'none';
+        if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan Majikan';
+        if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
+        if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
+    } else {
+        if (aduanBerkumpulan) {
+            if (kad3Ketua) kad3Ketua.style.display = 'flex';
+            if (kandunganKetua) kandunganKetua.style.display = 'block'; 
+            if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan (Yang sama untuk semua pengadu lain)';
+            if (kandunganBiasa) kandunganBiasa.style.display = 'block';
+            if (butangSeterusnya) butangSeterusnya.style.display = 'block';
+        } else {
+            if (kad3Ketua) kad3Ketua.style.display = 'none';
+            if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan';
+            if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
+            if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
+        }
+    }
+}
         function toggleMaklumatPerkhidmatan() {
             const kandungan = document.getElementById('kandunganMaklumatPerkhidmatan');
             const labelTogol = document.getElementById('labelTogolPerkhidmatan');
@@ -5122,53 +5149,6 @@ function semakSeksyenTuntutan() {
             }
         }
 
-function kawalJenisAduanTuntutan() {
-            const aduanBerkumpulan = document.getElementById('aduanBerkumpulan').checked;
-            const isMajikan = document.getElementById('majikan').checked;
-            
-            const kad3Ketua = document.getElementById('kad3_ketua');
-            const kandunganKetua = document.getElementById('kandunganTuntutanKetua');
-            
-            const tajukTuntutanSediaAda = document.getElementById('tajukTuntutanSediaAda');
-            const kandunganBiasa = document.getElementById('kandunganTuntutanSediaAda');
-            
-            const butangSeterusnya = document.getElementById('ruanganButangSeterusnyaTab1');
-
-            // --- LOGIK KELAYAKAN TUNTUTAN BAHARU ---
-            // Semak Sektor dan Jenis Perniagaan untuk tentukan jadual patut dipapar atau disembunyi
-            const sektor = document.getElementById('sektorDefendan').value;
-            const jp = document.getElementById('jenisPerniagaan').value.trim();
-            
-            if (sektor === '' || jp === '') {
-                // Jika masih kosong (terutama waktu di-reset), sembunyikan semua jadual tuntutan
-                if (kad3Ketua) kad3Ketua.style.display = 'none';
-                if (kandunganKetua) kandunganKetua.style.display = 'none';
-                if (kandunganBiasa) kandunganBiasa.style.display = 'none';
-                if (butangSeterusnya) butangSeterusnya.style.display = 'none';
-                return; // Berhenti di sini
-            }
-            // ---------------------------------------
-
-            if (isMajikan) {
-                if (kad3Ketua) kad3Ketua.style.display = 'none';
-                if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan Majikan';
-                if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
-                if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
-            } else {
-                if (aduanBerkumpulan) {
-                    if (kad3Ketua) kad3Ketua.style.display = 'flex';
-                    if (kandunganKetua) kandunganKetua.style.display = 'block'; 
-                    if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan (Yang sama untuk semua pengadu lain)';
-                    if (kandunganBiasa) kandunganBiasa.style.display = 'block';
-                    if (butangSeterusnya) butangSeterusnya.style.display = 'block';
-                } else {
-                    if (kad3Ketua) kad3Ketua.style.display = 'none';
-                    if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan';
-                    if (kandunganBiasa) kandunganBiasa.style.display = 'block'; 
-                    if (butangSeterusnya) butangSeterusnya.style.display = 'block'; 
-                }
-            }
-        }
 
         function semakKelayakanTuntutan() {
             kawalJenisAduanTuntutan();

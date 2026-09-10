@@ -3738,9 +3738,10 @@ function tukarPeranan() {
         if (window.paparanSemasa === 'urus') {
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'none';
             if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'none';
-            
-            // TAMBAHAN BARU: Hide Sektor apabila Majikan Pengadu di Pengurusan Kes
             if (ruanganSektor) ruanganSektor.style.display = 'none';
+            
+            // TAMBAHAN BARU: Hide Gaji Pokok apabila Majikan Pengadu di Pengurusan Kes
+            if (ruanganGaji) ruanganGaji.style.display = 'none';
             
             if (kandunganSyarikat) kandunganSyarikat.style.display = 'block';
             if (labelTogolSyarikat) {
@@ -3749,9 +3750,11 @@ function tukarPeranan() {
                 labelTogolSyarikat.style.color = 'var(--primary-blue)';
             }
         } else {
+            // Jika di Pendaftaran Kes, kekalkan butang dan kotak seperti biasa
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
             if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'block';
             if (ruanganSektor) ruanganSektor.style.display = 'grid'; 
+            // ruanganGaji sudah di "grid" kan pada baris atas, jadi ia akan kelihatan.
         }
 
     } else {

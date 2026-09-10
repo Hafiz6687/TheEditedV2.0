@@ -3678,9 +3678,10 @@ function tukarPeranan() {
     const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat');
     const labelTogolSyarikat = document.getElementById('labelTogolSyarikat');
 
-    // PEMBOLEHUBAH BARU UNTUK PEKERJA (Hide di Pengurusan Kes)
+    // PEMBOLEHUBAH BARU UNTUK HIDE DI PENGURUSAN KES
     const ruanganJawatan = document.getElementById('jawatanPengadu')?.closest('.form-group');
     const ruanganGaji = document.getElementById('gajiPokokPengadu')?.closest('.form-group');
+    const ruanganSektor = document.getElementById('sektorDefendan')?.closest('.form-group');
 
     if (suis.checked) {
         // --- SENARIO 1: MAJIKAN ADALAH PENGADU ---
@@ -3706,14 +3707,18 @@ function tukarPeranan() {
         if(ruanganGajiMinima) ruanganGajiMinima.style.display = "none";
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "block";
 
-        // Kembalikan paparan fields pekerja jika sebelum ini di-hide
+        // Kembalikan paparan fields pekerja & sektor jika sebelum ini di-hide
         if(ruanganJawatan) ruanganJawatan.style.display = "grid";
         if(ruanganGaji) ruanganGaji.style.display = "grid";
-        if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "block";
+        if(ruanganSektor) ruanganSektor.style.display = "grid";
 
         // Kawalan Khas Pengurusan Kes (Untuk Majikan)
         if (window.paparanSemasa === 'urus') {
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'none';
+            
+            // TAMBAHAN: Hide Alamat tempat pekerjaan... apabila Majikan adalah Pengadu di Pengurusan Kes
+            if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'none';
+            
             if (kandunganSyarikat) kandunganSyarikat.style.display = 'block';
             if (labelTogolSyarikat) {
                 labelTogolSyarikat.innerHTML = '▲ Sembunyi';
@@ -3722,6 +3727,7 @@ function tukarPeranan() {
             }
         } else {
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
+            if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'block';
         }
 
     } else {
@@ -3754,7 +3760,10 @@ function tukarPeranan() {
             if(ruanganGaji) ruanganGaji.style.display = "none";
             if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "none";
             if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
-            if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "none"; // Hide checkbox "Alamat tempat pekerjaan..."
+            if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "none"; 
+            
+            // TAMBAHAN: Hide Sektor apabila Aduan Pekerja (Individu/Kumpulan) di Pengurusan Kes
+            if(ruanganSektor) ruanganSektor.style.display = "none";
         } else {
             // PAPARAN NORMAL UNTUK PENDAFTARAN KES (BUKA SEMULA SEMUA FIELD)
             if(ruanganJantina) ruanganJantina.style.display = "grid";
@@ -3763,6 +3772,7 @@ function tukarPeranan() {
             if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "grid";
             if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
             if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "block";
+            if(ruanganSektor) ruanganSektor.style.display = "grid";
         }
     }
     

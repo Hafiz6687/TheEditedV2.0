@@ -3707,8 +3707,6 @@ function tukarPeranan() {
     const ruanganSektor = document.getElementById('sektorDefendan')?.closest('.form-group');
     
     const ruanganKenyataanAwal = document.getElementById('kenyataanAwal')?.closest('.card');
-    
-    // PEMBOLEHUBAH BARU: Sasaran untuk Tab "Kenyataan Pengadu" & Butang Navigasi
     const tabKenyataanMenu = document.querySelectorAll('.tab')[1];
     const btnSeterusnyaTab1 = document.querySelector('#ruanganButangSeterusnyaTab1 button');
     const btnKembaliTab3 = document.querySelector('#tab3 button.btn-terapung');
@@ -3749,7 +3747,7 @@ function tukarPeranan() {
             if (ruanganGaji) ruanganGaji.style.display = 'none';
             if (ruanganKenyataanAwal) ruanganKenyataanAwal.style.display = 'none';
             
-            // HIDE TAB 2 & SKIP TERUS KE TAB 3 BILA TEKAN SETERUSNYA
+            // HIDE TAB 2 & SKIP TERUS KE TAB 3
             if (tabKenyataanMenu) tabKenyataanMenu.style.display = 'none';
             if (btnSeterusnyaTab1) btnSeterusnyaTab1.setAttribute('onclick', "pergiKeTabBorang('tab3')");
             if (btnKembaliTab3) btnKembaliTab3.setAttribute('onclick', "pergiKeTabBorang('tab1')");
@@ -3779,13 +3777,6 @@ function tukarPeranan() {
         tempatKiri.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "none"; 
         ruanganAduan.style.display = "grid"; 
         
-        if (ruanganKenyataanAwal) ruanganKenyataanAwal.style.display = 'flex';
-        
-        // SENTIASA PASTIKAN TAB 2 DIBUKA UNTUK PEKERJA
-        if (tabKenyataanMenu) tabKenyataanMenu.style.display = '';
-        if (btnSeterusnyaTab1) btnSeterusnyaTab1.setAttribute('onclick', "pergiKeTabBorang('tab2')");
-        if (btnKembaliTab3) btnKembaliTab3.setAttribute('onclick', "pergiKeTabBorang('tab2')");
-        
         if (document.getElementById('aduanBerkumpulan')?.checked) { document.getElementById('ruanganBilanganPengadu').style.display = 'grid'; }
         if(tempatKerja2) tempatKerja2.appendChild(ruanganAlamatKerja);
         if(labelBerbeza) labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat defendan'; 
@@ -3802,6 +3793,7 @@ function tukarPeranan() {
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "none";
         if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
 
+        // Kawalan Khas Pengurusan Kes (Untuk Pekerja)
         if (window.paparanSemasa === 'urus') {
             if(ruanganJantina) ruanganJantina.style.display = "none";
             if(ruanganJawatan) ruanganJawatan.style.display = "none";
@@ -3810,7 +3802,15 @@ function tukarPeranan() {
             if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
             if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "none"; 
             if(ruanganSektor) ruanganSektor.style.display = "none";
+            
+            // TAMBAHAN BARU: HIDE TAB 2 & KAD KENYATAAN AWAL UNTUK PEKERJA
+            if (ruanganKenyataanAwal) ruanganKenyataanAwal.style.display = 'none';
+            if (tabKenyataanMenu) tabKenyataanMenu.style.display = 'none';
+            if (btnSeterusnyaTab1) btnSeterusnyaTab1.setAttribute('onclick', "pergiKeTabBorang('tab3')");
+            if (btnKembaliTab3) btnKembaliTab3.setAttribute('onclick', "pergiKeTabBorang('tab1')");
+
         } else {
+            // Jika di Pendaftaran Kes, kekalkan butang dan kotak seperti biasa
             if(ruanganJantina) ruanganJantina.style.display = "grid";
             if(ruanganJawatan) ruanganJawatan.style.display = "grid";
             if(ruanganGaji) ruanganGaji.style.display = "grid";
@@ -3818,6 +3818,12 @@ function tukarPeranan() {
             if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
             if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "block";
             if(ruanganSektor) ruanganSektor.style.display = "grid";
+            
+            // BUKA SEMULA TAB 2 & KAD KENYATAAN AWAL UNTUK PEKERJA
+            if (ruanganKenyataanAwal) ruanganKenyataanAwal.style.display = 'flex';
+            if (tabKenyataanMenu) tabKenyataanMenu.style.display = '';
+            if (btnSeterusnyaTab1) btnSeterusnyaTab1.setAttribute('onclick', "pergiKeTabBorang('tab2')");
+            if (btnKembaliTab3) btnKembaliTab3.setAttribute('onclick', "pergiKeTabBorang('tab2')");
         }
     }
     

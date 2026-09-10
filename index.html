@@ -1457,24 +1457,39 @@ Portal rasmi : jtksm.mohr.gov.my
                         this.style.height = '100%';
                     }
 
-                    if (posDisimpan) {
-                        const pos = JSON.parse(posDisimpan);
-                        currentPosX = pos.x;
-                        currentPosY = pos.y;
-                    }
-                    updateTransform();
-                };
-            }
+if (posDisimpan) {
+                    const pos = JSON.parse(posDisimpan);
+                    currentPosX = pos.x;
+                    currentPosY = pos.y;
+                }
+                updateTransform();
+            };
+        } // <--- penutup if (gambarDisimpan)
 
-                memoriSenaraiKes.push({
-                noKes: "KBR/10103/2026/0001", // <--- UBAH DI SINI
+        // --- KEMASKINI: Tarik data dari Local Storage supaya tak hilang bila refresh ---
+        const senaraiTersimpan = localStorage.getItem('eLC_senaraiKes');
+        if (senaraiTersimpan) {
+            // Jika ada memori lama, gunakan memori tersebut
+            memoriSenaraiKes = JSON.parse(senaraiTersimpan);
+        } else {
+            // Jika sistem baru pertama kali dibuka, masukkan 1 data contoh (dummy)
+            memoriSenaraiKes = [{
+                noKes: "KBR/10103/2026/0001", 
                 namaPengadu: "Mohamad Hafiz Bin Abu Bakar",
                 namaDefendan: "Abc Teknologi Enterprise<br><span style='font-size: 0.85em; font-weight: normal;'>Pemilik: Ali Bin Abu Chik</span>",
                 jenisAduan: "Individu",
                 tarikh: "2/8/2026"
-            });
-            renderSenaraiTugas();
-        });
+            }];
+            simpanSenaraiKeLokal();
+        }
+        
+        renderSenaraiTugas();
+    }); // <--- INI ADALAH PENUTUP DOMContentLoaded
+
+    // --- FUNGSI BARU: Simpan senarai kes ke dalam memori browser (Local Storage) ---
+    function simpanSenaraiKeLokal() {
+        localStorage.setItem('eLC_senaraiKes', JSON.stringify(memoriSenaraiKes));
+    }
 
 function bukaMaklumatKes(index) {
             indexKesSemasa = index;
@@ -4181,7 +4196,7 @@ function daftarKesSistem() {
                 }
                 memoriSenaraiKes.unshift(rekodRasmi);
             }
-
+            simpanSenaraiKeLokal(); // <--- TAMBAH BARIS INI
             alert("Tahniah! Kes berjaya didaftarkan ke dalam sistem."); 
                 
             isSelesaiDaftar = true; 
@@ -4296,7 +4311,7 @@ function simpanDrafSistem() {
         }
         memoriSenaraiKes.unshift(rekodDraf);
     }
-    
+    simpanSenaraiKeLokal(); // <--- TAMBAH BARIS INI
     alert("Maklumat draf telah berjaya disimpan. Anda boleh menyambung pendaftaran ini kemudian."); 
     
     isSelesaiDaftar = true; 
@@ -4307,8 +4322,14 @@ function simpanDrafSistem() {
     pergiKeTabBorang('tab1'); 
 }
 
-        function hapusKesDidaftar(index) { if (confirm("Adakah anda pasti mahu memadam kes ini dari senarai tugasan?")) { memoriSenaraiKes.splice(index, 1); renderSenaraiTugas(); } }
-
+function hapusKesDidaftar(index) { 
+    if (confirm("Adakah anda pasti mahu memadam kes ini dari senarai tugasan?")) { 
+        memoriSenaraiKes.splice(index, 1); 
+        simpanSenaraiKeLokal(); // <--- TAMBAH BARIS INI
+        renderSenaraiTugas(); 
+    } 
+}
+       
 function bukaKesDidaftar(index) {
     isSelesaiDaftar = false;
     isEditMode = true; 
@@ -5120,7 +5141,7 @@ function semakStatusCetakLengkap() {
                 const tagSelesai = "<br><span style='background-color: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700;'>SELESAI</span>";
                 kes.noKes = noKesBersih + tagSelesai;
             }
-            
+            simpanSenaraiKeLokal(); // <--- TAMBAH BARIS INI
             alert("Kes telah berjaya ditandakan sebagai SELESAI.");
             
             isSelesaiDaftar = true; 

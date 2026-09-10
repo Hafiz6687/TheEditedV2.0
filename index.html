@@ -1071,11 +1071,10 @@ Portal rasmi : jtksm.mohr.gov.my
                                 <div class="form-group"><label>Negeri <span>*</span></label><div class="input-wrapper"><select id="negeriDefendan"><option value="">-Sila Pilih-</option></select></div></div>
                                 <div class="form-group"><label>Bandar <span>*</span></label><div class="input-wrapper"><select id="bandarDefendan"><option value="">-Sila Pilih-</option></select></div></div>
 
-                                <div class="form-group"><label>No. Tel:</label><div class="input-wrapper"><input type="text" id="telDefendan" style="width: 60%;" placeholder="Contoh: 07-1234567" oninput="formatTelRumah(this)" maxlength="11"></div></div>
-                                <div class="form-group" style="margin-top: -5px;"><label>No. Tel (H/p):</label><div class="input-wrapper"><input type="text" id="hpDefendan" style="width: 60%;" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this)" maxlength="12"></div></div>
-                                
-                                <div class="form-group"><label>E-mel</label><div class="input-wrapper"><input type="email" id="emelDefendan" style="width: 60%;" placeholder="Contoh: syarikat@email.com"></div></div>
-                                
+                                <div class="form-group"><label>No. Tel:</label><div class="input-wrapper"><input type="text" id="telDefendan" style="width: 60%;" placeholder="Contoh: 07-1234567" oninput="formatTelRumah(this); semakKelayakanTuntutan();" maxlength="11"></div></div>
+                                <div class="form-group" style="margin-top: -5px;"><label>No. Tel (H/p):</label><div class="input-wrapper"><input type="text" id="hpDefendan" style="width: 60%;" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this); semakKelayakanTuntutan();" maxlength="12"></div></div>
+                                <div class="form-group"><label>E-mel</label><div class="input-wrapper"><input type="email" id="emelDefendan" style="width: 60%;" placeholder="Contoh: syarikat@email.com" oninput="semakKelayakanTuntutan();"></div></div>
+                        
                                 <div id="tempatAlamatKerja2">
                                     <div id="ruanganAlamatKerjaLengkap">
                                         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 30px 0;">

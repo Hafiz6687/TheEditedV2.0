@@ -3921,60 +3921,93 @@ function resetBorangPendaftaran() {
         // ------------------------
     }
 
+// --- FUNGSI KAWALAN PAPARAN (VIEW) MENU SIDEBAR ---
 function tukarView(jenisView, dariBukaKes = false) {
     const navSenarai = document.getElementById('navSenarai');
     const navDaftar = document.getElementById('navDaftar');
+    const navUrus = document.getElementById('navUrus'); // Butang baharu PENGURUSAN KES
+
     const viewSenarai = document.getElementById('viewSenaraiTugas');
     const viewDaftar = document.getElementById('viewPendaftaranKes');
     const viewMaklumat = document.getElementById('viewMaklumatKes');
+    
+    // (Pilihan) Jika anda ada bekas <div> khas untuk Pengurusan Kes
+    const viewUrus = document.getElementById('viewPengurusanKes'); 
+
     const tajukHalaman = document.getElementById('tajukHalamanAtas');
     const btnCetakHeader = document.getElementById('butangCetakHeader');
 
-    // --- LOGIK PINTAR UNTUK MENGELAKKAN DATA HILANG & MEMUDAHKAN KES B, C... ---
-    if (jenisView === 'daftar' && !dariBukaKes) {
-        if (!isSelesaiDaftar) {
-            // Semak jika ada data pengadu atau defendan yang sedang diisi
-            let adaData = document.getElementById('namaPengadu').value.trim() !== '' || document.getElementById('namaDefendan').value.trim() !== '';
+    // --- LOGIK PINTAR UNTUK MENGELAKKAN DATA HILANG ---
+    if ((jenisView === 'daftar' || jenisView === 'urus') && !dariBukaKes) {
+        // Anggap isSelesaiDaftar dan isEditMode sudah diisytihar (declare) di tempat lain
+        if (typeof isSelesaiDaftar !== 'undefined' && !isSelesaiDaftar) {
+            let adaData = false;
+            const namaP = document.getElementById('namaPengadu');
+            const namaD = document.getElementById('namaDefendan');
+            
+            if (namaP && namaD) {
+                adaData = namaP.value.trim() !== '' || namaD.value.trim() !== '';
+            }
             
             if (adaData) {
-                // Beri amaran berbeza mengikut mod (Edit Draf vs Pendaftaran Baharu)
-                let msg = isEditMode ? 
-                    "Anda sedang mengemaskini draf kes sedia ada.\n\nAdakah anda pasti mahu membatalkan kemaskini dan MENGOSONGKAN borang untuk mendaftar kes baharu?" : 
-                    "Borang pendaftaran masih mengandungi maklumat yang belum disimpan.\n\nAdakah anda pasti mahu MENGOSONGKANNYA untuk mendaftar kes baharu?";
+                let msg = (typeof isEditMode !== 'undefined' && isEditMode) ? 
+                    "Anda sedang mengemaskini draf kes sedia ada.\n\nAdakah anda pasti mahu membatalkan kemaskini dan MENGOSONGKAN borang?" : 
+                    "Borang masih mengandungi maklumat yang belum disimpan.\n\nAdakah anda pasti mahu MENGOSONGKANNYA?";
                 
                 if (!confirm(msg)) {
-                    return; // Jika Cancel, batal navigasi dan kekal di borang semasa (Kes A)
+                    return; 
                 }
             }
         }
-        // Jika pengguna tekan OK (atau borang memang kosong / sudah selesai daftar Kes A), 
-        // kosongkan sepenuhnya untuk Kes B (Tuntutan akan auto tersembunyi).
-        resetBorangPendaftaran();
-        isSelesaiDaftar = false;
+        if (typeof resetBorangPendaftaran === 'function') {
+            resetBorangPendaftaran();
+        }
+        if (typeof isSelesaiDaftar !== 'undefined') {
+            isSelesaiDaftar = false;
+        }
     }
-    // -------------------------------------------------------------------------
 
-    navSenarai.classList.remove('active');
-    navDaftar.classList.remove('active');
+    // Padam status 'active' (highlight biru) dari semua butang
+    if (navSenarai) navSenarai.classList.remove('active');
+    if (navDaftar) navDaftar.classList.remove('active');
+    if (navUrus) navUrus.classList.remove('active');
 
-    viewSenarai.style.display = 'none';
-    viewDaftar.style.display = 'none';
-    viewMaklumat.style.display = 'none';
+    // Sembunyikan semua paparan (view)
+    if (viewSenarai) viewSenarai.style.display = 'none';
+    if (viewDaftar) viewDaftar.style.display = 'none';
+    if (viewMaklumat) viewMaklumat.style.display = 'none';
+    if (viewUrus) viewUrus.style.display = 'none';
 
+    // --- KAWALAN PAPARAN BERDASARKAN BUTANG YANG DITEKAN ---
     if (jenisView === 'senarai') {
-        navSenarai.classList.add('active');
-        viewSenarai.style.display = 'block';
-        tajukHalaman.innerHTML = 'Senarai Tugasan';
-        btnCetakHeader.style.display = 'none';
-        renderSenaraiTugas();
-    } else if (jenisView === 'daftar') {
-        navDaftar.classList.add('active');
-        viewDaftar.style.display = 'block';
-        tajukHalaman.innerHTML = 'Pendaftaran Kes Buruh';
-        btnCetakHeader.style.display = 'flex';
-        setStatusBorang(false);
+        if (navSenarai) navSenarai.classList.add('active');
+        if (viewSenarai) viewSenarai.style.display = 'block';
+        if (tajukHalaman) tajukHalaman.innerHTML = 'Senarai Tugasan';
+        if (btnCetakHeader) btnCetakHeader.style.display = 'none';
+        if (typeof renderSenaraiTugas === 'function') renderSenaraiTugas();
         
-        pergiKeTabBorang('tab1');
+    } else if (jenisView === 'daftar') {
+        if (navDaftar) navDaftar.classList.add('active');
+        if (viewDaftar) viewDaftar.style.display = 'block';
+        if (tajukHalaman) tajukHalaman.innerHTML = 'Pendaftaran Kes Buruh';
+        if (btnCetakHeader) btnCetakHeader.style.display = 'flex';
+        if (typeof setStatusBorang === 'function') setStatusBorang(false);
+        if (typeof pergiKeTabBorang === 'function') pergiKeTabBorang('tab1');
+        
+    } else if (jenisView === 'urus') {
+        // LOGIK COPY PASTE UNTUK PENGURUSAN KES
+        if (navUrus) navUrus.classList.add('active'); 
+        
+        if (viewUrus) {
+            viewUrus.style.display = 'block'; 
+        } else if (viewDaftar) {
+            viewDaftar.style.display = 'block'; 
+        }
+        
+        if (tajukHalaman) tajukHalaman.innerHTML = 'Pengurusan Kes'; 
+        if (btnCetakHeader) btnCetakHeader.style.display = 'flex'; 
+        if (typeof setStatusBorang === 'function') setStatusBorang(false); 
+        if (typeof pergiKeTabBorang === 'function') pergiKeTabBorang('tab1'); 
     }
 }
 

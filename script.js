@@ -211,27 +211,23 @@ function kawalWarganegara() {
 
 function kawalJenisDaftarDefendan() {
     const jenis = document.getElementById('jenisDaftarDefendan').value;
-    const labelNo = document.getElementById('labelNoPendDefendan');
     const inputNo = document.getElementById('noPendDefendan');
     const remark = document.getElementById('remarkNoPendDefendan');
     const labelNama = document.getElementById('labelNamaDefendan'); 
+    const labelNo = document.getElementById('labelNoPendDefendan');
     const ruanganPemilik = document.getElementById('ruanganPemilikEnterprise');
+
+    // --- LANGKAH KEBAL: Matikan semua had aksara secara paksa dahulu ---
+    if (inputNo) {
+        inputNo.removeAttribute('maxlength');
+        inputNo.removeAttribute('maxLength');
+    }
 
     if (jenis === 'MyKad') {
         if(labelNo) labelNo.innerHTML = 'No. MyKad <span>*</span>'; 
         inputNo.placeholder = "Contoh: 880101-01-1234"; 
-        inputNo.maxLength = 14; 
+        inputNo.maxLength = 14; // Had dikembalikan HANYA untuk MyKad
         remark.innerText = "Masukkan No. Kad Pengenalan"; 
-        labelNama.innerHTML = 'Nama <span>*</span>'; 
-        if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
-        if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
-        if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = '';
-        
-    } else if (jenis === 'Pasport') {
-        if(labelNo) labelNo.innerHTML = 'No. Pasport <span>*</span>'; 
-        inputNo.placeholder = "Masukkan No. Pasport"; 
-        inputNo.maxLength = 20; 
-        remark.innerText = "Masukkan No. Pasport"; 
         labelNama.innerHTML = 'Nama <span>*</span>'; 
         if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
         if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
@@ -241,10 +237,7 @@ function kawalJenisDaftarDefendan() {
         if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
         inputNo.placeholder = "Masukkan No. Pendaftaran"; 
         
-        // --- PENAMBAHBAIKAN: Had aksara dimusnahkan secara paksa (Bebas) ---
-        inputNo.removeAttribute('maxlength'); 
-        inputNo.removeAttribute('maxLength'); 
-        inputNo.maxLength = 524288; // Had maksimum default HTML (Bebas)
+        // TIADA SEBARANG HAD AKSARA DI SINI (BEBAS)
         
         remark.innerText = "Masukkan No. Pendaftaran"; 
         labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
@@ -260,7 +253,7 @@ function kawalJenisDaftarDefendan() {
         if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
         inputNo.placeholder = "Sila pilih jenis pendaftaran"; 
         remark.innerText = ""; 
-        labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
+        labelNama.innerHTML = 'Nama <span>*</span>'; 
         if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
         if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
         if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = '';

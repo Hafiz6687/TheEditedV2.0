@@ -1761,10 +1761,12 @@ function bukaMaklumatKes(index) {
                 }
             }
 
-            const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
             if (btnKemaskiniPendaftaran) {
                 if (isDraf) {
                     btnKemaskiniPendaftaran.style.display = 'inline-block'; 
+                    // LOGIK BARU: Tukar teks ikut sumber kes
+                    btnKemaskiniPendaftaran.innerHTML = (kes.sumberFlow === 'urus') ? '✏️ Kemaskini Pengurusan' : '✏️ Kemaskini Pendaftaran';
                 } else {
                     btnKemaskiniPendaftaran.style.display = 'none'; 
                 }
@@ -3126,18 +3128,29 @@ function janaKenyataanAwal() {
             input.value = val;
         }
 
-        function kawalPaparanTab3(tabId) {
-            const ruanganNoKes = document.getElementById('ruanganNoKes');
-            const btnPreviewTop = document.getElementById('btnBukaPreviewTop');
+function kawalPaparanTab3(tabId) {
+    const ruanganNoKes = document.getElementById('ruanganNoKes');
+    const btnPreviewTop = document.getElementById('btnBukaPreviewTop');
+    
+    if (tabId === 'tab3') {
+        if (ruanganNoKes) ruanganNoKes.style.display = 'flex';
+        if (btnPreviewTop) {
+            btnPreviewTop.style.display = 'block';
             
-            if (tabId === 'tab3') {
-                if (ruanganNoKes) ruanganNoKes.style.display = 'flex';
-                if (btnPreviewTop) btnPreviewTop.style.display = 'block';
+            // --- LOGIK BARU: Tukar Butang Preview Ikut Flow ---
+            if (window.paparanSemasa === 'urus') {
+                btnPreviewTop.innerHTML = '📄 Preview Pengurusan Kes';
+                btnPreviewTop.setAttribute('onclick', 'bukaPreviewUrus()');
             } else {
-                if (ruanganNoKes) ruanganNoKes.style.display = 'none';
-                if (btnPreviewTop) btnPreviewTop.style.display = 'none';
+                btnPreviewTop.innerHTML = '📄 Semak & Cetak';
+                btnPreviewTop.setAttribute('onclick', 'bukaPreview()');
             }
         }
+    } else {
+        if (ruanganNoKes) ruanganNoKes.style.display = 'none';
+        if (btnPreviewTop) btnPreviewTop.style.display = 'none';
+    }
+}
 
 function pergiKeTabBorang(tabId) {
     // === TAMBAHAN KOD VALIDASI TUNTUTAN ===
@@ -4152,25 +4165,28 @@ function tukarView(jenisView, dariBukaKes = false) {
     }
 }
 
-        function renderSenaraiTugas() {
-            const tbody = document.getElementById('bodySenaraiTugas');
-            tbody.innerHTML = '';
-            if (memoriSenaraiKes.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Tiada kes didaftarkan setakat ini.</td></tr>`; return; }
-            memoriSenaraiKes.forEach((kes, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><a href="#" onclick="bukaMaklumatKes(${index})" style="color: var(--primary-blue); font-weight: 700; text-decoration: underline; cursor: pointer;">${kes.noKes}</a></td>
-                    <td><strong style="color: var(--text-main);">${kes.namaPengadu}</strong><br><span style="font-size: 0.85em; color: var(--text-muted);">${kes.jenisAduan}</span></td>
-                    <td><strong style="color: var(--text-main);">${kes.namaDefendan}</strong></td>
-                    <td style="color: var(--text-muted); font-weight: 500;">${kes.tarikh}</td>
-                    <td style="text-align: center; display: flex; gap: 5px; justify-content: center;">
-                        <button class="btn-edit-tbl" onclick="bukaMaklumatKes(${index})">📂 Buka</button>
-                        <button class="btn-delete-tbl" onclick="hapusKesDidaftar(${index})">🗑️ Hapus</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+function renderSenaraiTugas() {
+    const tbody = document.getElementById('bodySenaraiTugas');
+    tbody.innerHTML = '';
+    if (memoriSenaraiKes.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Tiada kes didaftarkan setakat ini.</td></tr>`; return; }
+    memoriSenaraiKes.forEach((kes, index) => {
+        // LOGIK BARU: Tambah tag visual jika kes ini dari Pengurusan Kes
+        const tagUrus = kes.sumberFlow === 'urus' ? `<span style="background-color: #fef08a; color: #854d0e; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold; margin-left: 6px;">URUS</span>` : '';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><a href="#" onclick="bukaMaklumatKes(${index})" style="color: var(--primary-blue); font-weight: 700; text-decoration: underline; cursor: pointer;">${kes.noKes}</a></td>
+            <td><strong style="color: var(--text-main);">${kes.namaPengadu}</strong>${tagUrus}<br><span style="font-size: 0.85em; color: var(--text-muted);">${kes.jenisAduan}</span></td>
+            <td><strong style="color: var(--text-main);">${kes.namaDefendan}</strong></td>
+            <td style="color: var(--text-muted); font-weight: 500;">${kes.tarikh}</td>
+            <td style="text-align: center; display: flex; gap: 5px; justify-content: center;">
+                <button class="btn-edit-tbl" onclick="bukaMaklumatKes(${index})">📂 Buka</button>
+                <button class="btn-delete-tbl" onclick="hapusKesDidaftar(${index})">🗑️ Hapus</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
 function daftarKesSistem() {
             let noKesAsal = document.getElementById('noKes').value;
@@ -4212,13 +4228,14 @@ function daftarKesSistem() {
             // --- TAMBAH KOD INI UNTUK TANGKAP SEMUA DATA BORANG PENDAFTARAN ---
             const dataPenuh = kumpulDataBorang(); 
 
-            const rekodRasmi = { 
-                noKes: noKesDenganTagDaftar, // <-- MASUKKAN TAG BIRU DI SINI
+const rekodRasmi = { 
+                noKes: noKesDenganTagDaftar, 
                 namaPengadu: namaPengaduFinal, 
                 namaDefendan: namaDefendanFinal, 
                 jenisAduan: jenisAduan, 
                 tarikh: tarikhHariIni,
-                dataBorang: dataPenuh // <-- MASUKKAN DATA PENUH KE DALAM REKOD
+                dataBorang: dataPenuh,
+                sumberFlow: window.paparanSemasa || 'daftar' // <--- TAMBAH BARIS INI
             };
             // ------------------------------------------------------------------
 
@@ -4328,13 +4345,14 @@ function simpanDrafSistem() {
     // TANGKAP SEMUA DATA DI SINI
     const dataPenuh = kumpulDataBorang(); 
 
-    const rekodDraf = { 
+const rekodDraf = { 
         noKes: noKesDenganTag, 
         namaPengadu: namaPengaduFinal, 
         namaDefendan: namaDefendanFinal, 
         jenisAduan: jenisAduan, 
         tarikh: tarikhHariIni,
-        dataBorang: dataPenuh // <-- MASUKKAN DATA KE DALAM REKOD
+        dataBorang: dataPenuh,
+        sumberFlow: window.paparanSemasa || 'daftar' // <--- TAMBAH BARIS INI
     };
 
     let indeksSediaAda = memoriSenaraiKes.findIndex(kes => kes.noKes.split('<br>')[0].trim() === noKesBersih);
@@ -4505,10 +4523,13 @@ for (const key in formData) {
         toggleAduan(); tukarPeranan();
     }
     
-    tukarView('daftar', true); 
+// --- LOGIK BARU: Kenal pasti dari mana asal borang ini dan buka flow yang tepat ---
+    const flowTujuan = kes.sumberFlow === 'urus' ? 'urus' : 'daftar';
+    tukarView(flowTujuan, true); 
+    
     pergiKeTabBorang('tab1');
     setStatusBorang(true); // Tukar borang ke status kemaskini
-}
+} // <--- penutup fungsi bukaKesDidaftar
 
         function toTitleCase(str) { if (!str || str === '-') return '-'; return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
@@ -5141,6 +5162,57 @@ function bukaPreviewPDF(jenisBorang) {
             document.body.classList.remove('print-only-akuan', 'print-only-kenyataan');
         }
 
+       // --- FUNGSI BARU: HTML Khas untuk Preview Pengurusan Kes (Tab 1 & Tab 3 sahaja) ---
+function janaHTMLPreviewUrus() {
+    const noKes = document.getElementById('noKes')?.value || '-';
+    const p_nama = document.getElementById('namaPengadu')?.value || '-';
+    const d_nama = document.getElementById('namaDefendan')?.value || '-';
+    
+    const fileList = document.getElementById('fileList');
+    const fileCount = fileList ? fileList.children.length : 0;
+    
+    return `
+        <div class="kertas-a4 page-akuan">
+            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 20px; text-decoration: underline;">
+                PREVIEW MAKLUMAT PENGURUSAN KES
+            </div>
+            <div style="margin-bottom: 20px; font-size: 11pt;"><strong>No. Kes:</strong> ${noKes}</div>
+            
+            <h3 style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 30px;">1. Maklumat Pengadu & Defendan</h3>
+            <table style="width: 100%; text-align: left; margin-bottom: 20px; font-size: 11pt;">
+                <tr><td style="width: 30%; padding: 8px 0;"><strong>Nama Pengadu:</strong></td><td style="text-transform: uppercase;">${p_nama}</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Nama Defendan:</strong></td><td style="text-transform: uppercase;">${d_nama}</td></tr>
+            </table>
+            
+            <h3 style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 30px;">2. Dokumen Sokongan (Lain-lain)</h3>
+            <p style="font-size: 11pt;">Jumlah dokumen dimuat naik ke dalam sistem: <strong>${fileCount} fail</strong></p>
+            <p style="font-size: 0.9em; color: #555; font-style: italic; margin-top: 10px;">*Sila rujuk sistem utama untuk memaparkan atau memuat turun dokumen sokongan fizikal yang dilampirkan.</p>
+        </div>
+    `;
+}
+
+// --- FUNGSI BARU: Buka Modal Preview Pengurusan Kes ---
+function bukaPreviewUrus() {
+    modCetakSemasa = 'Preview Urus';
+    
+    const htmlDokumen = janaHTMLPreviewUrus();
+    document.getElementById('previewContent').innerHTML = htmlDokumen;
+    document.getElementById('printArea').innerHTML = htmlDokumen;
+    
+    // Sembunyikan Butang Cetakan Borang (Sebab ini flow Pengurusan)
+    document.getElementById('menuCetakAkuan').style.display = 'none';
+    document.getElementById('menuCetakKenyataan').style.display = 'none';
+    document.getElementById('menuCetakG1').style.display = 'none'; 
+    document.getElementById('menuSelesai').style.display = 'none';
+
+    // Tunjukkan Kemaskini, Daftar & Batal SAHAJA
+    document.getElementById('menuKemaskini').style.display = 'flex';
+    document.getElementById('menuDaftar').style.display = 'flex';
+    document.getElementById('menuBatal').style.display = 'flex';
+
+    document.getElementById('modalPreview').style.display = 'flex';
+}
+       
         function kemaskiniDariPreview() { document.getElementById('modalPreview').style.display = 'none'; }
 
         function cetakKhusus(bahagian) {

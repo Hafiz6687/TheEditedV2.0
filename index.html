@@ -3651,7 +3651,12 @@ function tukarPeranan() {
     const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat');
     const labelTogolSyarikat = document.getElementById('labelTogolSyarikat');
 
+    // PEMBOLEHUBAH BARU UNTUK PEKERJA (Hide di Pengurusan Kes)
+    const ruanganJawatan = document.getElementById('jawatanPengadu')?.closest('.form-group');
+    const ruanganGaji = document.getElementById('gajiPokokPengadu')?.closest('.form-group');
+
     if (suis.checked) {
+        // --- SENARIO 1: MAJIKAN ADALAH PENGADU ---
         kad1.style.order = "2"; kad2.style.order = "1"; 
         tajuk1.innerHTML = "Maklumat Defendan (Pekerja)"; tajuk2.innerHTML = "Maklumat Pengadu (Majikan)";
         tempatKanan.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "block"; 
@@ -3674,12 +3679,14 @@ function tukarPeranan() {
         if(ruanganGajiMinima) ruanganGajiMinima.style.display = "none";
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "block";
 
-        // --- KAWALAN KHAS UNTUK PENGURUSAN KES ---
+        // Kembalikan paparan fields pekerja jika sebelum ini di-hide
+        if(ruanganJawatan) ruanganJawatan.style.display = "grid";
+        if(ruanganGaji) ruanganGaji.style.display = "grid";
+        if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "block";
+
+        // Kawalan Khas Pengurusan Kes (Untuk Majikan)
         if (window.paparanSemasa === 'urus') {
-            // Sembunyikan 5 maklumat Wakil Majikan
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'none';
-            
-            // Auto Buka Maklumat Organisasi/Syarikat
             if (kandunganSyarikat) kandunganSyarikat.style.display = 'block';
             if (labelTogolSyarikat) {
                 labelTogolSyarikat.innerHTML = '▲ Sembunyi';
@@ -3687,18 +3694,17 @@ function tukarPeranan() {
                 labelTogolSyarikat.style.color = 'var(--primary-blue)';
             }
         } else {
-            // Kembali ke paparan normal untuk Pendaftaran Kes (Show All)
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
         }
 
     } else {
+        // --- SENARIO 2: PEKERJA ADALAH PENGADU (Individu / Berkumpulan) ---
         kad1.style.order = "1"; kad2.style.order = "2"; 
         tajuk1.innerHTML = "Maklumat Pengadu"; tajuk2.innerHTML = "Maklumat Defendan";
         tempatKiri.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "none"; 
-        ruanganAduan.style.display = "grid"; ruanganJantina.style.display = "grid";
+        ruanganAduan.style.display = "grid"; 
+        
         if (document.getElementById('aduanBerkumpulan')?.checked) { document.getElementById('ruanganBilanganPengadu').style.display = 'grid'; }
-        if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
-        if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "grid";
         if(tempatKerja2) tempatKerja2.appendChild(ruanganAlamatKerja);
         if(labelBerbeza) labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat defendan'; 
         if(notaBerbeza) notaBerbeza.innerHTML = '*(tanda kotak di atas jika tempat pekerjaan berbeza)';
@@ -3712,9 +3718,25 @@ function tukarPeranan() {
         
         if(ruanganGajiMinima) ruanganGajiMinima.style.display = "flex";
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "none";
-
-        // Kembalikan kotak wakil majikan untuk keselamatan
         if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
+
+        // --- KAWALAN KHAS UNTUK PENGURUSAN KES (TUTUP FIELD TERTENTU) ---
+        if (window.paparanSemasa === 'urus') {
+            if(ruanganJantina) ruanganJantina.style.display = "none";
+            if(ruanganJawatan) ruanganJawatan.style.display = "none";
+            if(ruanganGaji) ruanganGaji.style.display = "none";
+            if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "none";
+            if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
+            if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "none"; // Hide checkbox "Alamat tempat pekerjaan..."
+        } else {
+            // PAPARAN NORMAL UNTUK PENDAFTARAN KES (BUKA SEMULA SEMUA FIELD)
+            if(ruanganJantina) ruanganJantina.style.display = "grid";
+            if(ruanganJawatan) ruanganJawatan.style.display = "grid";
+            if(ruanganGaji) ruanganGaji.style.display = "grid";
+            if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "grid";
+            if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
+            if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "block";
+        }
     }
     
     kemaskiniDropdownPendaftaran(); janaKenyataanAwal(); semakWakilLengkap(); semakSeksyenTuntutan(); 

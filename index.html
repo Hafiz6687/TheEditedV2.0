@@ -3834,7 +3834,7 @@ function tukarPeranan() {
             } else if (jenis === 'Pasport') {
                 if(labelNo) labelNo.innerHTML = 'No. Pasport <span>*</span>'; inputNo.placeholder = "Masukkan No. Pasport"; inputNo.maxLength = 20; remark.innerText = "Masukkan No. Pasport"; labelNama.innerHTML = 'Nama <span>*</span>'; ruanganPemilik.style.display = 'none'; document.getElementById('namaPemilikDefendan').value = ''; document.getElementById('kpPemilikDefendan').value = '';
             } else if (jenis.includes('SSM') || jenis === 'Lain-lain') {
-                if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; inputNo.placeholder = "Masukkan No. Pendaftaran"; inputNo.maxLength = 20; remark.innerText = "Masukkan No. Pendaftaran"; labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
+                if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; inputNo.placeholder = "Masukkan No. Pendaftaran"; inputNo.maxLength = 50; remark.innerText = "Masukkan No. Pendaftaran"; labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
                 if (jenis === 'SSM (Enterprise)') { ruanganPemilik.style.display = 'block'; } else { ruanganPemilik.style.display = 'none'; document.getElementById('namaPemilikDefendan').value = ''; document.getElementById('kpPemilikDefendan').value = ''; }
             } else {
                 if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; inputNo.placeholder = "Sila pilih jenis pendaftaran"; remark.innerText = ""; labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; ruanganPemilik.style.display = 'none'; document.getElementById('namaPemilikDefendan').value = ''; document.getElementById('kpPemilikDefendan').value = '';

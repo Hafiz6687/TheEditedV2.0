@@ -633,7 +633,7 @@ Portal rasmi : jtksm.mohr.gov.my
 
             <!-- BAHAGIAN 2: Maklumat Pengadu & Tuntutan (KINI BERADA DI ATAS) -->
             <div class="card full-width">
-                <div class="card-header">Maklumat Pengadu</div>
+                <div class="card-header" id="mk_header_pengadu">Maklumat Pengadu</div>
                 <div class="card-body">
                     <div class="grid-3" id="mk_grid_pengadu">
                         <!-- Ruangan ini akan dijana oleh JS bergantung kpd status Pengadu -->
@@ -1514,9 +1514,11 @@ function bukaMaklumatKes(index) {
                 });
             }
 
+// NAMA sentiasa betul dari memoriSenaraiKes
             const p_nama = kes.namaPengadu.replace(/<br>.*$/g, '');
-            const p_id = dataSistem['noPendPengadu'] || "-";
-            
+            const d_nama = kes.namaDefendan;
+
+            // ALAMAT KAD 1 (Pekerja)
             const p_a1 = dataSistem['alamatPengadu1'] || "";
             const p_a2 = dataSistem['alamatPengadu2'] || "";
             const p_a3 = dataSistem['alamatPengadu3'] || "";
@@ -1527,15 +1529,9 @@ function bukaMaklumatKes(index) {
             let p_posBdr = [p_pos, p_bdr].filter(Boolean).join(' ');
             if(p_posBdr) p_alamatArr.push(p_posBdr);
             if(p_ngr) p_alamatArr.push(p_ngr);
-            const p_alamat = p_alamatArr.length > 0 ? p_alamatArr.join('<br>') : "-";
+            const alamatKad1 = p_alamatArr.length > 0 ? p_alamatArr.join('<br>') : "-";
 
-            const p_tel = dataSistem['telPengadu'] || "-";
-            const p_hp = dataSistem['hpPengadu'] || "-";
-            const p_emel = dataSistem['emelPengadu'] || "-";
-            const p_bil_pengadu = dataSistem['bilPengadu'] ? dataSistem['bilPengadu'] + " Orang" : "-";
-            const d_nama = kes.namaDefendan;
-            const d_id = dataSistem['noPendDefendan'] || "-";
-            
+            // ALAMAT KAD 2 (Majikan / Syarikat)
             const d_a1 = dataSistem['alamatDefendan1'] || "";
             const d_a2 = dataSistem['alamatDefendan2'] || "";
             const d_a3 = dataSistem['alamatDefendan3'] || "";
@@ -1546,18 +1542,69 @@ function bukaMaklumatKes(index) {
             let d_posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
             if(d_posBdr) d_alamatArr.push(d_posBdr);
             if(d_ngr) d_alamatArr.push(d_ngr);
-            const d_alamat = d_alamatArr.length > 0 ? d_alamatArr.join('<br>') : "-";
+            const alamatKad2 = d_alamatArr.length > 0 ? d_alamatArr.join('<br>') : "-";
 
-            const d_tel = dataSistem['telDefendan'] || "-";
-            const d_hp = dataSistem['hpDefendan'] || "-";
-            const d_emel = dataSistem['emelDefendan'] || "-";
+            const p_bil_pengadu = dataSistem['bilPengadu'] ? dataSistem['bilPengadu'] + " Orang" : "-";
 
+            // --- PEMBOLEHUBAH DINAMIK UNTUK DIPAPARKAN ---
+            let p_id, p_tel, p_hp, p_emel, p_alamat;
+            let d_id, d_tel, d_hp, d_emel, d_alamat;
+            let lbl_p_id = "No. MyKad";
             const regexMyKad = /^\d{6}-?\d{2}-?\d{4}$/;
+            
+            const headerPengadu = document.getElementById('mk_header_pengadu');
+
+            if (isMajikan) {
+                // TUKAR TAJUK HEADER
+                if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu (Majikan)';
+                
+                // PENGADU = DATA DARI KAD 2 (MAJIKAN)
+                p_id = dataSistem['noPendDefendan'] || "-";
+                p_tel = dataSistem['telDefendan'] || "-";
+                p_hp = dataSistem['hpDefendan'] || "-";
+                p_emel = dataSistem['emelDefendan'] || "-";
+                p_alamat = alamatKad2;
+                
+                // DEFENDAN = DATA DARI KAD 1 (PEKERJA)
+                d_id = dataSistem['noPendPengadu'] || "-";
+                d_tel = dataSistem['telPengadu'] || "-";
+                d_hp = dataSistem['hpPengadu'] || "-";
+                d_emel = dataSistem['emelPengadu'] || "-";
+                d_alamat = alamatKad1;
+                
+                // LOGIK LABEL ID: Semak jika Majikan guna MyKad atau SSM
+                const jenisPendMajikan = dataSistem['jenisDaftarDefendan'] || "";
+                if (jenisPendMajikan === 'MyKad') {
+                    lbl_p_id = 'No. MyKad';
+                } else {
+                    lbl_p_id = 'No. Pendaftaran';
+                }
+                
+            } else {
+                // KEMBALIKAN TAJUK HEADER ASAL
+                if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu';
+                
+                // PENGADU = DATA DARI KAD 1 (PEKERJA)
+                p_id = dataSistem['noPendPengadu'] || "-";
+                p_tel = dataSistem['telPengadu'] || "-";
+                p_hp = dataSistem['hpPengadu'] || "-";
+                p_emel = dataSistem['emelPengadu'] || "-";
+                p_alamat = alamatKad1;
+                
+                // DEFENDAN = DATA DARI KAD 2 (MAJIKAN)
+                d_id = dataSistem['noPendDefendan'] || "-";
+                d_tel = dataSistem['telDefendan'] || "-";
+                d_hp = dataSistem['hpDefendan'] || "-";
+                d_emel = dataSistem['emelDefendan'] || "-";
+                d_alamat = alamatKad2;
+                
+                // LOGIK LABEL ID: Semak jika Pekerja guna MyKad atau Pasport
+                const p_isMyKad = regexMyKad.test(p_id);
+                lbl_p_id = p_isMyKad ? 'No. MyKad' : 'No. Pasport';
+            }
+
             const d_isMyKad = regexMyKad.test(d_id);
-
-            const p_isMyKad = /^\d{6}-?\d{2}-?\d{4}$/.test(p_id);
-            const lbl_p_id = p_isMyKad ? 'No. MyKad' : 'No. Passport';
-
+    
             // Tarik Kenyataan dari Memori
             let kenyataanPenuh = "-";
             if (kes.dataBorang && kes.dataBorang.inputs) {

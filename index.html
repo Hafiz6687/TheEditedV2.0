@@ -3529,13 +3529,24 @@ function kawalJenisAduanTuntutan() {
     let lulusPaparan = false;
 
     if (window.paparanSemasa === 'urus') {
-        // SYARAT PENGURUSAN KES: Salah satu daripada Tel, HP, atau Emel mesti diisi
-        const tel = document.getElementById('telPengadu').value.trim();
-        const hp = document.getElementById('hpPengadu').value.trim();
-        const emel = document.getElementById('emelPengadu').value.trim();
-        
-        if (tel !== '' || hp !== '' || emel !== '') {
-            lulusPaparan = true;
+        if (isMajikan) {
+            // SYARAT PENGURUSAN KES (MAJIKAN): Tel, HP, atau Emel (di ruangan Maklumat Defendan)
+            const telM = document.getElementById('telDefendan').value.trim();
+            const hpM = document.getElementById('hpDefendan').value.trim();
+            const emelM = document.getElementById('emelDefendan').value.trim();
+            
+            if (telM !== '' || hpM !== '' || emelM !== '') {
+                lulusPaparan = true;
+            }
+        } else {
+            // SYARAT PENGURUSAN KES (PEKERJA): Tel, HP, atau Emel (di ruangan Maklumat Pengadu)
+            const tel = document.getElementById('telPengadu').value.trim();
+            const hp = document.getElementById('hpPengadu').value.trim();
+            const emel = document.getElementById('emelPengadu').value.trim();
+            
+            if (tel !== '' || hp !== '' || emel !== '') {
+                lulusPaparan = true;
+            }
         }
     } else {
         // SYARAT ASAL PENDAFTARAN KES: Sektor & Jenis Perniagaan mesti diisi
@@ -3688,12 +3699,10 @@ function tukarPeranan() {
     const ruanganWarganegaraPengadu = document.getElementById('ruanganWarganegaraPengaduAsal');
     const ruanganHeaderSyarikat = document.getElementById('ruanganHeaderSyarikat');
     
-    // Pembolehubah tambahan khusus untuk fungsi HIDE/SHOW
     const kandunganWakilAsas = document.getElementById('kandunganWakilMajikanAsas');
     const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat');
     const labelTogolSyarikat = document.getElementById('labelTogolSyarikat');
 
-    // PEMBOLEHUBAH BARU UNTUK HIDE DI PENGURUSAN KES
     const ruanganJawatan = document.getElementById('jawatanPengadu')?.closest('.form-group');
     const ruanganGaji = document.getElementById('gajiPokokPengadu')?.closest('.form-group');
     const ruanganSektor = document.getElementById('sektorDefendan')?.closest('.form-group');
@@ -3722,7 +3731,6 @@ function tukarPeranan() {
         if(ruanganGajiMinima) ruanganGajiMinima.style.display = "none";
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "block";
 
-        // Kembalikan paparan fields pekerja & sektor jika sebelum ini di-hide
         if(ruanganJawatan) ruanganJawatan.style.display = "grid";
         if(ruanganGaji) ruanganGaji.style.display = "grid";
         if(ruanganSektor) ruanganSektor.style.display = "grid";
@@ -3730,9 +3738,10 @@ function tukarPeranan() {
         // Kawalan Khas Pengurusan Kes (Untuk Majikan)
         if (window.paparanSemasa === 'urus') {
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'none';
-            
-            // TAMBAHAN: Hide Alamat tempat pekerjaan... apabila Majikan adalah Pengadu di Pengurusan Kes
             if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'none';
+            
+            // TAMBAHAN BARU: Hide Sektor apabila Majikan Pengadu di Pengurusan Kes
+            if (ruanganSektor) ruanganSektor.style.display = 'none';
             
             if (kandunganSyarikat) kandunganSyarikat.style.display = 'block';
             if (labelTogolSyarikat) {
@@ -3743,6 +3752,7 @@ function tukarPeranan() {
         } else {
             if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
             if (ruanganAlamatKerja) ruanganAlamatKerja.style.display = 'block';
+            if (ruanganSektor) ruanganSektor.style.display = 'grid'; 
         }
 
     } else {
@@ -3768,7 +3778,6 @@ function tukarPeranan() {
         if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "none";
         if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
 
-        // --- KAWALAN KHAS UNTUK PENGURUSAN KES (TUTUP FIELD TERTENTU) ---
         if (window.paparanSemasa === 'urus') {
             if(ruanganJantina) ruanganJantina.style.display = "none";
             if(ruanganJawatan) ruanganJawatan.style.display = "none";
@@ -3776,11 +3785,8 @@ function tukarPeranan() {
             if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "none";
             if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
             if(ruanganAlamatKerja) ruanganAlamatKerja.style.display = "none"; 
-            
-            // TAMBAHAN: Hide Sektor apabila Aduan Pekerja (Individu/Kumpulan) di Pengurusan Kes
             if(ruanganSektor) ruanganSektor.style.display = "none";
         } else {
-            // PAPARAN NORMAL UNTUK PENDAFTARAN KES (BUKA SEMULA SEMUA FIELD)
             if(ruanganJantina) ruanganJantina.style.display = "grid";
             if(ruanganJawatan) ruanganJawatan.style.display = "grid";
             if(ruanganGaji) ruanganGaji.style.display = "grid";

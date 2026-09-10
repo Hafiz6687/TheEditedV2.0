@@ -241,8 +241,10 @@ function kawalJenisDaftarDefendan() {
         if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
         inputNo.placeholder = "Masukkan No. Pendaftaran"; 
         
-        // --- PENAMBAHBAIKAN: Had 20 aksara dibuang, kini Bebas ---
+        // --- PENAMBAHBAIKAN: Had aksara dimusnahkan secara paksa (Bebas) ---
         inputNo.removeAttribute('maxlength'); 
+        inputNo.removeAttribute('maxLength'); 
+        inputNo.maxLength = 524288; // Had maksimum default HTML (Bebas)
         
         remark.innerText = "Masukkan No. Pendaftaran"; 
         labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 

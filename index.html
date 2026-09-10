@@ -2432,31 +2432,40 @@ function bukaPreviewNotisSebutan() {
             }
         }
 
-        function semakWakilLengkap() {
-            const nama = document.getElementById('namaWakilMajikan')?.value.trim();
-            const kp = document.getElementById('noMyKadWakil')?.value.trim();
-            const jawatan = document.getElementById('jawatanWakilMajikan')?.value.trim();
-            
-            const wrapperSyarikat = document.getElementById('ruanganMaklumatSyarikatWrapper');
-            const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat'); 
-            const labelTogol = document.getElementById('labelTogolSyarikat');
-            const isMajikan = document.getElementById('majikan')?.checked;
-            
-            if (wrapperSyarikat) wrapperSyarikat.style.display = 'block';
-            
-            if (isMajikan) {
-                if (nama !== "" && kp !== "" && jawatan !== "") {
-                    kandunganSyarikat.style.display = 'block';
-                    if(labelTogol) { labelTogol.innerHTML = '▲ Sembunyi'; labelTogol.style.backgroundColor = '#eff6ff'; labelTogol.style.color = 'var(--primary-blue)'; }
-                } else {
-                    kandunganSyarikat.style.display = 'none';
-                    if(labelTogol) { labelTogol.innerHTML = '▼ Buka'; labelTogol.style.backgroundColor = '#f1f5f9'; labelTogol.style.color = 'var(--text-muted)'; }
-                }
-            } else {
-                kandunganSyarikat.style.display = 'block';
-                if(labelTogol) { labelTogol.innerHTML = '▲ Sembunyi'; labelTogol.style.backgroundColor = '#eff6ff'; labelTogol.style.color = 'var(--primary-blue)'; }
-            }
+function semakWakilLengkap() {
+    const nama = document.getElementById('namaWakilMajikan')?.value.trim();
+    const kp = document.getElementById('noMyKadWakil')?.value.trim();
+    const jawatan = document.getElementById('jawatanWakilMajikan')?.value.trim();
+    
+    const wrapperSyarikat = document.getElementById('ruanganMaklumatSyarikatWrapper');
+    const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat'); 
+    const labelTogol = document.getElementById('labelTogolSyarikat');
+    const isMajikan = document.getElementById('majikan')?.checked;
+    
+    if (wrapperSyarikat) wrapperSyarikat.style.display = 'block';
+    
+    if (isMajikan) {
+        // --- KAWALAN KHAS UNTUK PENGURUSAN KES ---
+        if (window.paparanSemasa === 'urus') {
+            // Di PENGURUSAN KES, kita abaikan semakan wakil dan sentiasa buka Maklumat Syarikat
+            kandunganSyarikat.style.display = 'block';
+            if(labelTogol) { labelTogol.innerHTML = '▲ Sembunyi'; labelTogol.style.backgroundColor = '#eff6ff'; labelTogol.style.color = 'var(--primary-blue)'; }
+            return; // Berhenti di sini supaya kotak tak auto-tutup
         }
+        // ------------------------------------------
+
+        if (nama !== "" && kp !== "" && jawatan !== "") {
+            kandunganSyarikat.style.display = 'block';
+            if(labelTogol) { labelTogol.innerHTML = '▲ Sembunyi'; labelTogol.style.backgroundColor = '#eff6ff'; labelTogol.style.color = 'var(--primary-blue)'; }
+        } else {
+            kandunganSyarikat.style.display = 'none';
+            if(labelTogol) { labelTogol.innerHTML = '▼ Buka'; labelTogol.style.backgroundColor = '#f1f5f9'; labelTogol.style.color = 'var(--text-muted)'; }
+        }
+    } else {
+        kandunganSyarikat.style.display = 'block';
+        if(labelTogol) { labelTogol.innerHTML = '▲ Sembunyi'; labelTogol.style.backgroundColor = '#eff6ff'; labelTogol.style.color = 'var(--primary-blue)'; }
+    }
+}
 
         function formatMyKadWakil(inputElement) {
             let val = inputElement.value.replace(/[^0-9]/g, ''); 
@@ -3609,81 +3618,108 @@ function kawalJenisAduanTuntutan() {
             janaKenyataanAwal();
         }
 
-        function tukarPeranan() {
-            const suis = document.getElementById('majikan');
-            const kad1 = document.getElementById('kad1');
-            const kad2 = document.getElementById('kad2');
-            const tajuk1 = document.getElementById('tajukKad1');
-            const tajuk2 = document.getElementById('tajukKad2');
-            
-            const blokSuisDanWakil = document.getElementById('blokSuisDanWakil');
-            const tempatKiri = document.getElementById('tempatSuis1');
-            const tempatKanan = document.getElementById('tempatSuis2');
+function tukarPeranan() {
+    const suis = document.getElementById('majikan');
+    const kad1 = document.getElementById('kad1');
+    const kad2 = document.getElementById('kad2');
+    const tajuk1 = document.getElementById('tajukKad1');
+    const tajuk2 = document.getElementById('tajukKad2');
+    
+    const blokSuisDanWakil = document.getElementById('blokSuisDanWakil');
+    const tempatKiri = document.getElementById('tempatSuis1');
+    const tempatKanan = document.getElementById('tempatSuis2');
 
-            const ruanganAduan = document.getElementById('ruanganAduan');
-            const ruanganJantina = document.getElementById('ruanganJantina');
-            const ruanganAlamatKerja = document.getElementById('ruanganAlamatKerjaLengkap');
-            const ruanganWakil = document.getElementById('ruanganWakilMajikan');
-            const tempatKerja1 = document.getElementById('tempatAlamatKerja1');
-            const tempatKerja2 = document.getElementById('tempatAlamatKerja2');
-            
-            const labelBerbeza = document.getElementById('labelAlamatBerbeza');
-            const notaBerbeza = document.getElementById('notaSalinAlamat');
-            
-            const seksyenPekerja = document.getElementById('seksyenPekerja');
-            const seksyenMajikan = document.getElementById('seksyenMajikan');
-            const ruanganGajiMinima = document.getElementById('ruanganGajiMinima');
-            const blokMaklumatPerkhidmatan = document.getElementById('blokMaklumatPerkhidmatan');
-            const ruanganWarganegaraPengadu = document.getElementById('ruanganWarganegaraPengaduAsal');
-            const ruanganHeaderSyarikat = document.getElementById('ruanganHeaderSyarikat');
+    const ruanganAduan = document.getElementById('ruanganAduan');
+    const ruanganJantina = document.getElementById('ruanganJantina');
+    const ruanganAlamatKerja = document.getElementById('ruanganAlamatKerjaLengkap');
+    const ruanganWakil = document.getElementById('ruanganWakilMajikan');
+    
+    const tempatKerja1 = document.getElementById('tempatAlamatKerja1');
+    const tempatKerja2 = document.getElementById('tempatAlamatKerja2');
+    const labelBerbeza = document.getElementById('labelAlamatBerbeza');
+    const notaBerbeza = document.getElementById('notaSalinAlamat');
+    
+    const seksyenPekerja = document.getElementById('seksyenPekerja');
+    const seksyenMajikan = document.getElementById('seksyenMajikan');
+    const ruanganGajiMinima = document.getElementById('ruanganGajiMinima');
+    const blokMaklumatPerkhidmatan = document.getElementById('blokMaklumatPerkhidmatan');
+    const ruanganWarganegaraPengadu = document.getElementById('ruanganWarganegaraPengaduAsal');
+    const ruanganHeaderSyarikat = document.getElementById('ruanganHeaderSyarikat');
+    
+    // Pembolehubah tambahan khusus untuk fungsi HIDE/SHOW
+    const kandunganWakilAsas = document.getElementById('kandunganWakilMajikanAsas');
+    const kandunganSyarikat = document.getElementById('kandunganMaklumatSyarikat');
+    const labelTogolSyarikat = document.getElementById('labelTogolSyarikat');
 
-            if (suis.checked) {
-                kad1.style.order = "2"; kad2.style.order = "1"; 
-                tajuk1.innerHTML = "Maklumat Defendan (Pekerja)"; tajuk2.innerHTML = "Maklumat Pengadu (Majikan)";
-                tempatKanan.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "block"; 
-                ruanganAduan.style.display = "none"; ruanganJantina.style.display = "none"; document.getElementById('ruanganBilanganPengadu').style.display = 'none';
-                if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
-                if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "none";
-                tempatKerja1.appendChild(ruanganAlamatKerja);
-                labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat pengadu (majikan)'; notaBerbeza.innerHTML = '*(tanda kotak di atas jika tempat pekerjaan berbeza)';
-                
-                if(seksyenPekerja && seksyenMajikan) { 
-                    seksyenPekerja.style.display = "none"; 
-                    seksyenMajikan.style.display = "block"; 
-                    
-                    const radioMaj = seksyenMajikan.querySelector('input[type="radio"]');
-                    if(radioMaj) radioMaj.checked = true;
-                    document.querySelectorAll('input[name="subSeksyen"]').forEach(cb => cb.checked = false);
-                }
-                
-                if(ruanganGajiMinima) ruanganGajiMinima.style.display = "none";
-                if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "block";
-            } else {
-                kad1.style.order = "1"; kad2.style.order = "2"; 
-                tajuk1.innerHTML = "Maklumat Pengadu"; tajuk2.innerHTML = "Maklumat Defendan";
-                tempatKiri.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "none"; 
-                ruanganAduan.style.display = "grid"; ruanganJantina.style.display = "grid";
-                if (document.getElementById('aduanBerkumpulan').checked) { document.getElementById('ruanganBilanganPengadu').style.display = 'grid'; }
-                if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
-                if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "grid";
-                tempatKerja2.appendChild(ruanganAlamatKerja);
-                labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat defendan'; notaBerbeza.innerHTML = '*(tanda kotak di atas jika tempat pekerjaan berbeza)';
-                
-                if(seksyenPekerja && seksyenMajikan) { 
-                    seksyenPekerja.style.display = "grid"; 
-                    seksyenMajikan.style.display = "none"; 
-                    
-                    const radioMaj = seksyenMajikan.querySelector('input[type="radio"]');
-                    if(radioMaj) radioMaj.checked = false;
-                }
-                
-               if(ruanganGajiMinima) ruanganGajiMinima.style.display = "flex";
-                if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "none";
+    if (suis.checked) {
+        kad1.style.order = "2"; kad2.style.order = "1"; 
+        tajuk1.innerHTML = "Maklumat Defendan (Pekerja)"; tajuk2.innerHTML = "Maklumat Pengadu (Majikan)";
+        tempatKanan.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "block"; 
+        ruanganAduan.style.display = "none"; ruanganJantina.style.display = "none"; 
+        if (document.getElementById('ruanganBilanganPengadu')) document.getElementById('ruanganBilanganPengadu').style.display = 'none';
+        if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "none";
+        if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "none";
+        if(tempatKerja1) tempatKerja1.appendChild(ruanganAlamatKerja);
+        if(labelBerbeza) labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat pengadu (majikan)'; 
+        if(notaBerbeza) notaBerbeza.innerHTML = '*(tanda kotak di atas jika tempat pekerjaan berbeza)';
+        
+        if(seksyenPekerja && seksyenMajikan) { 
+            seksyenPekerja.style.display = "none"; 
+            seksyenMajikan.style.display = "block"; 
+            const radioMaj = seksyenMajikan.querySelector('input[type="radio"]');
+            if(radioMaj) radioMaj.checked = true;
+            document.querySelectorAll('input[name="subSeksyen"]').forEach(cb => cb.checked = false);
+        }
+        
+        if(ruanganGajiMinima) ruanganGajiMinima.style.display = "none";
+        if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "block";
+
+        // --- KAWALAN KHAS UNTUK PENGURUSAN KES ---
+        if (window.paparanSemasa === 'urus') {
+            // Sembunyikan 5 maklumat Wakil Majikan
+            if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'none';
+            
+            // Auto Buka Maklumat Organisasi/Syarikat
+            if (kandunganSyarikat) kandunganSyarikat.style.display = 'block';
+            if (labelTogolSyarikat) {
+                labelTogolSyarikat.innerHTML = '▲ Sembunyi';
+                labelTogolSyarikat.style.backgroundColor = '#eff6ff';
+                labelTogolSyarikat.style.color = 'var(--primary-blue)';
             }
-            
-            kemaskiniDropdownPendaftaran(); janaKenyataanAwal(); semakWakilLengkap(); semakSeksyenTuntutan(); 
+        } else {
+            // Kembali ke paparan normal untuk Pendaftaran Kes (Show All)
+            if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
         }
 
+    } else {
+        kad1.style.order = "1"; kad2.style.order = "2"; 
+        tajuk1.innerHTML = "Maklumat Pengadu"; tajuk2.innerHTML = "Maklumat Defendan";
+        tempatKiri.appendChild(blokSuisDanWakil); ruanganWakil.style.display = "none"; 
+        ruanganAduan.style.display = "grid"; ruanganJantina.style.display = "grid";
+        if (document.getElementById('aduanBerkumpulan')?.checked) { document.getElementById('ruanganBilanganPengadu').style.display = 'grid'; }
+        if(blokMaklumatPerkhidmatan) blokMaklumatPerkhidmatan.style.display = "block";
+        if(ruanganWarganegaraPengadu) ruanganWarganegaraPengadu.style.display = "grid";
+        if(tempatKerja2) tempatKerja2.appendChild(ruanganAlamatKerja);
+        if(labelBerbeza) labelBerbeza.innerHTML = 'Alamat tempat pekerjaan tidak sama dengan alamat defendan'; 
+        if(notaBerbeza) notaBerbeza.innerHTML = '*(tanda kotak di atas jika tempat pekerjaan berbeza)';
+        
+        if(seksyenPekerja && seksyenMajikan) { 
+            seksyenPekerja.style.display = "grid"; 
+            seksyenMajikan.style.display = "none"; 
+            const radioMaj = seksyenMajikan.querySelector('input[type="radio"]');
+            if(radioMaj) radioMaj.checked = false;
+        }
+        
+        if(ruanganGajiMinima) ruanganGajiMinima.style.display = "flex";
+        if(ruanganHeaderSyarikat) ruanganHeaderSyarikat.style.display = "none";
+
+        // Kembalikan kotak wakil majikan untuk keselamatan
+        if (kandunganWakilAsas) kandunganWakilAsas.style.display = 'block';
+    }
+    
+    kemaskiniDropdownPendaftaran(); janaKenyataanAwal(); semakWakilLengkap(); semakSeksyenTuntutan(); 
+}
+       
         function kawalJenisDaftarPengadu() {
             const jenis = document.getElementById('jenisDaftarPengadu').value;
             const labelNo = document.getElementById('labelNoPendPengadu');
@@ -3923,15 +3959,16 @@ function resetBorangPendaftaran() {
 
 // --- FUNGSI KAWALAN PAPARAN (VIEW) MENU SIDEBAR ---
 function tukarView(jenisView, dariBukaKes = false) {
+    // SIMPAN STATUS PAPARAN SEMASA
+    window.paparanSemasa = jenisView; 
+
     const navSenarai = document.getElementById('navSenarai');
     const navDaftar = document.getElementById('navDaftar');
-    const navUrus = document.getElementById('navUrus'); // Butang baharu PENGURUSAN KES
+    const navUrus = document.getElementById('navUrus'); 
 
     const viewSenarai = document.getElementById('viewSenaraiTugas');
     const viewDaftar = document.getElementById('viewPendaftaranKes');
     const viewMaklumat = document.getElementById('viewMaklumatKes');
-    
-    // (Pilihan) Jika anda ada bekas <div> khas untuk Pengurusan Kes
     const viewUrus = document.getElementById('viewPengurusanKes'); 
 
     const tajukHalaman = document.getElementById('tajukHalamanAtas');
@@ -3939,7 +3976,6 @@ function tukarView(jenisView, dariBukaKes = false) {
 
     // --- LOGIK PINTAR UNTUK MENGELAKKAN DATA HILANG ---
     if ((jenisView === 'daftar' || jenisView === 'urus') && !dariBukaKes) {
-        // Anggap isSelesaiDaftar dan isEditMode sudah diisytihar (declare) di tempat lain
         if (typeof isSelesaiDaftar !== 'undefined' && !isSelesaiDaftar) {
             let adaData = false;
             const namaP = document.getElementById('namaPengadu');
@@ -3959,26 +3995,19 @@ function tukarView(jenisView, dariBukaKes = false) {
                 }
             }
         }
-        if (typeof resetBorangPendaftaran === 'function') {
-            resetBorangPendaftaran();
-        }
-        if (typeof isSelesaiDaftar !== 'undefined') {
-            isSelesaiDaftar = false;
-        }
+        if (typeof resetBorangPendaftaran === 'function') resetBorangPendaftaran();
+        if (typeof isSelesaiDaftar !== 'undefined') isSelesaiDaftar = false;
     }
 
-    // Padam status 'active' (highlight biru) dari semua butang
     if (navSenarai) navSenarai.classList.remove('active');
     if (navDaftar) navDaftar.classList.remove('active');
     if (navUrus) navUrus.classList.remove('active');
 
-    // Sembunyikan semua paparan (view)
     if (viewSenarai) viewSenarai.style.display = 'none';
     if (viewDaftar) viewDaftar.style.display = 'none';
     if (viewMaklumat) viewMaklumat.style.display = 'none';
     if (viewUrus) viewUrus.style.display = 'none';
 
-    // --- KAWALAN PAPARAN BERDASARKAN BUTANG YANG DITEKAN ---
     if (jenisView === 'senarai') {
         if (navSenarai) navSenarai.classList.add('active');
         if (viewSenarai) viewSenarai.style.display = 'block';
@@ -3993,21 +4022,16 @@ function tukarView(jenisView, dariBukaKes = false) {
         if (btnCetakHeader) btnCetakHeader.style.display = 'flex';
         if (typeof setStatusBorang === 'function') setStatusBorang(false);
         if (typeof pergiKeTabBorang === 'function') pergiKeTabBorang('tab1');
+        tukarPeranan(); // Refresh paparan kepada Pendaftaran
         
     } else if (jenisView === 'urus') {
-        // LOGIK COPY PASTE UNTUK PENGURUSAN KES
         if (navUrus) navUrus.classList.add('active'); 
-        
-        if (viewUrus) {
-            viewUrus.style.display = 'block'; 
-        } else if (viewDaftar) {
-            viewDaftar.style.display = 'block'; 
-        }
-        
+        if (viewUrus) { viewUrus.style.display = 'block'; } else if (viewDaftar) { viewDaftar.style.display = 'block'; }
         if (tajukHalaman) tajukHalaman.innerHTML = 'Pengurusan Kes'; 
         if (btnCetakHeader) btnCetakHeader.style.display = 'flex'; 
         if (typeof setStatusBorang === 'function') setStatusBorang(false); 
         if (typeof pergiKeTabBorang === 'function') pergiKeTabBorang('tab1'); 
+        tukarPeranan(); // Refresh paparan kepada Pengurusan Kes
     }
 }
 

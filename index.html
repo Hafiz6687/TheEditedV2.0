@@ -662,7 +662,7 @@ Portal rasmi : jtksm.mohr.gov.my
             </div>
 
 <!-- BAHAGIAN BARU: Kenyataan Pengadu (DIALIH KE BAWAH MAKLUMAT PENGADU) -->
-            <div class="card full-width">
+            <div class="card full-width" id="kad_kenyataan_pengadu_view">
                 <div class="card-header" onclick="toggleKenyataanPengaduView()" style="cursor: pointer; justify-content: space-between; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
                     <div style="display: flex; align-items: center; gap: 12px;">Kenyataan Pengadu & Kronologi Kes</div>
                     <!-- LALAIKAN KEPADA "▼ Buka" -->
@@ -1825,13 +1825,26 @@ const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
 
 
 // --- TAMBAHAN BARU: Auto-Sembunyi Kenyataan Pengadu bila maklumat kes dibuka ---
+            const kadKenyataanView = document.getElementById('kad_kenyataan_pengadu_view');
             const kandunganKenyataan = document.getElementById('kandunganKenyataanPengaduView');
             const labelKenyataan = document.getElementById('labelTogolKenyataanView');
-            if (kandunganKenyataan && labelKenyataan) {
-                kandunganKenyataan.style.display = 'none';
-                labelKenyataan.innerHTML = '▼ Buka';
-                labelKenyataan.style.backgroundColor = '#f1f5f9';
-                labelKenyataan.style.color = 'var(--text-muted)';
+            
+            if (kadKenyataanView) {
+                if (kes.sumberFlow === 'urus') {
+                    // Jika kes dari PENGURUSAN KES, sembunyikan keseluruhan Kad Kenyataan
+                    kadKenyataanView.style.display = 'none';
+                } else {
+                    // Jika kes dari PENDAFTARAN KES, paparkan Kad Kenyataan
+                    kadKenyataanView.style.display = 'flex';
+                    
+                    // Pastikan kandungan di dalamnya kekal tertutup secara lalai (▼ Buka)
+                    if (kandunganKenyataan && labelKenyataan) {
+                        kandunganKenyataan.style.display = 'none';
+                        labelKenyataan.innerHTML = '▼ Buka';
+                        labelKenyataan.style.backgroundColor = '#f1f5f9';
+                        labelKenyataan.style.color = 'var(--text-muted)';
+                    }
+                }
             }
             // -------------------------------------------------------------------------------
 

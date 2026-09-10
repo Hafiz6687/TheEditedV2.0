@@ -211,24 +211,57 @@ function kawalWarganegara() {
 
 function kawalJenisDaftarDefendan() {
     const jenis = document.getElementById('jenisDaftarDefendan').value;
+    const labelNo = document.getElementById('labelNoPendDefendan');
     const inputNo = document.getElementById('noPendDefendan');
     const remark = document.getElementById('remarkNoPendDefendan');
     const labelNama = document.getElementById('labelNamaDefendan'); 
+    const ruanganPemilik = document.getElementById('ruanganPemilikEnterprise');
 
     if (jenis === 'MyKad') {
-        inputNo.placeholder = "Contoh: 880101-01-1234";
-        inputNo.maxLength = 14;
-        remark.innerText = "Masukkan No. Kad Pengenalan";
+        if(labelNo) labelNo.innerHTML = 'No. MyKad <span>*</span>'; 
+        inputNo.placeholder = "Contoh: 880101-01-1234"; 
+        inputNo.maxLength = 14; 
+        remark.innerText = "Masukkan No. Kad Pengenalan"; 
         labelNama.innerHTML = 'Nama <span>*</span>'; 
-    } else if (jenis === 'SSM' || jenis === 'Lain-lain') {
-        inputNo.placeholder = "Masukkan No. Pendaftaran";
-        inputNo.maxLength = 20;
-        remark.innerText = "Masukkan No. Pendaftaran";
-        labelNama.innerHTML = 'Nama Syarikat/Organisasi <span>*</span>'; 
+        if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
+        if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
+        if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = '';
+        
+    } else if (jenis === 'Pasport') {
+        if(labelNo) labelNo.innerHTML = 'No. Pasport <span>*</span>'; 
+        inputNo.placeholder = "Masukkan No. Pasport"; 
+        inputNo.maxLength = 20; 
+        remark.innerText = "Masukkan No. Pasport"; 
+        labelNama.innerHTML = 'Nama <span>*</span>'; 
+        if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
+        if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
+        if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = '';
+        
+    } else if (jenis.includes('SSM') || jenis === 'Lain-lain') {
+        if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
+        inputNo.placeholder = "Masukkan No. Pendaftaran"; 
+        
+        // --- PENAMBAHBAIKAN: Had 20 aksara dibuang, kini Bebas ---
+        inputNo.removeAttribute('maxlength'); 
+        
+        remark.innerText = "Masukkan No. Pendaftaran"; 
+        labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
+        if (jenis === 'SSM (Enterprise)') { 
+            if(ruanganPemilik) ruanganPemilik.style.display = 'block'; 
+        } else { 
+            if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
+            if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
+            if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = ''; 
+        }
+        
     } else {
-        inputNo.placeholder = "Sila pilih jenis pendaftaran";
-        remark.innerText = "";
-        labelNama.innerHTML = 'Nama <span>*</span>'; 
+        if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
+        inputNo.placeholder = "Sila pilih jenis pendaftaran"; 
+        remark.innerText = ""; 
+        labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 
+        if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
+        if(document.getElementById('namaPemilikDefendan')) document.getElementById('namaPemilikDefendan').value = ''; 
+        if(document.getElementById('kpPemilikDefendan')) document.getElementById('kpPemilikDefendan').value = '';
     }
 }
 

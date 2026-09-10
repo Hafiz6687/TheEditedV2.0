@@ -217,16 +217,13 @@ function kawalJenisDaftarDefendan() {
     const labelNo = document.getElementById('labelNoPendDefendan');
     const ruanganPemilik = document.getElementById('ruanganPemilikEnterprise');
 
-    // --- LANGKAH KEBAL: Matikan semua had aksara secara paksa dahulu ---
-    if (inputNo) {
-        inputNo.removeAttribute('maxlength');
-        inputNo.removeAttribute('maxLength');
-    }
-
     if (jenis === 'MyKad') {
         if(labelNo) labelNo.innerHTML = 'No. MyKad <span>*</span>'; 
         inputNo.placeholder = "Contoh: 880101-01-1234"; 
-        inputNo.maxLength = 14; // Had dikembalikan HANYA untuk MyKad
+        
+        // Tetapkan semula kepada 14 khas untuk MyKad
+        inputNo.maxLength = 14; 
+        
         remark.innerText = "Masukkan No. Kad Pengenalan"; 
         labelNama.innerHTML = 'Nama <span>*</span>'; 
         if(ruanganPemilik) ruanganPemilik.style.display = 'none'; 
@@ -237,7 +234,9 @@ function kawalJenisDaftarDefendan() {
         if(labelNo) labelNo.innerHTML = 'Nombor Pendaftaran <span>*</span>'; 
         inputNo.placeholder = "Masukkan No. Pendaftaran"; 
         
-        // TIADA SEBARANG HAD AKSARA DI SINI (BEBAS)
+        // PENYELESAIAN MUKTAMAD: Kita setkan had kepada 500 aksara secara paksa
+        // Ini akan "menimpa" (override) sebarang had 20 aksara yang degil sebelum ini
+        inputNo.maxLength = 500; 
         
         remark.innerText = "Masukkan No. Pendaftaran"; 
         labelNama.innerHTML = 'Nama Syarikat/ Nama Organisasi <span>*</span>'; 

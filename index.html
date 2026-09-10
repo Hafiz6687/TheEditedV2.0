@@ -4170,13 +4170,16 @@ function renderSenaraiTugas() {
     tbody.innerHTML = '';
     if (memoriSenaraiKes.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Tiada kes didaftarkan setakat ini.</td></tr>`; return; }
     memoriSenaraiKes.forEach((kes, index) => {
-        // LOGIK BARU: Tambah tag visual jika kes ini dari Pengurusan Kes
-        const tagUrus = kes.sumberFlow === 'urus' ? `<span style="background-color: #fef08a; color: #854d0e; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold; margin-left: 6px;">URUS</span>` : '';
+        // LOGIK DIKEMASKINI: Bentuk tag URUS diselaraskan dengan tag DAFTAR dan diletak margin-top
+        const tagUrus = kes.sumberFlow === 'urus' ? `<br><span style="background-color: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700; display: inline-block; margin-top: 4px;">URUS</span>` : '';
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><a href="#" onclick="bukaMaklumatKes(${index})" style="color: var(--primary-blue); font-weight: 700; text-decoration: underline; cursor: pointer;">${kes.noKes}</a></td>
-            <td><strong style="color: var(--text-main);">${kes.namaPengadu}</strong>${tagUrus}<br><span style="font-size: 0.85em; color: var(--text-muted);">${kes.jenisAduan}</span></td>
+            <td>
+                <a href="#" onclick="bukaMaklumatKes(${index})" style="color: var(--primary-blue); font-weight: 700; text-decoration: underline; cursor: pointer;">${kes.noKes}</a>
+                ${tagUrus}
+            </td>
+            <td><strong style="color: var(--text-main);">${kes.namaPengadu}</strong><br><span style="font-size: 0.85em; color: var(--text-muted);">${kes.jenisAduan}</span></td>
             <td><strong style="color: var(--text-main);">${kes.namaDefendan}</strong></td>
             <td style="color: var(--text-muted); font-weight: 500;">${kes.tarikh}</td>
             <td style="text-align: center; display: flex; gap: 5px; justify-content: center;">

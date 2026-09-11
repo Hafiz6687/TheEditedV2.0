@@ -480,6 +480,42 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL POP-UP KHAS UNTUK TARIK BALIK KES (MAJIKAN) -->
+    <div class="modal-overlay" id="modalTarikBalikMajikan">
+        <div class="modal-box">
+            <div class="modal-title">Maklumat Wakil Tarik Balik Kes</div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Nama Majikan / Wakil Majikan <span>*</span></label>
+                <input type="text" id="tb_namaWakil" placeholder="Nama penuh wakil" oninput="hurufBesarSetiapPerkataan(this)">
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Jenis Pendaftaran <span>*</span></label>
+                <select id="tb_jenisPendWakil" onchange="kawalJenisPendWakilTarikBalik()">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="MyKad">MyKad</option>
+                    <option value="Pasport">Pasport</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_tb_idWakil">
+                <label style="text-align: left;" id="label_tb_idWakil">No. MyKad / Pasport <span>*</span></label>
+                <input type="text" id="tb_idWakil" placeholder="" maxlength="14" oninput="formatIdWakilTarikBalik(this)">
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Jawatan <span>*</span></label>
+                <input type="text" id="tb_jawatanWakil" placeholder="Contoh: Pengurus Sumber Manusia" oninput="hurufBesarSetiapPerkataan(this)">
+            </div>
+
+<div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('modalTarikBalikMajikan').style.display='none'">Batal</button>
+                <button class="btn-save" onclick="janaTarikBalikMajikan()">✔ Teruskan</button>
+            </div>
+        </div> <!-- Penutup modal-box -->
+    </div> <!-- Penutup modal-overlay -->
     
     <!-- PREVIEW MODAL & ACTION ICON BUTTON -->
   <div class="modal-overlay" id="modalPreview" style="z-index: 2000; flex-direction: column; padding: 0; background: rgba(0,0,0,0.8); position: fixed;">      
@@ -1921,193 +1957,207 @@ function tindakanSebutan() {
 }
 
 // FUNGSI BAHARU: Menjana dan Memaparkan Akuan Penarikan Balik Kes
-        function bukaPreviewTarikBalik() {
-            const kes = memoriSenaraiKes[indexKesSemasa];
-            if (!kes) return;
+function bukaPreviewTarikBalik() {
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    if (!kes) return;
 
-            // Dapatkan maklumat asas
-            let noKes = kes.noKes.split('<br>')[0].trim();
-            let namaP = "", kpP = "", alamatP = "", namaD = "";
-            let perengganPengenalan = "";
-            let namaTandatangan = "";
-            let kpTandatangan = "";
+    // 1. SEMAK JIKA MAJIKAN ADALAH PENGADU
+    let isMajikan = false;
+    let inputs = {};
+    if (kes.dataBorang && kes.dataBorang.inputs) {
+        inputs = kes.dataBorang.inputs;
+        isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
+    } else {
+        isMajikan = kes.jenisAduan === 'Majikan';
+    }
 
-            // Ekstrak maklumat dari data yang disimpan (jika ada)
-            if (kes.dataBorang && kes.dataBorang.inputs) {
-                const inputs = kes.dataBorang.inputs;
-                const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
-                
-                // --- PENAMBAHBAIKAN: EKSTRAK BILANGAN UNTUK KES BERKUMPULAN ---
-                let teksPihak = "merupakan pihak Pengadu";
-                if (inputs['aduan'] === 'Berkumpulan' && !isMajikan) {
-                    let totalPengadu = parseInt(inputs['bilPengadu']) || 1;
-                    let bilDiwakili = totalPengadu > 1 ? totalPengadu - 1 : 0;
-                    teksPihak = `merupakan pihak Ketua Pengadu yang mewakili ${bilDiwakili} orang yang lain`;
-                }
-                // ---------------------------------------------------------------
-                
-                if (isMajikan) {
-                    let namaWakil = inputs['namaWakilMajikan'] || '[NAMA WAKIL]';
-                    let kpWakil = inputs['noMyKadWakil'] || '_________________________';
-                    let namaSyarikat = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
-                    let noPendSyarikat = inputs['noPendDefendan'] || '_________________________';
-                    
-                    let almt = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join(', ');
-                    alamatP = almt || '____________________________________________________';
-                    
-                    namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
-
-                    perengganPengenalan = `Bahawasanya saya, <strong>${namaWakil.toUpperCase()}</strong> (No. MyKad: <strong>${kpWakil}</strong>) mewakili majikan <strong>${namaSyarikat.toUpperCase()}</strong> (No. Pendaftaran: <strong>${noPendSyarikat}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, merupakan pihak Pengadu yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
-                    
-                    namaTandatangan = namaWakil.toUpperCase();
-                    kpTandatangan = kpWakil;
-                } else {
-                    namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
-                    kpP = inputs['noPendPengadu'] || '_________________________';
-                    
-                    let jenisId = inputs['jenisDaftarPengadu'] === 'Pasport' ? 'No. Pasport' : 'No. MyKad';
-                    
-                    let almt = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join(', ');
-                    alamatP = almt || '____________________________________________________';
-                    
-                    namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
-
-                    // --- MENGGUNAKAN teksPihak YANG TELAH DIPROSES DI ATAS ---
-                    perengganPengenalan = `Bahawasanya saya, <strong>${namaP.toUpperCase()}</strong> (${jenisId}: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, ${teksPihak} yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
-                    
-                    namaTandatangan = namaP.toUpperCase();
-                    kpTandatangan = kpP;
-                }
-            } else {
-                namaP = kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
-                kpP = "_________________________";
-                alamatP = "____________________________________________________";
-                namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
-                
-                // Fallback sekiranya ia adalah fail dummy lama
-                let teksPihak = kes.jenisAduan === 'Berkumpulan' ? 
-                                `merupakan pihak Ketua Pengadu yang mewakili pengadu-pengadu yang lain` : 
-                                `merupakan pihak Pengadu`;
-
-                perengganPengenalan = `Bahawasanya saya, <strong>${namaP}</strong> (No. Kad Pengenalan / Pasport / Pendaftaran: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP}</strong>, ${teksPihak} yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD}</strong> (selepas ini dirujuk sebagai "Defendan").`;
-                namaTandatangan = namaP;
-                kpTandatangan = kpP;
-            }
-
-            // 1. Tarikh Hari Ini
-            const t = new Date();
-            const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
-            const tarikhHariIniFormat = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
-            
-            // 2. Nama Pegawai (Tarik dari profil sidebar)
-            let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
-            const namaPegawai = namaPegawaiRaw.toUpperCase();
-            
-            // 3. Jawatan Pegawai
-            const jawatanPegawai = "Pegawai Tenaga Kerja";
-
-            // Struktur HTML Rasmi Akuan Penarikan Balik Kes
-            const htmlTarikBalik = `
-                <style>
-                    @media print {
-                        .kertas-tb { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; }
-                        body { background: white; }
-                        body > *:not(#printArea) { display: none !important; }
-                        #printArea { display: block !important; }
-                    }
-                    .kertas-tb {
-                        background: white; width: 21cm; min-height: 29.7cm; padding: 2.5cm;
-                        margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-                        font-family: Arial, sans-serif; color: black; font-size: 11.5pt; line-height: 1.6;
-                        box-sizing: border-box; text-align: justify;
-                    }
-                    .tb-title { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 25px; text-decoration: underline; }
-                    .tb-ref { text-align: right; font-weight: bold; margin-bottom: 30px; }
-                    .tb-list { margin-top: 10px; margin-bottom: 10px; padding-left: 25px; }
-                    .tb-list li { margin-bottom: 12px; }
-                    .tb-list-alpha { list-style-type: lower-alpha; padding-left: 25px; margin-top: 8px; }
-                    .tb-sign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px; page-break-inside: avoid; }
-                </style>
-                <div class="kertas-tb">
-                    <div class="tb-ref">No. Kes: ${noKes}</div>
-                    <div class="tb-title">AKUAN PENARIKAN BALIK KES</div>
-                    
-                    <p>${perengganPengenalan}</p>
-                    
-                    <p>Saya dengan ini dengan sesungguhnya dan sebenarnya berikrar dan menyatakan seperti berikut:</p>
-                    
-                    <ol class="tb-list">
-                        <li>Saya menarik balik keseluruhan aduan, tuntutan dan prosiding terhadap Defendan berhubung kes yang didaftarkan di bawah nombor kes <strong>${noKes}</strong>.</li>
-                        <li>Bahawa keputusan untuk menarik balik kes ini dibuat secara sukarela, tanpa sebarang paksaan, ugutan, tekanan atau pengaruh daripada mana-mana pihak.</li>
-                        <li>Saya memahami kesan serta implikasi undang-undang akibat penarikan balik kes ini.</li>
-                        <li>Saya tidak lagi mempunyai sebarang tuntutan terhadap Defendan berhubung perkara yang menjadi asas kepada kes tersebut, melainkan hak yang diperuntukkan secara nyata oleh undang-undang.</li>
-                        <li>Saya memohon supaya pihak Jabatan Tenaga Kerja / Mahkamah merekodkan penarikan balik kes ini.</li>
-                    </ol>
-                    
-                    <p style="margin-top: 25px;">Saya membuat akuan ini dengan kepercayaan bahawa segala kandungan akuan ini adalah benar mengikut pengetahuan dan pemahaman saya.</p>
-                    
-                    <div class="tb-sign-grid">
-                        <div>
-                            <strong>Ditandatangani oleh (Pengadu):</strong><br><br><br><br>
-                            ...................................................................<br>
-                            <strong>${namaTandatangan}</strong><br>
-                            <span id="labelIdTandatangan">No. KP / Pasport:</span> ${kpTandatangan}<br>
-                            Tarikh: <strong>${tarikhHariIniFormat}</strong><br>
-                        </div>
-                        <div>
-                            <strong>Dihadapan (Saksi / Pegawai):</strong><br><br><br><br>
-                            ...................................................................<br>
-                            <strong>${namaPegawai}</strong><br>
-                            Jawatan: <strong>${jawatanPegawai}</strong><br>
-                            Tarikh: <strong>${tarikhHariIniFormat}</strong><br>
-                            <br>
-                            Cop Rasmi (jika berkenaan):
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Masukkan HTML ke dalam ruang Preview dan kawasan Cetakan
-            document.getElementById('previewContent').innerHTML = htmlTarikBalik;
-            document.getElementById('printArea').innerHTML = htmlTarikBalik;
-            
-            const labelPreview = document.querySelector('#previewContent #labelIdTandatangan');
-            const labelPrint = document.querySelector('#printArea #labelIdTandatangan');
-            const teksLabel = kpTandatangan.includes('-') ? 'No. MyKad:' : 'No. Passport:';
-
-            if (labelPreview) labelPreview.innerHTML = teksLabel;
-            if (labelPrint) labelPrint.innerHTML = teksLabel;
-
-            // Konfigurasi butang Action Dropdown di penjuru atas kanan
-            document.getElementById('menuCetakAkuan').style.display = 'none';
-            document.getElementById('menuCetakKenyataan').style.display = 'none';
-            document.getElementById('menuDaftar').style.display = 'none';
-            
-            const menuCetakG1 = document.getElementById('menuCetakG1');
-            menuCetakG1.style.display = 'flex';
-            menuCetakG1.innerHTML = '🖨️ Cetak Akuan Penarikan';
-            document.getElementById('menuKemaskini').style.display = 'flex';
-            document.getElementById('menuBatal').style.display = 'flex';
-            document.getElementById('menuSelesai').style.display = 'none';
-
-menuCetakG1.onclick = function() {
-                document.getElementById('actionMenu').classList.remove('show');
-                window.print();
-
-                // --- TAMBAH BARIS REKOD INI ---
-                rekodSejarahTindakan(indexKesSemasa, "Tarik Balik Kes", "Akuan Penarikan Balik Kes telah dijana dan dicetak oleh sistem.");
-                
-                setTimeout(() => {
-                    menuCetakG1.style.display = 'none';
-                    document.getElementById('menuKemaskini').style.display = 'none';
-                    document.getElementById('menuBatal').style.display = 'none';
-                    document.getElementById('menuSelesai').style.display = 'flex';
-                }, 500);
-            };
-
-            alert("Dokumen Akuan Penarikan Balik Kes sedia untuk dijana dan dicetak.");
-            document.getElementById('modalPreview').style.display = 'flex';
+    // 2. TANGKAP DAN PAPAR POP-UP JIKA MAJIKAN & DATA WAKIL BELUM DIISI
+    if (isMajikan && !window.tempDataWakil) {
+        // Pra-isi dengan data pendaftaran (jika ada) untuk menyenangkan user
+        if (inputs['namaWakilMajikan']) {
+            document.getElementById('tb_namaWakil').value = inputs['namaWakilMajikan'];
+            document.getElementById('tb_jawatanWakil').value = inputs['jawatanWakilMajikan'] || '';
+            document.getElementById('tb_jenisPendWakil').value = 'MyKad';
+            kawalJenisPendWakilTarikBalik();
+            document.getElementById('tb_idWakil').value = inputs['noMyKadWakil'] || '';
+        } else {
+            document.getElementById('tb_namaWakil').value = '';
+            document.getElementById('tb_jenisPendWakil').value = '';
+            document.getElementById('tb_jawatanWakil').value = '';
+            kawalJenisPendWakilTarikBalik();
         }
+        document.getElementById('modalTarikBalikMajikan').style.display = 'flex';
+        return; // Hentikan fungsi di sini dan tunggu user tekan 'Teruskan'
+    }
+
+    // 3. TERUSKAN PENJANAAN DOKUMEN JIKA MAKLUMAT SUDAH LENGKAP
+    let noKes = kes.noKes.split('<br>')[0].trim();
+    let namaP = "", kpP = "", alamatP = "", namaD = "";
+    let perengganPengenalan = "";
+    let namaTandatangan = "";
+    let kpTandatangan = "";
+    let jawatanTandatanganHtml = ""; // Tambahan untuk jawatan wakil
+    let jenisIdLabel = "No. KP / Pasport"; 
+
+    if (isMajikan) {
+        // Ambil data dari Pop-up
+        let namaWakil = window.tempDataWakil.nama;
+        let kpWakil = window.tempDataWakil.idWakil;
+        let jenisPendWakil = window.tempDataWakil.jenis;
+        let jawatanWakil = window.tempDataWakil.jawatan;
+        
+        let namaSyarikat = inputs['namaDefendan'] || kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
+        let noPendSyarikat = inputs['noPendDefendan'] || '_________________________';
+        
+        let almt = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join(', ');
+        alamatP = almt || '____________________________________________________';
+        
+        namaD = inputs['namaPengadu'] || kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
+
+        jenisIdLabel = jenisPendWakil === 'Pasport' ? 'No. Pasport' : 'No. MyKad';
+
+        perengganPengenalan = `Bahawasanya saya, <strong>${namaWakil.toUpperCase()}</strong> (${jenisIdLabel}: <strong>${kpWakil}</strong>) mewakili majikan <strong>${namaSyarikat.toUpperCase()}</strong> (No. Pendaftaran: <strong>${noPendSyarikat}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, merupakan pihak Pengadu yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
+        
+        namaTandatangan = namaWakil.toUpperCase();
+        kpTandatangan = kpWakil;
+        jawatanTandatanganHtml = `Jawatan: <strong>${jawatanWakil}</strong><br>`;
+        
+    } else {
+        // Jika PEKERJA (Kekal logik lama)
+        let teksPihak = "merupakan pihak Pengadu";
+        if (inputs['aduan'] === 'Berkumpulan') {
+            let totalPengadu = parseInt(inputs['bilPengadu']) || 1;
+            let bilDiwakili = totalPengadu > 1 ? totalPengadu - 1 : 0;
+            teksPihak = `merupakan pihak Ketua Pengadu yang mewakili ${bilDiwakili} orang yang lain`;
+        } else if (kes.jenisAduan === 'Berkumpulan' && !inputs['aduan']) {
+            teksPihak = `merupakan pihak Ketua Pengadu yang mewakili pengadu-pengadu yang lain`;
+        }
+
+        namaP = inputs['namaPengadu'] || kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
+        kpP = inputs['noPendPengadu'] || '_________________________';
+        
+        jenisIdLabel = inputs['jenisDaftarPengadu'] === 'Pasport' ? 'No. Pasport' : 'No. MyKad';
+        
+        let almt = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join(', ');
+        alamatP = almt || '____________________________________________________';
+        
+        namaD = inputs['namaDefendan'] || kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
+
+        perengganPengenalan = `Bahawasanya saya, <strong>${namaP.toUpperCase()}</strong> (${jenisIdLabel}: <strong>${kpP}</strong>) yang beralamat di <strong>${alamatP.toUpperCase()}</strong>, ${teksPihak} yang telah memfailkan aduan atau tuntutan terhadap <strong>${namaD.toUpperCase()}</strong> (selepas ini dirujuk sebagai "Defendan").`;
+        
+        namaTandatangan = namaP.toUpperCase();
+        kpTandatangan = kpP;
+    }
+
+    // 4. Tarikh Hari Ini
+    const t = new Date();
+    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+    const tarikhHariIniFormat = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+    
+    // 5. Nama & Jawatan Pegawai
+    let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
+    const namaPegawai = namaPegawaiRaw.toUpperCase();
+    const jawatanPegawai = "Pegawai Tenaga Kerja";
+
+    // 6. Struktur HTML Rasmi Akuan Penarikan Balik Kes
+    const htmlTarikBalik = `
+        <style>
+            @media print {
+                .kertas-tb { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; }
+                body { background: white; }
+                body > *:not(#printArea) { display: none !important; }
+                #printArea { display: block !important; }
+            }
+            .kertas-tb {
+                background: white; width: 21cm; min-height: 29.7cm; padding: 2.5cm;
+                margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                font-family: Arial, sans-serif; color: black; font-size: 11.5pt; line-height: 1.6;
+                box-sizing: border-box; text-align: justify;
+            }
+            .tb-title { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 25px; text-decoration: underline; }
+            .tb-ref { text-align: right; font-weight: bold; margin-bottom: 30px; }
+            .tb-list { margin-top: 10px; margin-bottom: 10px; padding-left: 25px; }
+            .tb-list li { margin-bottom: 12px; }
+            .tb-list-alpha { list-style-type: lower-alpha; padding-left: 25px; margin-top: 8px; }
+            .tb-sign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px; page-break-inside: avoid; }
+        </style>
+        <div class="kertas-tb">
+            <div class="tb-ref">No. Kes: ${noKes}</div>
+            <div class="tb-title">AKUAN PENARIKAN BALIK KES</div>
+            
+            <p>${perengganPengenalan}</p>
+            
+            <p>Saya dengan ini dengan sesungguhnya dan sebenarnya berikrar dan menyatakan seperti berikut:</p>
+            
+            <ol class="tb-list">
+                <li>Saya menarik balik keseluruhan aduan, tuntutan dan prosiding terhadap Defendan berhubung kes yang didaftarkan di bawah nombor kes <strong>${noKes}</strong>.</li>
+                <li>Bahawa keputusan untuk menarik balik kes ini dibuat secara sukarela, tanpa sebarang paksaan, ugutan, tekanan atau pengaruh daripada mana-mana pihak.</li>
+                <li>Saya memahami kesan serta implikasi undang-undang akibat penarikan balik kes ini.</li>
+                <li>Saya tidak lagi mempunyai sebarang tuntutan terhadap Defendan berhubung perkara yang menjadi asas kepada kes tersebut, melainkan hak yang diperuntukkan secara nyata oleh undang-undang.</li>
+                <li>Saya memohon supaya pihak Jabatan Tenaga Kerja / Mahkamah merekodkan penarikan balik kes ini.</li>
+            </ol>
+            
+            <p style="margin-top: 25px;">Saya membuat akuan ini dengan kepercayaan bahawa segala kandungan akuan ini adalah benar mengikut pengetahuan dan pemahaman saya.</p>
+            
+            <div class="tb-sign-grid">
+                <div>
+                    <strong>Ditandatangani oleh (Pengadu):</strong><br><br><br><br>
+                    ...................................................................<br>
+                    <strong>${namaTandatangan}</strong><br>
+                    ${jawatanTandatanganHtml}
+                    <span id="labelIdTandatangan">${jenisIdLabel}:</span> ${kpTandatangan}<br>
+                    Tarikh: <strong>${tarikhHariIniFormat}</strong><br>
+                </div>
+                <div>
+                    <strong>Dihadapan (Saksi / Pegawai):</strong><br><br><br><br>
+                    ...................................................................<br>
+                    <strong>${namaPegawai}</strong><br>
+                    Jawatan: <strong>${jawatanPegawai}</strong><br>
+                    Tarikh: <strong>${tarikhHariIniFormat}</strong><br>
+                    <br>
+                    Cop Rasmi (jika berkenaan):
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 7. Masukkan HTML ke dalam ruang Preview dan kawasan Cetakan
+    document.getElementById('previewContent').innerHTML = htmlTarikBalik;
+    document.getElementById('printArea').innerHTML = htmlTarikBalik;
+
+    // Konfigurasi butang Action Dropdown di penjuru atas kanan
+    document.getElementById('menuCetakAkuan').style.display = 'none';
+    document.getElementById('menuCetakKenyataan').style.display = 'none';
+    document.getElementById('menuDaftar').style.display = 'none';
+    
+    const menuCetakG1 = document.getElementById('menuCetakG1');
+    menuCetakG1.style.display = 'flex';
+    menuCetakG1.innerHTML = '🖨️ Cetak Akuan Penarikan';
+    document.getElementById('menuKemaskini').style.display = 'flex';
+    document.getElementById('menuBatal').style.display = 'flex';
+    document.getElementById('menuSelesai').style.display = 'none';
+
+    menuCetakG1.onclick = function() {
+        document.getElementById('actionMenu').classList.remove('show');
+        window.print();
+
+        // Rekod sejarah
+        rekodSejarahTindakan(indexKesSemasa, "Tarik Balik Kes", "Akuan Penarikan Balik Kes telah dijana dan dicetak oleh sistem.");
+        
+        setTimeout(() => {
+            menuCetakG1.style.display = 'none';
+            document.getElementById('menuKemaskini').style.display = 'none';
+            document.getElementById('menuBatal').style.display = 'none';
+            document.getElementById('menuSelesai').style.display = 'flex';
+        }, 500);
+    };
+
+    // Bersihkan memori Pop-Up supaya kes lain yang ditarik balik akan sentiasa ditanya maklumat terkini
+    window.tempDataWakil = null;
+
+    alert("Dokumen Akuan Penarikan Balik Kes sedia untuk dijana dan dicetak.");
+    document.getElementById('modalPreview').style.display = 'flex';
+}
 // =========================================================================
 // FUNGSI GLOBAL CETAK NOTIS (Dibina mirip seperti fungsi cetakKhusus)
 // =========================================================================
@@ -5602,6 +5652,70 @@ function hapusSejarahTindakan(indexKes, indexSejarah) {
             renderJadualSejarah(indexKes);
         }
     }
+}
+       // --- FUNGSI BARU: Kawalan Dropdown Modal Tarik Balik ---
+function kawalJenisPendWakilTarikBalik() {
+    const jenis = document.getElementById('tb_jenisPendWakil').value;
+    const ruangan = document.getElementById('ruangan_tb_idWakil');
+    const label = document.getElementById('label_tb_idWakil');
+    const input = document.getElementById('tb_idWakil');
+    
+    if (jenis === '') {
+        ruangan.style.display = 'none';
+    } else {
+        ruangan.style.display = 'block';
+        if (jenis === 'MyKad') {
+            label.innerHTML = 'No. MyKad <span>*</span>';
+            input.placeholder = 'Contoh: 880101-01-1234';
+            input.maxLength = 14;
+        } else if (jenis === 'Pasport') {
+            label.innerHTML = 'No. Pasport <span>*</span>';
+            input.placeholder = 'Masukkan No. Pasport';
+            input.maxLength = 20;
+        }
+        input.value = ''; // Kosongkan ruangan untuk elak masalah format campur
+    }
+}
+
+// --- FUNGSI BARU: Format No MyKad / Pasport di Modal ---
+function formatIdWakilTarikBalik(inputElement) {
+    const jenis = document.getElementById('tb_jenisPendWakil').value;
+    if (jenis === 'MyKad') {
+        let val = inputElement.value.replace(/[^0-9]/g, ''); 
+        let formatted = val;
+        if (val.length > 6) { formatted = val.substring(0, 6) + '-' + val.substring(6); }
+        if (val.length > 8) { formatted = formatted.substring(0, 9) + '-' + formatted.substring(9, 13); }
+        inputElement.value = formatted;
+    } else {
+        // Jika Pasport, huruf dibesarkan
+        inputElement.value = inputElement.value.toUpperCase();
+    }
+}
+
+// --- FUNGSI BARU: Butang Teruskan dari Modal ---
+function janaTarikBalikMajikan() {
+    const nama = document.getElementById('tb_namaWakil').value.trim();
+    const jenis = document.getElementById('tb_jenisPendWakil').value;
+    const idWakil = document.getElementById('tb_idWakil').value.trim();
+    const jawatan = document.getElementById('tb_jawatanWakil').value.trim();
+    
+    if (!nama || !jenis || !idWakil || !jawatan) {
+        alert("Sila lengkapkan semua maklumat wakil majikan.");
+        return;
+    }
+    
+    // Tutup pop-up dan simpan memori sementara
+    document.getElementById('modalTarikBalikMajikan').style.display = 'none';
+    
+    window.tempDataWakil = {
+        nama: nama,
+        jenis: jenis,
+        idWakil: idWakil,
+        jawatan: jawatan
+    };
+    
+    // Panggil semula fungsi asal tarik balik kes
+    bukaPreviewTarikBalik(); 
 }
     </script>
 </body>

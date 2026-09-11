@@ -3730,6 +3730,7 @@ function kawalJenisAduanTuntutan() {
     const kad3Ketua = document.getElementById('kad3_ketua');
     const kandunganKetua = document.getElementById('kandunganTuntutanKetua');
     
+    const kad4Biasa = document.getElementById('kad4_biasa'); // <-- Kawalan keseluruhan kad
     const tajukTuntutanSediaAda = document.getElementById('tajukTuntutanSediaAda');
     const kandunganBiasa = document.getElementById('kandunganTuntutanSediaAda');
     
@@ -3739,27 +3740,17 @@ function kawalJenisAduanTuntutan() {
     let lulusPaparan = false;
 
     if (window.paparanSemasa === 'urus') {
-        if (isMajikan) {
-            // SYARAT PENGURUSAN KES (MAJIKAN): Tel, HP, atau Emel (di ruangan Maklumat Defendan)
-            const telM = document.getElementById('telDefendan').value.trim();
-            const hpM = document.getElementById('hpDefendan').value.trim();
-            const emelM = document.getElementById('emelDefendan').value.trim();
-            
-            if (telM !== '' || hpM !== '' || emelM !== '') {
-                lulusPaparan = true;
-            }
-        } else {
-            // SYARAT PENGURUSAN KES (PEKERJA): Tel, HP, atau Emel (di ruangan Maklumat Pengadu)
-            const tel = document.getElementById('telPengadu').value.trim();
-            const hp = document.getElementById('hpPengadu').value.trim();
-            const emel = document.getElementById('emelPengadu').value.trim();
-            
-            if (tel !== '' || hp !== '' || emel !== '') {
-                lulusPaparan = true;
-            }
+        // PENGURUSAN KES: Syaratnya maklumat Pekerja (Kad 1) mesti ada No Tel, HP atau Emel
+        // Tidak kira siapa pengadu, maklumat pekerja sentiasa berada di ID 'pengadu'
+        const tel = document.getElementById('telPengadu').value.trim();
+        const hp = document.getElementById('hpPengadu').value.trim();
+        const emel = document.getElementById('emelPengadu').value.trim();
+        
+        if (tel !== '' || hp !== '' || emel !== '') {
+            lulusPaparan = true;
         }
     } else {
-        // SYARAT ASAL PENDAFTARAN KES: Sektor & Jenis Perniagaan mesti diisi
+        // PENDAFTARAN KES: Syaratnya Sektor & Jenis Perniagaan mesti diisi
         const sektor = document.getElementById('sektorDefendan').value;
         const jp = document.getElementById('jenisPerniagaan').value.trim();
         
@@ -3768,10 +3759,11 @@ function kawalJenisAduanTuntutan() {
         }
     }
 
-    // Jika syarat TIDAK dipenuhi, sembunyikan semua jadual
+    // Jika syarat TIDAK dipenuhi, sembunyikan semua jadual & KOTAK sepenuhnya
     if (!lulusPaparan) {
         if (kad3Ketua) kad3Ketua.style.display = 'none';
         if (kandunganKetua) kandunganKetua.style.display = 'none';
+        if (kad4Biasa) kad4Biasa.style.display = 'none'; // <-- Sembunyikan supaya garisan biru tak 'tergantung'
         if (kandunganBiasa) kandunganBiasa.style.display = 'none';
         if (butangSeterusnya) butangSeterusnya.style.display = 'none';
         return; // Berhenti di sini
@@ -3779,6 +3771,8 @@ function kawalJenisAduanTuntutan() {
     // ----------------------------------------------
 
     // --- JIKA SYARAT LULUS, TERUSKAN PAPARAN ASAL ---
+    if (kad4Biasa) kad4Biasa.style.display = 'flex'; // Munculkan semula kotak
+    
     if (isMajikan) {
         if (kad3Ketua) kad3Ketua.style.display = 'none';
         if (tajukTuntutanSediaAda) tajukTuntutanSediaAda.innerText = 'Maklumat Tuntutan Majikan';
@@ -3799,6 +3793,7 @@ function kawalJenisAduanTuntutan() {
         }
     }
 }
+       
         function toggleMaklumatPerkhidmatan() {
             const kandungan = document.getElementById('kandunganMaklumatPerkhidmatan');
             const labelTogol = document.getElementById('labelTogolPerkhidmatan');
@@ -4750,6 +4745,9 @@ for (const key in formData) {
     
     pergiKeTabBorang('tab1');
     setStatusBorang(true); // Tukar borang ke status kemaskini
+    
+    // PEMBETULAN: Paksa sistem semak kelayakan jadual SELEPAS mod Pengurusan disahkan
+    kawalJenisAduanTuntutan(); 
 } // <--- penutup fungsi bukaKesDidaftar
 
         function toTitleCase(str) { if (!str || str === '-') return '-'; return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }

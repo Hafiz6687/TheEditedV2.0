@@ -2160,7 +2160,7 @@ window.cetakNotis = function(jenis) {
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT NOTIS SEBUTAN
 // =========================================================================
-function bukaPreviewNotisSebutan() {
+function bukaPreviewNotisSebutan(tarikhHst = null, masaHst = null) { // <--- TAMBAH PARAMETER SINI
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
@@ -2199,18 +2199,21 @@ function bukaPreviewNotisSebutan() {
     }
 
     // Ekstrak Tarikh dan Masa Sebutan
-    const tarikhRaw = document.getElementById('mk_tarikh_sebutan').value;
-    const masaRaw = document.getElementById('mk_masa_sebutan').value;
+    // LOGIK DIKEMASKINI: Gunakan parameter jika ada (dari Sejarah), jika tiada guna nilai kotak input
+    const tarikhRaw = tarikhHst || document.getElementById('mk_tarikh_sebutan').value;
+    const masaRaw = masaHst || document.getElementById('mk_masa_sebutan').value;
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     let tarikhSebutanText = "[Tarikh]";
-    if (tarikhRaw) {
+    if (tarikhRaw && tarikhRaw !== '-') {
         let t = new Date(tarikhRaw);
-        tarikhSebutanText = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        if (!isNaN(t)) {
+            tarikhSebutanText = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        }
     }
 
     let masaSebutanText = "[Masa]";
-    if (masaRaw) {
+    if (masaRaw && masaRaw !== '-') {
         let [jam, minit] = masaRaw.split(':');
         let jamNum = parseInt(jam);
         let ampm = jamNum >= 12 ? "petang" : "pagi";
@@ -5530,7 +5533,6 @@ function renderJadualSejarah(index) {
     const sejarah = kes.sejarahTindakan || [];
 
     if (sejarah.length === 0) {
-        // DIKEMASKINI: colspan ditukar dari 4 ke 5
         tbody.innerHTML = `<tr><td colspan="5" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
         return;
     }
@@ -5544,9 +5546,14 @@ function renderJadualSejarah(index) {
         // --- LOGIK BARU: Butang Jana Dokumen berdasarkan Jenis Tindakan ---
         let btnJana = "-";
         
-        // 1. Jika Notis Sebutan (Panggil semula preview Notis)
+        // 1. Jika Notis Sebutan (Ekstrak tarikh & masa dari butiran sejarah)
         if (rekod.tindakan.includes("Notis Sebutan")) {
-            btnJana = `<button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px; width: 100%;" onclick="bukaPreviewNotisSebutan()">📄 Papar Notis</button>`;
+            let tMatch = rekod.butiran.match(/pada (.*?) jam/);
+            let mMatch = rekod.butiran.match(/jam (.*?)\./);
+            let tarikhHst = tMatch ? tMatch[1] : '';
+            let masaHst = mMatch ? mMatch[1] : '';
+            
+            btnJana = `<button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px; width: 100%;" onclick="bukaPreviewNotisSebutan('${tarikhHst}', '${masaHst}')">📄 Papar Notis</button>`;
         } 
         // 2. Jika Tarik Balik Kes (Panggil semula preview Akuan Tarik Balik)
         else if (rekod.tindakan === "Tarik Balik Kes") {

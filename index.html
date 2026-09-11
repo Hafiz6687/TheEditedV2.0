@@ -1479,10 +1479,14 @@ if (posDisimpan) {
                 jenisAduan: "Individu",
                 tarikh: "2/8/2026"
             }];
-            simpanSenaraiKeLokal();
+        simpanSenaraiKeLokal();
         }
         
         renderSenaraiTugas();
+
+        // --- TAMBAHAN BARU: Tetapkan paparan utama ke Senarai Tugasan sebaik sahaja sistem dibuka ---
+        tukarView('senarai'); 
+
     }); // <--- INI ADALAH PENUTUP DOMContentLoaded
 
     // --- FUNGSI BARU: Simpan senarai kes ke dalam memori browser (Local Storage) ---

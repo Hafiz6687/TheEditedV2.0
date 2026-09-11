@@ -741,7 +741,21 @@ Portal rasmi : jtksm.mohr.gov.my
                     </table>
                 </div>
             </div>
-           <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
+           <!-- BAHAGIAN 3.6: Menu Pilihan Tindakan Pengurusan Kes -->
+            <div class="card full-width" id="menu_tindakan_urus" style="display: none; background-color: #f8fafc; border: 1px dashed var(--primary-blue);">
+                <div class="card-body" style="padding: 15px 24px;">
+                    <div style="font-weight: 700; color: var(--primary-blue); margin-bottom: 12px; font-size: 0.95em;">PILIHAN TINDAKAN PENGURUSAN:</div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-save btn-terapung" style="background-color: var(--primary-blue); padding: 8px 16px; font-size: 0.85em;" onclick="toggleKadUrus('sebutan')">📅 Sebutan Kes</button>
+                        <button class="btn-save btn-terapung" style="background-color: var(--primary-blue); padding: 8px 16px; font-size: 0.85em;" onclick="toggleKadUrus('alamat')">📍 Alamat Terkini Defendan</button>
+                        <button class="btn-save btn-terapung" style="background-color: var(--primary-blue); padding: 8px 16px; font-size: 0.85em;" onclick="toggleKadUrus('saman_a')">📄 Saman (Borang A)</button>
+                        <button class="btn-save btn-terapung" style="background-color: var(--primary-blue); padding: 8px 16px; font-size: 0.85em;" onclick="toggleKadUrus('saman_memo')">📄 Saman (Memo Luar Kawasan)</button>
+                        <button class="btn-save btn-terapung" style="background-color: var(--primary-blue); padding: 8px 16px; font-size: 0.85em;" onclick="toggleKadUrus('saman_tampal')">📄 Saman (Tampal)</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
 <div class="card full-width" id="kad_sebutan_kes">
     <div class="card-header">Penetapan Tarikh Sebutan Kes</div>
                 <div class="card-body">
@@ -1857,28 +1871,32 @@ function bukaMaklumatKes(index) {
 
             const isDraf = kes.noKes.includes('DRAF');
 
-    // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan ---
+// --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---
             const kadSejarah = document.getElementById('kad_sejarah_tindakan');
+            const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
+            
             if (kadSejarah) {
                 if (kes.sumberFlow === 'urus') {
                     kadSejarah.style.display = 'flex';
                     renderJadualSejarah(indexKesSemasa); // Render data sejarah
+                    
+                    // Paparkan butang-butang tindakan jika ia dari Pengurusan Kes & bukan draf
+                    if (menuTindakanUrus && !isDraf) {
+                        menuTindakanUrus.style.display = 'flex';
+                    } else if (menuTindakanUrus) {
+                        menuTindakanUrus.style.display = 'none';
+                    }
                 } else {
                     kadSejarah.style.display = 'none';
+                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
                 }
             }
             // --------------------------------------------------------
     
             const kadSebutan = document.getElementById('kad_sebutan_kes');
-            
             if (kadSebutan) {
-                // LOGIK BARU: Hanya paparkan Penetapan Tarikh Sebutan jika ia dari PENGURUSAN KES dan BUKAN Draf
-                if (kes.sumberFlow === 'urus' && !isDraf) {
-                    kadSebutan.style.display = 'flex'; 
-                } else {
-                    // Sembunyikan untuk flow PENDAFTARAN KES atau jika ia adalah Draf
-                    kadSebutan.style.display = 'none'; 
-                }
+                // Sembunyikan secara lalai. Ia akan dibuka secara manual melalui butang 'Sebutan Kes'
+                kadSebutan.style.display = 'none'; 
             }
 
             const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
@@ -5715,6 +5733,33 @@ function janaTarikBalikMajikan() {
     // Panggil semula fungsi asal tarik balik kes
     bukaPreviewTarikBalik(); 
 }
-    </script>
+       // --- FUNGSI BARU: Mengawal Paparan Kad Tindakan Pengurusan Kes ---
+function toggleKadUrus(jenis) {
+    const kadSebutan = document.getElementById('kad_sebutan_kes');
+    
+    if (jenis === 'sebutan') {
+        // Togol papar/sembunyi kad sebutan
+        if (kadSebutan.style.display === 'none' || kadSebutan.style.display === '') {
+            kadSebutan.style.display = 'flex';
+            // Auto scroll supaya pengguna terus nampak kotak sebutan di bawah
+            kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            kadSebutan.style.display = 'none';
+        }
+    } else {
+        // Jika fungsi lain ditekan, pastikan kad sebutan ditutup
+        if (kadSebutan) kadSebutan.style.display = 'none';
+        
+        // Peringatan sementara untuk butang yang belum ada borangnya
+        const namaTindakan = {
+            'alamat': 'Alamat Terkini Defendan',
+            'saman_a': 'Saman (Borang A)',
+            'saman_memo': 'Saman (Memo Luar Kawasan)',
+            'saman_tampal': 'Saman (Tampal)'
+        };
+        alert("Modul Pembangunan: Fungsi untuk [" + namaTindakan[jenis] + "] akan ditambah dan direalisasikan pada fasa seterusnya.");
+    }
+}
+</script>
 </body>
 </html>

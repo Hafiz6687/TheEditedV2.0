@@ -2178,16 +2178,23 @@ function bukaPreviewNotisSebutan() {
         masaSebutanText = `${jamFormat}:${minit} ${ampm}`;
     }
 
-    // Ekstrak dan Kira Jumlah Tuntutan (Untuk Surat Defendan)
+// Ekstrak dan Kira Jumlah Tuntutan (Untuk Surat Defendan)
     let jumlahKeseluruhan = 0;
-    if (memoriTuntutan && memoriTuntutan.length > 0) {
-        memoriTuntutan.forEach(item => {
+    
+    // LOGIK BARU: Tarik data tuntutan dari memori kes yang tersimpan, bukan borang kosong
+    let senaraiTuntutanSemasa = [];
+    if (kes.dataBorang && kes.dataBorang.tuntutanBiasa && kes.dataBorang.tuntutanBiasa.length > 0) {
+        senaraiTuntutanSemasa = kes.dataBorang.tuntutanBiasa;
+    }
+
+    if (senaraiTuntutanSemasa.length > 0) {
+        senaraiTuntutanSemasa.forEach(item => {
             let jum = parseFloat(item.jumlah);
             if (!isNaN(jum)) jumlahKeseluruhan += jum;
         });
     }
     const jumlahKeseluruhanFormat = jumlahKeseluruhan.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
+    
     // Format Tarikh Hari Ini untuk Surat
     const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;

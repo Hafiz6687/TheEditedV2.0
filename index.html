@@ -687,6 +687,26 @@ Portal rasmi : jtksm.mohr.gov.my
                 </div>
             </div>
 
+            <!-- BAHAGIAN 3.5: Sejarah Tindakan (Eksklusif PENGURUSAN KES) -->
+            <div class="card full-width" id="kad_sejarah_tindakan" style="display: none;">
+                <div class="card-header">Sejarah Tindakan</div>
+                <div class="card-body">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
+                        <thead style="background-color: var(--card-header-bg);">
+                            <tr>
+                                <th style="width: 5%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Bil.</th>
+                                <th style="width: 20%; padding: 12px; border-bottom: 1px solid var(--border-color);">Tarikh & Masa Rekod</th>
+                                <th style="width: 25%; padding: 12px; border-bottom: 1px solid var(--border-color);">Jenis Tindakan</th>
+                                <th style="width: 50%; padding: 12px; border-bottom: 1px solid var(--border-color);">Butiran Lanjut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mk_body_sejarah">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
            <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
 <div class="card full-width" id="kad_sebutan_kes">
     <div class="card-header">Penetapan Tarikh Sebutan Kes</div>
@@ -1802,6 +1822,19 @@ function bukaMaklumatKes(index) {
             semakButangSebutan();
 
             const isDraf = kes.noKes.includes('DRAF');
+
+    // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan ---
+            const kadSejarah = document.getElementById('kad_sejarah_tindakan');
+            if (kadSejarah) {
+                if (kes.sumberFlow === 'urus') {
+                    kadSejarah.style.display = 'flex';
+                    renderJadualSejarah(indexKesSemasa); // Render data sejarah
+                } else {
+                    kadSejarah.style.display = 'none';
+                }
+            }
+            // --------------------------------------------------------
+    
             const kadSebutan = document.getElementById('kad_sebutan_kes');
             
             if (kadSebutan) {
@@ -2057,9 +2090,12 @@ function tindakanSebutan() {
             document.getElementById('menuBatal').style.display = 'flex';
             document.getElementById('menuSelesai').style.display = 'none';
 
-            menuCetakG1.onclick = function() {
+menuCetakG1.onclick = function() {
                 document.getElementById('actionMenu').classList.remove('show');
                 window.print();
+
+                // --- TAMBAH BARIS REKOD INI ---
+                rekodSejarahTindakan(indexKesSemasa, "Tarik Balik Kes", "Akuan Penarikan Balik Kes telah dijana dan dicetak oleh sistem.");
                 
                 setTimeout(() => {
                     menuCetakG1.style.display = 'none';
@@ -2087,22 +2123,26 @@ window.cetakNotis = function(jenis) {
     window.print();
     document.body.classList.remove('print-only-' + jenis);
 
-    // 3. Kemaskini status & ubah rupa butang jadi hijau (Selesai)
+    // Dapatkan tarikh dan masa yang diisi untuk dimasukkan dalam rekod
+    const tarikhSebutan = document.getElementById('mk_tarikh_sebutan').value || '-';
+    const masaSebutan = document.getElementById('mk_masa_sebutan').value || '-';
+    const butiranSebutan = `Tarikh sebutan ditetapkan pada ${tarikhSebutan} jam ${masaSebutan}.`;
+
+    // 3. Kemaskini status & rekod sejarah
     if (jenis === 'pengadu') {
         window.isNotisPengaduPrinted = true;
+        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan", `${butiranSebutan} (Surat Notis Pengadu dijana dan dicetak).`); // <-- Rekod di sini
+        
         const btnP = document.getElementById('menuCetakNotisPengadu');
-        if (btnP) {
-            btnP.innerHTML = '✅ Cetak Notis Sebutan Pengadu';
-            btnP.style.color = '#10b981'; // Hijau
-        }
+        if (btnP) { btnP.innerHTML = '✅ Cetak Notis Sebutan Pengadu'; btnP.style.color = '#10b981'; }
     } else if (jenis === 'defendan') {
         window.isNotisDefendanPrinted = true;
+        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan", `${butiranSebutan} (Surat Notis Defendan dijana dan dicetak).`); // <-- Rekod di sini
+        
         const btnD = document.getElementById('menuCetakNotisDefendan');
-        if (btnD) {
-            btnD.innerHTML = '✅ Cetak Notis Sebutan Defendan';
-            btnD.style.color = '#10b981'; // Hijau
-        }
+        if (btnD) { btnD.innerHTML = '✅ Cetak Notis Sebutan Defendan'; btnD.style.color = '#10b981'; }
     }
+    // NOTA: Dalam kod anda, ada satu simbol '}' yang berlebihan di sini. Saya telah membuangnya.
 
     // 4. Semak jika kedua-duanya dah dicetak, terus kembali ke Senarai Tugas
     if (window.isNotisPengaduPrinted && window.isNotisDefendanPrinted) {
@@ -5454,6 +5494,61 @@ function janaNoKesBaru() {
                 }
             }
         }
+       // --- FUNGSI BARU: Merekod Sejarah Tindakan ke dalam memori ---
+function rekodSejarahTindakan(index, tindakan, butiran) {
+    if (index < 0 || !memoriSenaraiKes[index]) return;
+    const kes = memoriSenaraiKes[index];
+    
+    // Wujudkan array sejarah jika belum ada
+    if (!kes.sejarahTindakan) kes.sejarahTindakan = [];
+
+    const now = new Date();
+    const masa = now.toLocaleTimeString('ms-MY', { hour12: true, hour: 'numeric', minute: '2-digit' });
+    const tarikh = now.toLocaleDateString('ms-MY');
+
+    kes.sejarahTindakan.push({
+        tarikhMasa: `${tarikh} | ${masa}`,
+        tindakan: tindakan,
+        butiran: butiran
+    });
+
+    simpanSenaraiKeLokal(); // Simpan ke Local Storage supaya tak hilang
+    
+    // Refresh paparan jadual sejarah secara real-time
+    if (document.getElementById('viewMaklumatKes').style.display === 'block' && indexKesSemasa === index) {
+        renderJadualSejarah(index);
+    }
+}
+
+// --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
+function renderJadualSejarah(index) {
+    const kes = memoriSenaraiKes[index];
+    const tbody = document.getElementById('mk_body_sejarah');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    const sejarah = kes.sejarahTindakan || [];
+
+    if (sejarah.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
+        return;
+    }
+
+    // Terbalikkan array supaya tindakan yang terbaharu berada di atas sekali
+    const sejarahTerbalik = [...sejarah].reverse();
+    
+    sejarahTerbalik.forEach((rekod, i) => {
+        const num = sejarah.length - i; 
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${num}</td>
+            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${rekod.tarikhMasa}</td>
+            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-blue); font-weight: bold;">${rekod.tindakan}</td>
+            <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${rekod.butiran}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
     </script>
 </body>
 </html>

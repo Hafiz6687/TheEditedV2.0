@@ -1914,16 +1914,12 @@ function bukaMaklumatKes(index) {
                 kadSebutan.style.display = 'none'; 
             }
 
-            const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
     
             if (btnKemaskiniPendaftaran) {
-                if (isDraf) {
-                    btnKemaskiniPendaftaran.style.display = 'inline-block'; 
-                    // LOGIK BARU: Tukar teks ikut sumber kes
-                    btnKemaskiniPendaftaran.innerHTML = (kes.sumberFlow === 'urus') ? '✏️ Kemaskini Pengurusan' : '✏️ Kemaskini Pendaftaran';
-                } else {
-                    btnKemaskiniPendaftaran.style.display = 'none'; 
-                }
+                // Sentiasa paparkan butang kemaskini tidak kira Draf atau Daftar
+                btnKemaskiniPendaftaran.style.display = 'inline-block'; 
+                btnKemaskiniPendaftaran.innerHTML = (kes.sumberFlow === 'urus') ? '✏️ Kemaskini Pengurusan' : '✏️ Kemaskini Pendaftaran';
             }
 
             document.getElementById('btnEditRekodKes').onclick = function() {
@@ -4434,26 +4430,38 @@ function daftarKesSistem() {
             // --- TAMBAH KOD INI UNTUK TANGKAP SEMUA DATA BORANG PENDAFTARAN ---
             const dataPenuh = kumpulDataBorang(); 
 
-const rekodRasmi = { 
+            // --- KOD BAHARU: Pelihara sejarah tindakan yang lama supaya tidak terpadam ---
+            let sejarahLama = [];
+            if (isEditMode && indexKesSemasa > -1 && memoriSenaraiKes[indexKesSemasa].sejarahTindakan) {
+                sejarahLama = memoriSenaraiKes[indexKesSemasa].sejarahTindakan;
+            }
+
+            const rekodRasmi = { 
                 noKes: noKesDenganTagDaftar, 
                 namaPengadu: namaPengaduFinal, 
                 namaDefendan: namaDefendanFinal, 
                 jenisAduan: jenisAduan, 
                 tarikh: tarikhHariIni,
                 dataBorang: dataPenuh,
-                sumberFlow: window.paparanSemasa || 'daftar' // <--- TAMBAH BARIS INI
+                sumberFlow: window.paparanSemasa || 'daftar',
+                sejarahTindakan: sejarahLama // <--- KEKALKAN SEJARAH
             };
             // ------------------------------------------------------------------
 
             let indeksSediaAda = (noKesBersih !== "") ? memoriSenaraiKes.findIndex(kes => kes.noKes.split('<br>')[0].trim() === noKesBersih) : -1;
 
-            if (isEditMode) {
+                if (isEditMode) {
                 if (indeksSediaAda !== -1 && indeksSediaAda !== indexKesSemasa) {
                     alert("Ralat: No. Kes " + noKesBersih + " telah digunakan oleh kes lain. Sila masukkan nombor yang berbeza.");
                     document.getElementById('noKes').focus();
                     return;
                 }
                 memoriSenaraiKes[indexKesSemasa] = rekodRasmi;
+                
+                // --- KOD BAHARU: Masukkan log kemaskini ke dalam sejarah ---
+                if (!noKesAsal.includes('DRAF')) {
+                    rekodSejarahTindakan(indexKesSemasa, "Kemaskini Maklumat Kes", "Maklumat pengadu, defendan, atau tuntutan telah dikemaskini.");
+                }
             } else {
                 if (indeksSediaAda !== -1) {
                     alert("AMARAN: No. Kes " + noKesBersih + " telah wujud! Sila masukkan No. Kes baharu supaya kes lama tidak tertindih.");
@@ -4548,17 +4556,24 @@ function simpanDrafSistem() {
     const tagDraf = "<br><span style='background-color: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700;'>DRAF</span>";
     const noKesDenganTag = noKesBersih + tagDraf;
 
-    // TANGKAP SEMUA DATA DI SINI
+// TANGKAP SEMUA DATA DI SINI
     const dataPenuh = kumpulDataBorang(); 
 
-const rekodDraf = { 
+    // --- KOD BAHARU: Pelihara sejarah tindakan yang lama supaya tidak terpadam ---
+    let sejarahLama = [];
+    if (isEditMode && indexKesSemasa > -1 && memoriSenaraiKes[indexKesSemasa].sejarahTindakan) {
+        sejarahLama = memoriSenaraiKes[indexKesSemasa].sejarahTindakan;
+    }
+
+    const rekodDraf = { 
         noKes: noKesDenganTag, 
         namaPengadu: namaPengaduFinal, 
         namaDefendan: namaDefendanFinal, 
         jenisAduan: jenisAduan, 
         tarikh: tarikhHariIni,
         dataBorang: dataPenuh,
-        sumberFlow: window.paparanSemasa || 'daftar' // <--- TAMBAH BARIS INI
+        sumberFlow: window.paparanSemasa || 'daftar',
+        sejarahTindakan: sejarahLama // <--- KEKALKAN SEJARAH
     };
 
     let indeksSediaAda = memoriSenaraiKes.findIndex(kes => kes.noKes.split('<br>')[0].trim() === noKesBersih);

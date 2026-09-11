@@ -5381,35 +5381,197 @@ function bukaPreviewPDF(jenisBorang) {
             document.body.classList.remove('print-only-akuan', 'print-only-kenyataan');
         }
 
-       // --- FUNGSI BARU: HTML Khas untuk Preview Pengurusan Kes (Tab 1 & Tab 3 sahaja) ---
+// --- FUNGSI BARU: HTML Khas untuk Preview Pengurusan Kes (Tab 1 & Tab 3 sahaja) ---
 function janaHTMLPreviewUrus() {
     const noKes = document.getElementById('noKes')?.value || '-';
-    const p_nama = document.getElementById('namaPengadu')?.value || '-';
-    const d_nama = document.getElementById('namaDefendan')?.value || '-';
-    
+    const isMajikan = document.getElementById('majikan')?.checked;
+    const isBerkumpulan = document.getElementById('aduanBerkumpulan')?.checked;
+
+    // PENGADU
+    const p_namaRaw = document.getElementById('namaPengadu')?.value || '-';
+    const d_namaRaw = document.getElementById('namaDefendan')?.value || '-';
+
+    // ALAMAT PEKERJA
+    const p_a1 = document.getElementById('alamatPengadu1')?.value || "";
+    const p_a2 = document.getElementById('alamatPengadu2')?.value || "";
+    const p_a3 = document.getElementById('alamatPengadu3')?.value || "";
+    const p_pos = document.getElementById('poskodPengadu')?.value || "";
+    const p_bdr = document.getElementById('bandarPengadu')?.value || "";
+    const p_ngr = document.getElementById('negeriPengadu')?.value || "";
+    let p_alamatArr = [p_a1, p_a2, p_a3].filter(Boolean);
+    let p_posBdr = [p_pos, p_bdr].filter(Boolean).join(' ');
+    if(p_posBdr) p_alamatArr.push(p_posBdr);
+    if(p_ngr) p_alamatArr.push(p_ngr);
+    const alamatPekerja = p_alamatArr.length > 0 ? p_alamatArr.join(',<br>') : "-";
+
+    // ALAMAT MAJIKAN / SYARIKAT
+    const d_a1 = document.getElementById('alamatDefendan1')?.value || "";
+    const d_a2 = document.getElementById('alamatDefendan2')?.value || "";
+    const d_a3 = document.getElementById('alamatDefendan3')?.value || "";
+    const d_pos = document.getElementById('poskodDefendan')?.value || "";
+    const d_bdr = document.getElementById('bandarDefendan')?.value || "";
+    const d_ngr = document.getElementById('negeriDefendan')?.value || "";
+    let d_alamatArr = [d_a1, d_a2, d_a3].filter(Boolean);
+    let d_posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
+    if(d_posBdr) d_alamatArr.push(d_posBdr);
+    if(d_ngr) d_alamatArr.push(d_ngr);
+    const alamatSyarikat = d_alamatArr.length > 0 ? d_alamatArr.join(',<br>') : "-";
+
+    const p_bil_pengadu = document.getElementById('bilPengadu')?.value ? document.getElementById('bilPengadu').value + " Orang" : "-";
+
+    // TEMPAT KERJA
+    let tempatKerjaPaparan = '';
+    const alamatBerbeza = document.getElementById('alamatBerbeza')?.checked;
+    if (!alamatBerbeza) {
+        const syarikatNama = d_namaRaw;
+        let alamatArr = [syarikatNama, d_a1, d_a2, d_a3].filter(Boolean);
+        let posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
+        if(posBdr) alamatArr.push(posBdr);
+        if(d_ngr) alamatArr.push(d_ngr);
+        tempatKerjaPaparan = alamatArr.join(',<br>') || '-';
+    } else {
+        const namaTK = document.getElementById('namaTempatKerja')?.value || "";
+        const a1 = document.getElementById('alamatKerja1')?.value || "";
+        const a2 = document.getElementById('alamatKerja2')?.value || "";
+        const a3 = document.getElementById('alamatKerja3')?.value || "";
+        const pos = document.getElementById('poskodKerja')?.value || "";
+        const bdr = document.getElementById('bandarKerja')?.value || "";
+        const ngr = document.getElementById('negeriKerja')?.value || "";
+        let alamatArr = [namaTK, a1, a2, a3].filter(Boolean);
+        let posBdr = [pos, bdr].filter(Boolean).join(' ');
+        if(posBdr) alamatArr.push(posBdr);
+        if(ngr) alamatArr.push(ngr);
+        tempatKerjaPaparan = alamatArr.join(',<br>') || '-';
+    }
+
+    let p_id, p_tel, p_hp, p_emel, p_alamat, p_nama;
+    let d_id, d_tel, d_hp, d_emel, d_alamat, d_nama;
+    let lbl_p_id = "No. MyKad";
+    let lbl_d_id = "No. MyKad";
+
+    if (isMajikan) {
+        p_nama = d_namaRaw;
+        p_id = document.getElementById('noPendDefendan')?.value || "-";
+        p_tel = document.getElementById('telDefendan')?.value || "-";
+        p_hp = document.getElementById('hpDefendan')?.value || "-";
+        p_emel = document.getElementById('emelDefendan')?.value || "-";
+        p_alamat = alamatSyarikat;
+        const jenisPendMajikan = document.getElementById('jenisDaftarDefendan')?.value || "";
+        lbl_p_id = jenisPendMajikan === 'MyKad' ? 'No. MyKad' : 'No. Pendaftaran';
+
+        d_nama = p_namaRaw;
+        d_id = document.getElementById('noPendPengadu')?.value || "-";
+        d_tel = document.getElementById('telPengadu')?.value || "-";
+        d_hp = document.getElementById('hpPengadu')?.value || "-";
+        d_emel = document.getElementById('emelPengadu')?.value || "-";
+        d_alamat = alamatPekerja;
+        const jenisPendPekerja = document.getElementById('jenisDaftarPengadu')?.value || "";
+        lbl_d_id = jenisPendPekerja === 'Pasport' ? 'No. Pasport' : 'No. MyKad';
+    } else {
+        p_nama = p_namaRaw;
+        p_id = document.getElementById('noPendPengadu')?.value || "-";
+        p_tel = document.getElementById('telPengadu')?.value || "-";
+        p_hp = document.getElementById('hpPengadu')?.value || "-";
+        p_emel = document.getElementById('emelPengadu')?.value || "-";
+        p_alamat = alamatPekerja;
+        const jenisPendPekerja = document.getElementById('jenisDaftarPengadu')?.value || "";
+        lbl_p_id = jenisPendPekerja === 'Pasport' ? 'No. Pasport' : 'No. MyKad';
+
+        d_nama = d_namaRaw;
+        d_id = document.getElementById('noPendDefendan')?.value || "-";
+        d_tel = document.getElementById('telDefendan')?.value || "-";
+        d_hp = document.getElementById('hpDefendan')?.value || "-";
+        d_emel = document.getElementById('emelDefendan')?.value || "-";
+        d_alamat = alamatSyarikat;
+        const jenisPendMajikan = document.getElementById('jenisDaftarDefendan')?.value || "";
+        lbl_d_id = jenisPendMajikan === 'MyKad' ? 'No. MyKad' : 'No. Pendaftaran';
+    }
+
+    const headerP = isMajikan ? 'Maklumat Pengadu (Majikan)' : 'Maklumat Pengadu';
+    const headerD = isMajikan ? 'Maklumat Defendan (Pekerja)' : 'Maklumat Defendan (Majikan)';
+
+    let htmlPengadu = `
+        <div style="border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; font-size: 10.5pt; overflow: hidden; break-inside: avoid;">
+            <div style="background-color: #f1f5f9; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; font-size: 11pt;">
+                ${headerP}
+            </div>
+            <div style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Nama Pengadu</div>
+                    <div style="font-weight: bold; text-transform: uppercase; margin-bottom: 15px;">${p_nama}</div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">${lbl_p_id}</div>
+                    <div style="font-weight: 500;">${p_id}</div>
+                </div>
+                <div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Alamat Pengadu</div>
+                    <div style="text-transform: uppercase;">${p_alamat}</div>
+                </div>
+                <div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Alamat tempat pekerjaan ${isMajikan ? 'defendan' : ''}</div>
+                    <div style="text-transform: uppercase; margin-bottom: 15px;">${tempatKerjaPaparan}</div>
+                    ${(!isMajikan && isBerkumpulan) ? `<div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Bilangan pengadu (Termasuk ketua)</div><div style="font-weight: 500;">${p_bil_pengadu}</div>` : ''}
+                </div>
+            </div>
+            <div style="padding: 10px 15px; background-color: #f8fafc; border-top: 1px solid #cbd5e1; display: flex; gap: 20px;">
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">No. Tel.:</span> ${p_tel}</div>
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">No. Tel. (H/P):</span> ${p_hp}</div>
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">Emel:</span> ${p_emel}</div>
+            </div>
+        </div>
+    `;
+
+    let htmlDefendan = `
+        <div style="border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; font-size: 10.5pt; overflow: hidden; break-inside: avoid;">
+            <div style="background-color: #f1f5f9; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; font-size: 11pt;">
+                ${headerD}
+            </div>
+            <div style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Nama Defendan</div>
+                    <div style="font-weight: bold; text-transform: uppercase; margin-bottom: 15px;">${d_nama}</div>
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">${lbl_d_id}</div>
+                    <div style="font-weight: 500;">${d_id}</div>
+                </div>
+                <div style="grid-column: span 2;">
+                    <div style="color: #475569; font-weight: 600; font-size: 0.9em; margin-bottom: 4px;">Alamat Defendan</div>
+                    <div style="text-transform: uppercase;">${d_alamat}</div>
+                </div>
+            </div>
+            <div style="padding: 10px 15px; background-color: #f8fafc; border-top: 1px solid #cbd5e1; display: flex; gap: 20px;">
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">No. Tel.:</span> ${d_tel}</div>
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">No. Tel. (H/P):</span> ${d_hp}</div>
+                <div><span style="color: #475569; font-weight: 600; font-size: 0.9em;">Emel:</span> ${d_emel}</div>
+            </div>
+        </div>
+    `;
+
     const fileList = document.getElementById('fileList');
     const fileCount = fileList ? fileList.children.length : 0;
-    
+
     return `
-        <div class="kertas-a4 page-akuan">
-            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 20px; text-decoration: underline;">
+        <div class="kertas-a4 page-akuan" style="padding: 2cm 2.5cm;">
+            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 25px; text-decoration: underline; color: #1e293b;">
                 PREVIEW MAKLUMAT PENGURUSAN KES
             </div>
-            <div style="margin-bottom: 20px; font-size: 11pt;"><strong>No. Kes:</strong> ${noKes}</div>
+            <div style="margin-bottom: 25px; font-size: 11pt; padding: 10px 15px; background-color: #f1f5f9; border-radius: 8px; display: inline-block; border: 1px solid #cbd5e1;">
+                <strong style="color: #475569;">No. Kes:</strong> <span style="font-weight: bold; color: var(--primary-blue);">${noKes}</span>
+            </div>
             
-            <h3 style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 30px;">1. Maklumat Pengadu & Defendan</h3>
-            <table style="width: 100%; text-align: left; margin-bottom: 20px; font-size: 11pt;">
-                <tr><td style="width: 30%; padding: 8px 0;"><strong>Nama Pengadu:</strong></td><td style="text-transform: uppercase;">${p_nama}</td></tr>
-                <tr><td style="padding: 8px 0;"><strong>Nama Defendan:</strong></td><td style="text-transform: uppercase;">${d_nama}</td></tr>
-            </table>
+            ${htmlPengadu}
+            ${htmlDefendan}
             
-            <h3 style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 30px;">2. Dokumen Sokongan (Lain-lain)</h3>
-            <p style="font-size: 11pt;">Jumlah dokumen dimuat naik ke dalam sistem: <strong>${fileCount} fail</strong></p>
-            <p style="font-size: 0.9em; color: #555; font-style: italic; margin-top: 10px;">*Sila rujuk sistem utama untuk memaparkan atau memuat turun dokumen sokongan fizikal yang dilampirkan.</p>
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 30px; font-size: 10.5pt; overflow: hidden; break-inside: avoid;">
+                <div style="background-color: #f1f5f9; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; font-size: 11pt;">
+                    Dokumen Sokongan (Lain-lain)
+                </div>
+                <div style="padding: 15px;">
+                    <p style="margin-top: 0; margin-bottom: 8px;">Jumlah dokumen dimuat naik ke dalam sistem: <strong>${fileCount} fail</strong></p>
+                    <p style="font-size: 0.9em; color: var(--danger); font-style: italic; margin: 0;">*Sila rujuk sistem utama untuk memaparkan atau memuat turun dokumen sokongan fizikal yang dilampirkan.</p>
+                </div>
+            </div>
         </div>
     `;
 }
-
 // --- FUNGSI BARU: Buka Modal Preview Pengurusan Kes ---
 function bukaPreviewUrus() {
     modCetakSemasa = 'Preview Urus';

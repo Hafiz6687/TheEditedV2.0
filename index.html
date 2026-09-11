@@ -1801,14 +1801,17 @@ function bukaMaklumatKes(index) {
             const kadSebutan = document.getElementById('kad_sebutan_kes');
             
             if (kadSebutan) {
-                if (isDraf) {
-                    kadSebutan.style.display = 'none'; 
-                } else {
+                // LOGIK BARU: Hanya paparkan Penetapan Tarikh Sebutan jika ia dari PENGURUSAN KES dan BUKAN Draf
+                if (kes.sumberFlow === 'urus' && !isDraf) {
                     kadSebutan.style.display = 'flex'; 
+                } else {
+                    // Sembunyikan untuk flow PENDAFTARAN KES atau jika ia adalah Draf
+                    kadSebutan.style.display = 'none'; 
                 }
             }
 
-const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+            const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+    
             if (btnKemaskiniPendaftaran) {
                 if (isDraf) {
                     btnKemaskiniPendaftaran.style.display = 'inline-block'; 

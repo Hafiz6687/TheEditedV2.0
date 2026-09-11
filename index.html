@@ -637,12 +637,12 @@ Portal rasmi : jtksm.mohr.gov.my
         <!-- ========================================== -->
         <div id="viewMaklumatKes" style="display: none; padding: 32px; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box;">
             
-            <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
                 <button class="btn-cancel btn-terapung" onclick="tukarView('senarai')" style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 1.2em; line-height: 1;">←</span> Kembali ke Senarai
                 </button>
-                <button class="btn-edit-tbl btn-terapung" id="btnEditRekodKes" style="padding: 10px 20px; font-weight: bold;">
-                    ✏️ Kemaskini Pendaftaran
+                <button id="btnEditRekodKes" class="btn-terapung" style="display: flex; align-items: center; gap: 8px; background-color: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    <span style="font-size: 1.2em; line-height: 1;">✏️</span> Kemaskini
                 </button>
             </div>
 
@@ -1918,8 +1918,8 @@ const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
     
             if (btnKemaskiniPendaftaran) {
                 // Sentiasa paparkan butang kemaskini tidak kira Draf atau Daftar
-                btnKemaskiniPendaftaran.style.display = 'inline-block'; 
-                btnKemaskiniPendaftaran.innerHTML = (kes.sumberFlow === 'urus') ? '✏️ Kemaskini Pengurusan' : '✏️ Kemaskini Pendaftaran';
+                btnKemaskiniPendaftaran.style.display = 'flex'; // Ditukar ke 'flex' supaya sejajar dengan butang Kembali
+                btnKemaskiniPendaftaran.innerHTML = '<span style="font-size: 1.2em; line-height: 1;">✏️</span> Kemaskini';
             }
 
             document.getElementById('btnEditRekodKes').onclick = function() {

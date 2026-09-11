@@ -6245,7 +6245,7 @@ function bukaPreviewSamanA() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // HTML UTAMA SAMAN A (Dikemaskini dengan line-height: 1.15)
+    // HTML UTAMA SAMAN A
     const htmlSamanA = `
         <style>
             @media print {
@@ -6256,7 +6256,7 @@ function bukaPreviewSamanA() {
                 .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
-            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 11pt; line-height: 1.15; box-sizing: border-box; position: relative; }
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 11pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             .notis-body-wrapper { padding: 0 1.23cm; } 
             .jarak-tab { display: inline-block; width: 40px; }
         </style>
@@ -6264,13 +6264,13 @@ function bukaPreviewSamanA() {
         <div class="kertas-notis" id="kertasSamanA">
             <div style="text-align: right; font-weight: bold; font-size: 10pt; margin-bottom: 15px;">(Buruh 79—Pin. 12/91)</div>
 
-            <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 25px; line-height: 1.15;">
+            <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 25px; line-height: 1.5;">
                 BORANG A<br>
                 SAMAN<br>
                 <span style="font-weight: normal;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
             </div>
 
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.15;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.6;">
                 
                 <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">
                     Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}
@@ -6290,11 +6290,11 @@ function bukaPreviewSamanA() {
                     <div>... Defendan</div>
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 15px;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px;">
                     Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD.toUpperCase()}</strong>.
                 </div>
                 
-                <div style="text-align: justify; margin-bottom: 15px;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px;">
                     Kamu adalah dengan ini disaman untuk hadir di Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:
                 </div>
 
@@ -6321,15 +6321,15 @@ function bukaPreviewSamanA() {
                     </table>
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 15px;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px;">
                     Sila ambil perhatian bahawa kamu boleh membawa saksi-saksi yang kamu ingin panggil bagi pihak kamu ke perbicaraan aduan di atas, dan bahawa kamu boleh memohon kepada Ketua Pengarah bagi saman-saman kepada orang-orang yang harus hadir dan memberi keterangan.
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 15px;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px;">
                     Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 25px;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px;">
                     Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.
                 </div>
 

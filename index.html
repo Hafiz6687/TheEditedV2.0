@@ -742,26 +742,55 @@ Portal rasmi : jtksm.mohr.gov.my
                 </div>
             </div>
 <!-- BAHAGIAN 3.6: Menu Pilihan Tindakan Pengurusan Kes -->
-            <div id="menu_tindakan_urus" style="display: none; margin-bottom: 24px; flex-direction: column; width: 100%; grid-column: 1 / -1;">
-                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 12px; font-size: 0.95em;">PILIHAN TINDAKAN PENGURUSAN:</div>
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
-                    <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('sebutan')">
-                        <span>📅 Sebutan Kes</span>
-                    </button>
-                    <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('alamat')">
-                        <span>📍 Alamat Terkini<br>Defendan</span>
-                    </button>
-                    <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
-                        <span>📄 Saman<br>(Borang A)</span>
-                    </button>
-                    <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_memo')">
-                        <span>📄 Saman<br>(Memo Luar Kawasan)</span>
-                    </button>
-                    <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_tampal')">
-                        <span>📄 Saman<br>(Tampal)</span>
-                    </button>
-                </div>
-            </div>
+            <div class="card full-width" id="menu_tindakan_urus" style="display: none;">
+                <div class="card-header">Pilihan Tindakan Pengurusan</div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('sebutan')">
+                            <span>📅 Sebutan Kes</span>
+                        </button>
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('alamat')">
+                            <span>📍 Alamat Terkini<br>Defendan</span>
+                        </button>
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
+                            <span>📄 Saman<br>(Borang A)</span>
+                        </button>
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600;Boleh, semestinya! Ini adalah satu idea yang sangat baik untuk memastikan antaramuka (UI) sistem anda nampak lebih seragam, kemas dan konsisten dengan bahagian-bahagian lain seperti Maklumat Defendan dan Sejarah.
+
+Anda hanya perlu menukar struktur HTML untuk `PILIHAN TINDAKAN PENGURUSAN` menggunakan susunan *"card"* (kad) yang sama seperti bahagian lain, iaitu dengan menggunakan *class* `card full-width`, `card-header`, dan `card-body`.
+
+Berikut adalah kod yang telah dikemaskini untuk bahagian tersebut (Gantikan kod lama di **BAHAGIAN 3.6** dengan kod di bawah):
+
+```html
+<!-- BAHAGIAN 3.6: Menu Pilihan Tindakan Pengurusan Kes -->
+<div class="card full-width" id="menu_tindakan_urus" style="display: none;">
+  <div class="card-header">Pilihan Tindakan Pengurusan</div>
+  <div class="card-body">
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+      
+      <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('sebutan')">
+        <span>📅 Sebutan Kes</span>
+      </button>
+      
+      <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('alamat')">
+        <span>📍 Alamat Terkini<br>Defendan</span>
+      </button>
+      
+      <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
+        <span>📄 Saman<br>(Borang A)</span>
+      </button>
+      
+      <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_memo')">
+        <span>📄 Saman<br>(Memo Luar Kawasan)</span>
+      </button>
+      
+      <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_tampal')">
+        <span>📄 Saman<br>(Tampal)</span>
+      </button>
+      
+    </div>
+  </div>
+</div>
             
             <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
 <div class="card full-width" id="kad_sebutan_kes">

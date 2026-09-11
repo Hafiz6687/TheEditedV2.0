@@ -4131,13 +4131,14 @@ function resetBorangPendaftaran() {
         document.getElementById('senaraiElaun').innerHTML = '';
         // ----------------------------------------------------------------
 
-        // Kosongkan semula bekas jadual pengadu tambahan
+// Kosongkan semula bekas jadual pengadu tambahan
         janaJadualPengaduTambahan(0);
 
         // --- TAMBAH KOD INI UNTUK SUNTIK NO KES AUTO-INCREMENT ---
         document.getElementById('noKes').value = janaNoKesBaru();
         // ---------------------------------------------------------
 
+        toggleAduan(); // <--- MASUKKAN FUNGSI INI DI SINI
         tukarPeranan(); 
         kawalJenisDaftarPengadu();
         kawalJenisDaftarDefendan();

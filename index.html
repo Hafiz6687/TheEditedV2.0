@@ -687,7 +687,7 @@ Portal rasmi : jtksm.mohr.gov.my
                 </div>
             </div>
 
-            <!-- BAHAGIAN 3.5: Sejarah Tindakan (Eksklusif PENGURUSAN KES) -->
+<!-- BAHAGIAN 3.5: Sejarah Tindakan (Eksklusif PENGURUSAN KES) -->
             <div class="card full-width" id="kad_sejarah_tindakan" style="display: none;">
                 <div class="card-header">Sejarah Tindakan</div>
                 <div class="card-body">
@@ -695,9 +695,10 @@ Portal rasmi : jtksm.mohr.gov.my
                         <thead style="background-color: var(--card-header-bg);">
                             <tr>
                                 <th style="width: 5%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Bil.</th>
-                                <th style="width: 20%; padding: 12px; border-bottom: 1px solid var(--border-color);">Tarikh & Masa Rekod</th>
-                                <th style="width: 25%; padding: 12px; border-bottom: 1px solid var(--border-color);">Jenis Tindakan</th>
-                                <th style="width: 50%; padding: 12px; border-bottom: 1px solid var(--border-color);">Butiran Lanjut</th>
+                                <th style="width: 15%; padding: 12px; border-bottom: 1px solid var(--border-color);">Tarikh & Masa Rekod</th>
+                                <th style="width: 20%; padding: 12px; border-bottom: 1px solid var(--border-color);">Jenis Tindakan</th>
+                                <th style="width: 45%; padding: 12px; border-bottom: 1px solid var(--border-color);">Butiran Lanjut</th>
+                                <th style="width: 15%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Jana Dokumen</th>
                             </tr>
                         </thead>
                         <tbody id="mk_body_sejarah">
@@ -706,7 +707,6 @@ Portal rasmi : jtksm.mohr.gov.my
                     </table>
                 </div>
             </div>
-            
            <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
 <div class="card full-width" id="kad_sebutan_kes">
     <div class="card-header">Penetapan Tarikh Sebutan Kes</div>
@@ -2128,16 +2128,16 @@ window.cetakNotis = function(jenis) {
     const masaSebutan = document.getElementById('mk_masa_sebutan').value || '-';
     const butiranSebutan = `Tarikh sebutan ditetapkan pada ${tarikhSebutan} jam ${masaSebutan}.`;
 
-    // 3. Kemaskini status & rekod sejarah
+// 3. Kemaskini status & rekod sejarah
     if (jenis === 'pengadu') {
         window.isNotisPengaduPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan", `${butiranSebutan} (Surat Notis Pengadu dijana dan dicetak).`); // <-- Rekod di sini
+        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan (Pengadu)", `${butiranSebutan} (Surat Notis Pengadu dijana dan dicetak).`); // <-- DIKEMASKINI
         
         const btnP = document.getElementById('menuCetakNotisPengadu');
         if (btnP) { btnP.innerHTML = '✅ Cetak Notis Sebutan Pengadu'; btnP.style.color = '#10b981'; }
     } else if (jenis === 'defendan') {
         window.isNotisDefendanPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan", `${butiranSebutan} (Surat Notis Defendan dijana dan dicetak).`); // <-- Rekod di sini
+        rekodSejarahTindakan(indexKesSemasa, "Notis Sebutan (Defendan)", `${butiranSebutan} (Surat Notis Defendan dijana dan dicetak).`); // <-- DIKEMASKINI
         
         const btnD = document.getElementById('menuCetakNotisDefendan');
         if (btnD) { btnD.innerHTML = '✅ Cetak Notis Sebutan Defendan'; btnD.style.color = '#10b981'; }
@@ -5530,7 +5530,8 @@ function renderJadualSejarah(index) {
     const sejarah = kes.sejarahTindakan || [];
 
     if (sejarah.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
+        // DIKEMASKINI: colspan ditukar dari 4 ke 5
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
         return;
     }
 
@@ -5539,12 +5540,26 @@ function renderJadualSejarah(index) {
     
     sejarahTerbalik.forEach((rekod, i) => {
         const num = sejarah.length - i; 
+
+        // --- LOGIK BARU: Butang Jana Dokumen berdasarkan Jenis Tindakan ---
+        let btnJana = "-";
+        
+        // 1. Jika Notis Sebutan (Panggil semula preview Notis)
+        if (rekod.tindakan.includes("Notis Sebutan")) {
+            btnJana = `<button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px; width: 100%;" onclick="bukaPreviewNotisSebutan()">📄 Papar Notis</button>`;
+        } 
+        // 2. Jika Tarik Balik Kes (Panggil semula preview Akuan Tarik Balik)
+        else if (rekod.tindakan === "Tarik Balik Kes") {
+            btnJana = `<button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px; width: 100%;" onclick="bukaPreviewTarikBalik()">📄 Papar Akuan</button>`;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${num}</td>
             <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${rekod.tarikhMasa}</td>
             <td style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-blue); font-weight: bold;">${rekod.tindakan}</td>
-            <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${rekod.butiran}</td>
+            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); line-height: 1.4;">${rekod.butiran}</td>
+            <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${btnJana}</td>
         `;
         tbody.appendChild(tr);
     });

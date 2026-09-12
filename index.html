@@ -1998,19 +1998,29 @@ function bukaMaklumatKes(index) {
                 </tr>
             `;
 
-            document.getElementById('mk_tarikh_sebutan').value = '';
-            document.getElementById('mk_masa_sebutan').value = '';
-            semakButangSebutan();
-            document.getElementById('mk_tarikh_saman').value = '';
-            document.getElementById('mk_masa_saman').value = '';
-            semakButangSaman();
+            // Reset Sebutan
+            if (document.getElementById('mk_tarikh_sebutan')) document.getElementById('mk_tarikh_sebutan').value = '';
+            if (document.getElementById('mk_masa_sebutan')) document.getElementById('mk_masa_sebutan').value = '';
+            if (typeof semakButangSebutan === 'function') semakButangSebutan();
+            
+            // Reset Saman A
+            if (document.getElementById('mk_tarikh_saman')) document.getElementById('mk_tarikh_saman').value = '';
+            if (document.getElementById('mk_masa_saman')) document.getElementById('mk_masa_saman').value = '';
+            if (typeof semakButangSaman === 'function') semakButangSaman();
+            
             const kadSamanHadir = document.getElementById('kad_saman_hadir');
             if (kadSamanHadir) { kadSamanHadir.style.display = 'none'; }
-            document.getElementById('mk_tarikh_saman_tampal').value = '';
-            document.getElementById('mk_masa_saman_tampal').value = '';
-            semakButangSamanTampal();
-            const kadSamanTampal = document.getElementById('kad_saman_tampal');
-            if (kadSamanTampal) { kadSamanTampal.style.display = 'none'; }    
+
+            // Reset Saman Memo Luar Kawasan (Ganti Saman Tampal)
+            if (document.getElementById('mk_tarikh_saman_memo')) document.getElementById('mk_tarikh_saman_memo').value = '';
+            if (document.getElementById('mk_pejabat_memo')) document.getElementById('mk_pejabat_memo').value = '';
+            if (document.getElementById('mk_alamat1_memo')) document.getElementById('mk_alamat1_memo').value = '';
+            if (document.getElementById('mk_poskod_memo')) document.getElementById('mk_poskod_memo').value = '';
+            if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
+            
+            const kadSamanMemo = document.getElementById('kad_saman_memo');
+            if (kadSamanMemo) { kadSamanMemo.style.display = 'none'; }
+
             const isDraf = kes.noKes.includes('DRAF');
 
 // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---

@@ -6720,55 +6720,165 @@ function toggleKadUrus(jenis) {
     const kadSebutan = document.getElementById('kad_sebutan_kes');
     const kadSamanHadir = document.getElementById('kad_saman_hadir');
     const kadSamanTampal = document.getElementById('kad_saman_tampal');
+    const kadSamanMemo = document.getElementById('kad_saman_memo'); // <-- BARU
     
-    if (jenis === 'sebutan') {
-        if (kadSamanHadir) kadSamanHadir.style.display = 'none';
-        if (kadSamanTampal) kadSamanTampal.style.display = 'none';
-        
-        if (kadSebutan.style.display === 'none' || kadSebutan.style.display === '') {
-            kadSebutan.style.display = 'flex';
-            setTimeout(() => { kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
-        } else {
-            kadSebutan.style.display = 'none';
-        }
-    } else if (jenis === 'alamat') {
-        if (kadSebutan) kadSebutan.style.display = 'none';
-        if (kadSamanHadir) kadSamanHadir.style.display = 'none';
-        if (kadSamanTampal) kadSamanTampal.style.display = 'none';
+    // Simpan status paparan sebelum ia disembunyikan (untuk fungsi toggle buka/tutup)
+    const isSebutanOpen = kadSebutan?.style.display === 'flex';
+    const isSamanAOpen = kadSamanHadir?.style.display === 'flex';
+    const isSamanTampalOpen = kadSamanTampal?.style.display === 'flex';
+    const isSamanMemoOpen = kadSamanMemo?.style.display === 'flex';
+
+    // Sembunyikan semua kad penetapan secara lalai
+    if (kadSebutan) kadSebutan.style.display = 'none';
+    if (kadSamanHadir) kadSamanHadir.style.display = 'none';
+    if (kadSamanTampal) kadSamanTampal.style.display = 'none';
+    if (kadSamanMemo) kadSamanMemo.style.display = 'none'; // <-- BARU
+    
+    // Alamat tiada kad penetapan, ia terus jana pop-up
+    if (jenis === 'alamat') {
         bukaPreviewAlamatTerkini();
-        
-    } else if (jenis === 'saman_a') {
-        if (kadSebutan) kadSebutan.style.display = 'none'; 
-        if (kadSamanTampal) kadSamanTampal.style.display = 'none'; 
-        
-        if (kadSamanHadir.style.display === 'none' || kadSamanHadir.style.display === '') {
-            kadSamanHadir.style.display = 'flex';
-            setTimeout(() => { kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
-        } else {
-            kadSamanHadir.style.display = 'none';
-        }
-        
-    } else if (jenis === 'saman_tampal') {
-        if (kadSebutan) kadSebutan.style.display = 'none'; 
-        if (kadSamanHadir) kadSamanHadir.style.display = 'none'; 
-        
-        if (kadSamanTampal.style.display === 'none' || kadSamanTampal.style.display === '') {
-            kadSamanTampal.style.display = 'flex';
-            setTimeout(() => { kadSamanTampal.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
-        } else {
-            kadSamanTampal.style.display = 'none';
-        }
-        
-    } else {
-        if (kadSebutan) kadSebutan.style.display = 'none';
-        if (kadSamanHadir) kadSamanHadir.style.display = 'none';
-        if (kadSamanTampal) kadSamanTampal.style.display = 'none';
-        
-        const namaTindakan = {
-            'saman_memo': 'Saman (Memo Luar Kawasan)'
-        };
-        alert("Modul Pembangunan: Fungsi untuk [" + namaTindakan[jenis] + "] akan ditambah dan direalisasikan pada fasa seterusnya.");
+        return;
     }
+
+    // Tentukan kad mana yang patut dibuka dan skrol ke arahnya
+    if (jenis === 'sebutan' && !isSebutanOpen) {
+        if (kadSebutan) { kadSebutan.style.display = 'flex'; setTimeout(() => kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
+    } else if (jenis === 'saman_a' && !isSamanAOpen) {
+        if (kadSamanHadir) { kadSamanHadir.style.display = 'flex'; setTimeout(() => kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
+    } else if (jenis === 'saman_tampal' && !isSamanTampalOpen) {
+        if (kadSamanTampal) { kadSamanTampal.style.display = 'flex'; setTimeout(() => kadSamanTampal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
+    } else if (jenis === 'saman_memo' && !isSamanMemoOpen) { // <-- BARU
+        if (kadSamanMemo) { kadSamanMemo.style.display = 'flex'; setTimeout(() => kadSamanMemo.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
+    }
+}
+
+// --- VALIDASI BUTANG SAMAN HADIR (BORANG A) ---
+function semakButangSaman() {
+    const tarikh = document.getElementById('mk_tarikh_saman').value;
+    const masa = document.getElementById('mk_masa_saman').value;
+    const btn = document.getElementById('btnTindakanSaman');
+
+    if (tarikh && masa) {
+        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanSamanA() {
+    const tarikh = document.getElementById('mk_tarikh_saman').value;
+    const masa = document.getElementById('mk_masa_saman').value;
+    if (tarikh && masa) { bukaPreviewSamanA(); }
+}
+
+// --- VALIDASI BUTANG SAMAN HADIR (TAMPAL) ---
+function semakButangSamanTampal() {
+    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
+    const masa = document.getElementById('mk_masa_saman_tampal').value;
+    const btn = document.getElementById('btnTindakanSamanTampal');
+
+    if (tarikh && masa) {
+        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanSamanTampal() {
+    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
+    const masa = document.getElementById('mk_masa_saman_tampal').value;
+    if (tarikh && masa) { bukaPreviewSamanTampal(); 
+    }
+}
+
+// --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
+function semakButangSamanMemo() {
+    const tarikh = document.getElementById('mk_tarikh_saman_memo').value;
+    const masa = document.getElementById('mk_masa_saman_memo').value;
+    const btn = document.getElementById('btnTindakanSamanMemo');
+
+    if (tarikh && masa) {
+        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanSamanMemo() {
+    const tarikh = document.getElementById('mk_tarikh_saman_memo').value;
+    const masa = document.getElementById('mk_masa_saman_memo').value;
+    if (tarikh && masa) { 
+        bukaPreviewSamanMemo(); 
+    }
+}
+
+// =========================================================================
+// FUNGSI MENJANA DAN MEMAPARKAN SURAT SAMAN (MEMO LUAR KAWASAN)
+// =========================================================================
+function bukaPreviewSamanMemo() {
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    if (!kes) return;
+
+    // DRAF HTML SEMENTARA UNTUK MEMO
+    const htmlSamanMemo = `
+        <style>
+            @media print {
+                @page { margin: 0; size: A4 portrait; }
+                body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                body > *:not(#printArea) { display: none !important; }
+                #printArea { display: block !important; }
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 2cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
+            }
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 12pt; line-height: 1.25; box-sizing: border-box; position: relative; }
+        </style>
+        
+        <div class="kertas-notis" id="kertasSamanMemo">
+            <div style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.5; text-align: center; margin-top: 50px;">
+                <div style="font-weight: bold; font-size: 14pt; margin-bottom: 25px; color: var(--primary-blue);">
+                    FLOW SAMAN (MEMO) BERJAYA DIWUJUDKAN
+                </div>
+                <div>
+                    Sila berikan saya senarai teks/perenggan dan susunan format yang sebenar untuk dokumen <strong>Saman (Memo Luar Kawasan)</strong> ini.<br><br>
+                    Setelah anda berikan teks tersebut, saya akan bentukkan kod HTML nya supaya ia kelihatan profesional seperti Borang A dan Saman Tampal.
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('previewContent').innerHTML = htmlSamanMemo;
+    document.getElementById('printArea').innerHTML = htmlSamanMemo;
+
+    // Sembunyikan butang yang tak berkaitan
+    document.getElementById('menuCetakAkuan').style.display = 'none';
+    document.getElementById('menuCetakKenyataan').style.display = 'none';
+    document.getElementById('menuDaftar').style.display = 'none';
+    document.getElementById('menuSelesai').style.display = 'none';
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+
+    // Wujudkan butang cetak memo
+    const menuCetakG1 = document.getElementById('menuCetakG1');
+    menuCetakG1.style.display = 'flex';
+    menuCetakG1.innerHTML = '🖨️ Cetak Saman (Memo Luar Kawasan)';
+    
+    document.getElementById('menuKemaskini').style.display = 'flex';
+    document.getElementById('menuBatal').style.display = 'flex';
+
+    menuCetakG1.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        window.print();
+        
+        // Rekod ke dalam sejarah
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Memo)", "Dokumen Saman (Memo Luar Kawasan) telah dijana dan dicetak.");
+        
+        setTimeout(() => {
+            document.getElementById('modalPreview').style.display = 'none';
+            tukarView('senarai');
+        }, 500);
+    };
+
+    document.getElementById('modalPreview').style.display = 'flex';
 }
 
 // --- VALIDASI BUTANG SAMAN HADIR (BORANG A) ---

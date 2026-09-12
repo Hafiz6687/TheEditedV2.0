@@ -837,9 +837,8 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div> 
-</div> <!-- TAMAT VIEW MAKLUMAT KES -->
 
-<!-- BAHAGIAN 4.6: Penetapan Tarikh Saman Hadir (Tampal) -->
+            <!-- BAHAGIAN 4.6: Penetapan Tarikh Saman Hadir (Tampal) -->
 <div class="card full-width" id="kad_saman_tampal" style="display: none;">
     <div class="card-header">Penetapan Tarikh Saman Hadir (Tampal)</div>
     <div class="card-body">
@@ -871,7 +870,8 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div>
-        
+</div> <!-- TAMAT VIEW MAKLUMAT KES -->
+
         <!-- VIEW PENDAFTARAN (FORM) ASAL -->
         <div id="viewPendaftaranKes">
             
@@ -6723,7 +6723,7 @@ function toggleKadUrus(jenis) {
         
         if (kadSebutan.style.display === 'none' || kadSebutan.style.display === '') {
             kadSebutan.style.display = 'flex';
-            kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
         } else {
             kadSebutan.style.display = 'none';
         }
@@ -6739,7 +6739,7 @@ function toggleKadUrus(jenis) {
         
         if (kadSamanHadir.style.display === 'none' || kadSamanHadir.style.display === '') {
             kadSamanHadir.style.display = 'flex';
-            kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
         } else {
             kadSamanHadir.style.display = 'none';
         }
@@ -6750,7 +6750,7 @@ function toggleKadUrus(jenis) {
         
         if (kadSamanTampal.style.display === 'none' || kadSamanTampal.style.display === '') {
             kadSamanTampal.style.display = 'flex';
-            kadSamanTampal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { kadSamanTampal.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
         } else {
             kadSamanTampal.style.display = 'none';
         }

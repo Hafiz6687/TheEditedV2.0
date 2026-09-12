@@ -857,14 +857,15 @@ Portal rasmi : jtksm.mohr.gov.my
     </div>
 </div>
 
-<!-- BAHAGIAN 4.6: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
+<!-- BAHAGIAN 4.7: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
 <style>
     .grid-memo { display: grid; grid-template-columns: repeat(4, 1fr) 180px; gap: 15px; align-items: end; }
     .grid-memo-span3 { grid-column: span 3; }
+    .grid-memo-span2 { grid-column: span 2; } /* TAMBAHAN BARU */
     .grid-memo-span1 { grid-column: span 1; }
     @media (max-width: 950px) {
         .grid-memo { grid-template-columns: 1fr; gap: 10px; }
-        .grid-memo-span3, .grid-memo-span1 { grid-column: span 1; }
+        .grid-memo-span3, .grid-memo-span2, .grid-memo-span1 { grid-column: span 1; }
     }
 </style>
 
@@ -878,11 +879,7 @@ Portal rasmi : jtksm.mohr.gov.my
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Pejabat Tenaga Kerja Luar Kawasan</label>
                 <input type="text" id="mk_pejabat_memo" placeholder="Cth: Pejabat Tenaga Kerja Segamat" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span1">
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
-                <input type="text" id="mk_poskod_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_memo', 'mk_negeri_memo', 'mk_bandar_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
-            </div>
-            <div class="grid-memo-span1">
+            <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Saman Dikembalikan</label>
                 <input type="date" id="mk_tarikh_saman_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
@@ -892,16 +889,11 @@ Portal rasmi : jtksm.mohr.gov.my
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
                 <input type="text" id="mk_alamat1_memo" placeholder="Baris 1" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span1">
+            <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
                 <select id="mk_bandar_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
                     <option value="">-Sila Pilih-</option>
                 </select>
-            </div>
-            <div class="grid-memo-span1">
-                <button id="btnTindakanSamanMemo" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.85em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanMemo()" disabled>
-                    📄 Jana Saman (Memo)
-                </button>
             </div>
 
             <!-- ROW 3 -->
@@ -909,14 +901,26 @@ Portal rasmi : jtksm.mohr.gov.my
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
                 <input type="text" id="mk_alamat2_memo" placeholder="Baris 2" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span1">
+            <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
                 <select id="mk_negeri_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
                     <option value="">-Sila Pilih-</option>
                 </select>
             </div>
+
+            <!-- ROW 4 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
+                <input type="text" id="mk_alamat3_memo" placeholder="Baris 3" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
             <div class="grid-memo-span1">
-                <!-- Ruang Kosong (Card 5 di Row 3) -->
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                <input type="text" id="mk_poskod_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_memo', 'mk_negeri_memo', 'mk_bandar_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span1">
+                <button id="btnTindakanSamanMemo" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.85em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanMemo()" disabled>
+                    📄 Jana Saman (Memo)
+                </button>
             </div>
 
         </div>
@@ -2011,10 +2015,12 @@ function bukaMaklumatKes(index) {
             const kadSamanHadir = document.getElementById('kad_saman_hadir');
             if (kadSamanHadir) { kadSamanHadir.style.display = 'none'; }
 
-            // Reset Saman Memo Luar Kawasan (Ganti Saman Tampal)
+            // Reset Saman Memo Luar Kawasan
             if (document.getElementById('mk_tarikh_saman_memo')) document.getElementById('mk_tarikh_saman_memo').value = '';
             if (document.getElementById('mk_pejabat_memo')) document.getElementById('mk_pejabat_memo').value = '';
             if (document.getElementById('mk_alamat1_memo')) document.getElementById('mk_alamat1_memo').value = '';
+            if (document.getElementById('mk_alamat2_memo')) document.getElementById('mk_alamat2_memo').value = '';
+            if (document.getElementById('mk_alamat3_memo')) document.getElementById('mk_alamat3_memo').value = '';
             if (document.getElementById('mk_poskod_memo')) document.getElementById('mk_poskod_memo').value = '';
             if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
             

@@ -908,6 +908,56 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div>
+            <!-- BAHAGIAN 4.7: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
+<div class="card full-width" id="kad_saman_memo" style="display: none;">
+    <div class="card-header">Penetapan Tarikh Saman (Memo Luar Kawasan)</div>
+    <div class="card-body">
+        <div class="sebutan-grid-labels">
+            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
+            <div class="info-label" style="margin:0;">Masa Hadir</div>
+            <div class="info-label" style="margin:0; display: flex; align-items: center; gap: 5px;">
+                Tempat Saman Hadir
+                <div class="tooltip-container">
+                    <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
+                    <div class="tooltip-text" style="text-transform: none; font-weight: 500;">
+                        Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
+                    </div>
+                </div>
+            </div>
+            <div></div> <!-- Spacer untuk butang -->
+        </div>
+        
+        <div class="sebutan-grid-inputs">
+            <div>
+                <label class="mobile-label">Tarikh Hadir</label>
+                <input type="date" id="mk_tarikh_saman_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Masa Hadir</label>
+                <input type="time" id="mk_masa_saman_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">
+                    <span style="display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                        Tempat Saman Hadir
+                        <span class="tooltip-container">
+                            <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
+                            <span class="tooltip-text" style="text-transform: none; font-weight: 500;">
+                                Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
+                            </span>
+                        </span>
+                    </span>
+                </label>
+                <input type="text" id="mk_tempat_saman_memo" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            </div>
+            <div>
+                <button id="btnTindakanSamanMemo" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.85em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanMemo()" disabled>
+                    📄 Jana Saman (Memo)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div> <!-- TAMAT VIEW MAKLUMAT KES -->
 

@@ -6548,8 +6548,13 @@ function bukaPreviewSamanTampal() {
     const tempatSamanRaw = document.getElementById('mk_tempat_saman_tampal')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
-    // Ekstrak Nama Pejabat Sahaja (Bahagian pertama sebelum koma)
-    const namaPejabatSaman = tempatSamanRaw.split(',')[0].trim();
+    // Ekstrak Nama Pejabat dan Negeri
+    const arraySaman = tempatSamanRaw.split(',');
+    const namaPejabatSaman = arraySaman[0].trim();
+    let negeriSaman = arraySaman[arraySaman.length - 1].trim(); // Ambil bahagian paling hujung selepas koma terakhir
+    
+    // Buang gelaran rasmi negeri (seperti Darul Takzim, Darul Ehsan) supaya lebih kemas (Cth: NEGERI JOHOR)
+    negeriSaman = negeriSaman.replace(/ Darul \w+/gi, '').replace(/ Wilayah Persekutuan/gi, '');
 
     const tH = new Date();
     const tarikhSamanDD = tH.getDate();
@@ -6566,20 +6571,23 @@ function bukaPreviewSamanTampal() {
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
+                /* Padding diselaraskan kepada Atas/Bawah: 1.5cm, Kiri/Kanan: 2cm */
                 .kertas-notis { margin: 0 !important; padding: 1.5cm 2cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
-            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.25; box-sizing: border-box; position: relative; }
-            .notis-body-wrapper { padding: 0; } 
+            /* Font ditetapkan kepada 12pt */
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 12pt; line-height: 1.25; box-sizing: border-box; position: relative; }
+            .notis-body-wrapper { padding: 0; font-size: 12pt; } 
         </style>
         
         <div class="kertas-notis" id="kertasSamanTampal">
 
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.25;">
                 
                 <div style="text-align: center; font-weight: bold; margin-bottom: 25px;">
                     KETUA PENGARAH TENAGA KERJA KES SAMAN<br>
-                    NO. ${noKes}
+                    NO. ${noKes}<br>
+                    DI ${namaPejabatSaman.toUpperCase()} NEGERI ${negeriSaman.toUpperCase()}
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 10px;">Antara</div>

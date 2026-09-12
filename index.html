@@ -516,7 +516,48 @@
             </div>
         </div> <!-- Penutup modal-box -->
     </div> <!-- Penutup modal-overlay -->
-    
+    <!-- MODAL POP-UP KHAS UNTUK BATAL KES -->
+    <div class="modal-overlay" id="modalBatalKes">
+        <div class="modal-box">
+            <div class="modal-title">Maklumat Pembatalan Kes</div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Kebebasan memfailkan semula kes <span>*</span></label>
+                <div class="input-wrapper radio-group">
+                    <label><input type="radio" name="bk_kebebasan" value="Ya" checked> Ya</label>
+                    <label><input type="radio" name="bk_kebebasan" value="Tidak"> Tidak</label>
+                </div>
+            </div>
+
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Sebab Pembatalan <span>*</span></label>
+                <select id="bk_sebab" onchange="kawalSebabBatal()" style="width: 100%; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="pengadu tidak hadir.">Pengadu tidak hadir.</option>
+                    <option value="saman terhadap Defendan tidak dapat diserahkan dan pengadu tidak dapat membekalkan maklumat mengenainya.">Saman terhadap Defendan tidak dapat diserahkan dan pengadu tidak dapat membekalkan maklumat mengenainya.</option>
+                    <option value="Sebab-sebab lain">Sebab-sebab lain</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_bk_sebab_lain">
+                <label style="text-align: left;">Nyatakan Sebab Lain <span>*</span></label>
+                <textarea id="bk_sebab_lain" rows="3" class="auto-expand" style="resize: vertical; width: 100%; box-sizing: border-box;"></textarea>
+            </div>
+
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Salinan kepada Defendan (s.k.) <span>*</span></label>
+                <div class="input-wrapper radio-group">
+                    <label><input type="radio" name="bk_salinan" value="Ya"> Ya</label>
+                    <label><input type="radio" name="bk_salinan" value="Tidak" checked> Tidak</label>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('modalBatalKes').style.display='none'">Batal</button>
+                <button class="btn-save" onclick="janaBatalKes()">✔ Teruskan</button>
+            </div>
+        </div>
+    </div>
     <!-- PREVIEW MODAL & ACTION ICON BUTTON -->
   <div class="modal-overlay" id="modalPreview" style="z-index: 2000; flex-direction: column; padding: 0; background: rgba(0,0,0,0.8); position: fixed;">      
         <!-- Bahagian Paparan Kertas (A4) -->
@@ -765,7 +806,7 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaPreviewTarikBalik()">
                             <span>🚫 Tarik Balik<br>Kes</span>
                         </button>
-                        <button class="btn-terapung" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaPreviewBatalKes()">
+                        <button class="btn-terapung" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaModalBatalKes()">
                             <span>❌ Batal Kes</span>
                         </button>
                     </div>
@@ -7066,15 +7107,71 @@ function bukaPreviewSamanMemo() {
 
     document.getElementById('modalPreview').style.display = 'flex';
 }
-       // =========================================================================
+// =========================================================================
+// FUNGSI KAWALAN POP-UP BATAL KES
+// =========================================================================
+function bukaModalBatalKes() {
+    document.getElementById('bk_sebab').value = '';
+    document.getElementById('bk_sebab_lain').value = '';
+    document.getElementById('ruangan_bk_sebab_lain').style.display = 'none';
+    document.querySelector('input[name="bk_kebebasan"][value="Ya"]').checked = true;
+    document.querySelector('input[name="bk_salinan"][value="Tidak"]').checked = true;
+    document.getElementById('modalBatalKes').style.display = 'flex';
+}
+
+function kawalSebabBatal() {
+    const sebab = document.getElementById('bk_sebab').value;
+    if (sebab === 'Sebab-sebab lain') {
+        document.getElementById('ruangan_bk_sebab_lain').style.display = 'block';
+    } else {
+        document.getElementById('ruangan_bk_sebab_lain').style.display = 'none';
+    }
+}
+
+function janaBatalKes() {
+    const kebebasan = document.querySelector('input[name="bk_kebebasan"]:checked').value;
+    const sebab = document.getElementById('bk_sebab').value;
+    const sebabLain = document.getElementById('bk_sebab_lain').value.trim();
+    const salinan = document.querySelector('input[name="bk_salinan"]:checked').value;
+
+    if (sebab === '') {
+        alert('Sila pilih Sebab Pembatalan.');
+        return;
+    }
+    if (sebab === 'Sebab-sebab lain' && sebabLain === '') {
+        alert('Sila nyatakan sebab lain secara ringkas.');
+        return;
+    }
+
+    document.getElementById('modalBatalKes').style.display = 'none';
+    
+    // Simpan data pop-up sementara
+    window.tempDataBatal = {
+        kebebasan: kebebasan,
+        sebab: sebab,
+        sebabLain: sebabLain,
+        salinan: salinan
+    };
+
+    // Terus buka surat
+    bukaPreviewBatalKes();
+}
+
+// =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT NOTIS PEMBATALAN KES
 // =========================================================================
 function bukaPreviewBatalKes() {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
+    // 1. TANGKAP DAN PAPAR POP-UP JIKA MAKLUMAT BELUM DIISI (Untuk cetakan dari Sejarah)
+    if (!window.tempDataBatal) {
+        bukaModalBatalKes();
+        return; 
+    }
+
     let noKes = kes.noKes.split('<br>')[0].trim();
-    let namaP = "", alamatP = "", namaD = "";
+    let namaP = "", alamatP = "", namaD = "", alamatD = "";
 
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
@@ -7087,15 +7184,18 @@ function bukaPreviewBatalKes() {
             namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
             alamatP = almtDef || '[ALAMAT PENGADU]';
             namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
+            alamatD = almtPeng || '[ALAMAT DEFENDAN]';
         } else {
             namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
             alamatP = almtPeng || '[ALAMAT PENGADU]';
             namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
+            alamatD = almtDef || '[ALAMAT DEFENDAN]';
         }
     } else {
         namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
         alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
         namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
+        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
     }
 
     const tH = new Date();
@@ -7104,6 +7204,34 @@ function bukaPreviewBatalKes() {
 
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
+
+    // LOGIK PERENGGAN BERDASARKAN POP-UP
+    let kebebasanTeks = window.tempDataBatal.kebebasan === 'Ya' ? 'dengan kebebasan' : 'tanpa kebebasan';
+    let p2HTML = `2.<span class="jarak-tab"></span>Dukacita dimaklumkan bahawa aduan / tuntutan kes buruh tuan/puan seperti nombor rujukan di atas telah <strong>DIBATALKAN</strong> ${kebebasanTeks} memfailkan semula kes.`;
+
+    let p3HTML = '';
+    if (window.tempDataBatal.sebab === 'Sebab-sebab lain') {
+        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:<br><br><div style="margin-left: 40px; font-weight: bold;">${window.tempDataBatal.sebabLain}</div>`;
+    } else {
+        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh ${window.tempDataBatal.sebab}`;
+    }
+
+    let skHTML = '';
+    if (window.tempDataBatal.salinan === 'Ya') {
+        skHTML = `
+            <div style="margin-top: 30px;">
+                <table style="border: none; font-size: 10pt; width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="vertical-align: top; width: 40px; border: none; padding: 0;">s.k:</td>
+                        <td style="vertical-align: top; border: none; padding: 0; text-transform: uppercase;">
+                            <strong>${namaD}</strong><br>
+                            ${alamatD}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        `;
+    }
 
     const templateHeaderHTML = `
         <div class="notis-header">
@@ -7133,6 +7261,7 @@ function bukaPreviewBatalKes() {
         </div>
     `;
 
+    // TEMPLATE PENUTUP (Dengan penambahan S.K secara dinamik)
     const templateFooterHTML = `
         <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
         <div class="notis-slogan">
@@ -7145,6 +7274,7 @@ function bukaPreviewBatalKes() {
             ${namaPegawai}<br>
             <span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
+        ${skHTML}
         <div class="notis-footer-line"></div>
     `;
 
@@ -7201,20 +7331,18 @@ function bukaPreviewBatalKes() {
                     KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>
                     ANTARA PENGADU : ${namaP}<br>
                     TERHADAP DEFENDAN : ${namaD}<br>
-                    PERKARA: NOTIS PEMBATALAN KES <!-- TAJUK NOTIS -->
+                    PERKARA: NOTIS PEMBATALAN KES
                 </div>
                 <hr class="notis-garis-tajuk">
 
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
 
                 <div class="notis-isi" style="text-align: justify;">
-                    2.<span class="jarak-tab"></span>Dukacita dimaklumkan bahawa aduan / tuntutan kes buruh tuan/puan seperti nombor rujukan di atas telah <strong>DIBATALKAN</strong>.
+                    ${p2HTML}
                 </div>
 
                 <div class="notis-isi" style="text-align: justify;">
-                    3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:
-                    <br><br>
-                    <em>(Sila nyatakan sebab pembatalan kes secara manual di ruang ini sebelum cetakan dilakukan)</em>
+                    ${p3HTML}
                 </div>
 
                 ${templateFooterHTML}
@@ -7245,10 +7373,13 @@ function bukaPreviewBatalKes() {
         document.getElementById('actionMenu').classList.remove('show');
         window.print();
         
-        rekodSejarahTindakan(indexKesSemasa, "Batal Kes", "Surat makluman pembatalan kes telah dijana dan dicetak.");
+        let sebabPendek = window.tempDataBatal.sebabLain ? "Sebab lain." : "Pengadu tidak hadir/saman gagal diserah.";
+        rekodSejarahTindakan(indexKesSemasa, "Batal Kes", `Surat makluman pembatalan kes telah dijana dan dicetak. (${sebabPendek})`);
         
         setTimeout(() => {
             document.getElementById('modalPreview').style.display = 'none';
+            // Membersihkan memori temp supaya pop-up sentiasa tanya soalan baru jika kes lain dibatalkan
+            window.tempDataBatal = null;
             tukarView('senarai');
         }, 500);
     };

@@ -6253,23 +6253,23 @@ function bukaPreviewSamanA() {
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
-                /* Kunci Ketinggian 1 Muka Surat Tepat */
-                .kertas-notis { margin: 0 !important; padding: 0.75cm 2cm !important; box-shadow: none !important; width: 100% !important; height: 297mm !important; page-break-after: always; position: relative !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; box-sizing: border-box !important; }
+                /* Padding Kertas Cetak Dikembalikan Kepada Normal, Tiada Flexbox */
+                .kertas-notis { margin: 0 !important; padding: 0.75cm 2cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
             
-            /* Kunci Ketinggian (height: 297mm) dan set display: flex */
-            .kertas-notis { background: white; width: 210mm; height: 297mm; padding: 0.75cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.25; box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+            /* Kertas dengan Position Relative untuk memegang tandatangan di bawah */
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 0.75cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.25; box-sizing: border-box; position: relative; }
             
-            /* Body akan ambil ruang kosong supaya tandatangan auto tertolak ke bawah */
-            .notis-body-wrapper { padding: 0; display: flex; flex-direction: column; flex-grow: 1; } 
+            /* Ruang bawah (padding-bottom 3.5cm) ditambah supaya perenggan tak tertindih dengan kotak tandatangan */
+            .notis-body-wrapper { padding: 0; padding-bottom: 3.5cm; } 
             
             .jarak-tab { display: inline-block; width: 40px; }
         </style>
         
         <div class="kertas-notis" id="kertasSamanA">
-            <!-- Paling Atas Mencecah Margin (margin-top: 0) -->
-            <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 10px 0;">(Buruh 79—Pin. 12/91)</div>
+            <!-- Tajuk Hujung Kanan Atas -->
+            <div style="text-align: right; font-weight: bold; font-size: 10pt; margin-bottom: 10px;">(Buruh 79—Pin. 12/91)</div>
 
             <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 10px; line-height: 1.25;">
                 BORANG A<br>
@@ -6343,19 +6343,20 @@ function bukaPreviewSamanA() {
                     Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">
+                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">
                     Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong>
                 </div>
+            </div>
 
-                <!-- margin-top: auto AKAN MENOLAK KOTAK TANDATANGAN INI KE BAWAH SEKALI MENCECAH MARGIN BOTTOM -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: auto; margin-bottom: 0; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> <!-- Kotak Kosong untuk tolak nama ke Kanan -->
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
-                    </div>
+            <!-- TANDATANGAN DI KUNCI TEGAR (ABSOLUTE) KE HAD MARGIN BAWAH KERTAS -->
+            <div style="position: absolute; bottom: 0.75cm; left: 2cm; right: 2cm; display: grid; grid-template-columns: 1fr 1fr; line-height: 1.25;">
+                <div></div> <!-- Kotak Kosong untuk tolak nama ke Kanan -->
+                <div style="text-align: center;">
+                    <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                    <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
                 </div>
             </div>
+            
         </div>
     `;
 

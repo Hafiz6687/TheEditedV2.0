@@ -834,14 +834,17 @@ Portal rasmi : jtksm.mohr.gov.my
                 <input type="time" id="mk_masa_saman" onchange="semakButangSaman()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div>
-                <label class="mobile-label" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                    Tempat Saman Hadir
-                    <div class="tooltip-container">
-                        <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                        <div class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                            Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                        </div>
-                    </div>
+                <!-- PEMBETULAN: display flex dialihkan ke dalam span supaya mobile-label boleh tersembunyi di PC -->
+                <label class="mobile-label">
+                    <span style="display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                        Tempat Saman Hadir
+                        <span class="tooltip-container">
+                            <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
+                            <span class="tooltip-text" style="text-transform: none; font-weight: 500;">
+                                Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
+                            </span>
+                        </span>
+                    </span>
                 </label>
                 <input type="text" id="mk_tempat_saman" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
             </div>
@@ -883,14 +886,17 @@ Portal rasmi : jtksm.mohr.gov.my
                 <input type="time" id="mk_masa_saman_tampal" onchange="semakButangSamanTampal()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div>
-                <label class="mobile-label" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                    Tempat Saman Hadir
-                    <div class="tooltip-container">
-                        <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                        <div class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                            Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                        </div>
-                    </div>
+                <!-- PEMBETULAN: display flex dialihkan ke dalam span supaya mobile-label boleh tersembunyi di PC -->
+                <label class="mobile-label">
+                    <span style="display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                        Tempat Saman Hadir
+                        <span class="tooltip-container">
+                            <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
+                            <span class="tooltip-text" style="text-transform: none; font-weight: 500;">
+                                Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
+                            </span>
+                        </span>
+                    </span>
                 </label>
                 <input type="text" id="mk_tempat_saman_tampal" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
             </div>

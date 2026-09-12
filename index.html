@@ -804,7 +804,40 @@ Portal rasmi : jtksm.mohr.gov.my
     </div>
 </div>
 
-        </div> <!-- TAMAT VIEW MAKLUMAT KES -->
+           <!-- BAHAGIAN 4.5: Penetapan Tarikh Saman Hadir (Borang A) -->
+<div class="card full-width" id="kad_saman_hadir" style="display: none;">
+    <div class="card-header">Penetapan Tarikh Saman Hadir</div>
+    <div class="card-body">
+        <!-- Grid Responsive Custom (Baris Label dan Baris Input) -->
+        <div class="sebutan-grid-labels">
+            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
+            <div class="info-label" style="margin:0;">Masa Hadir</div>
+            <div class="info-label" style="margin:0;">Tempat Saman Hadir</div>
+            <div></div> <!-- Spacer untuk butang -->
+        </div>
+        
+        <div class="sebutan-grid-inputs">
+            <div>
+                <label class="mobile-label">Tarikh Hadir</label>
+                <input type="date" id="mk_tarikh_saman" onchange="semakButangSaman()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Masa Hadir</label>
+                <input type="time" id="mk_masa_saman" onchange="semakButangSaman()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Tempat Saman Hadir</label>
+                <input type="text" id="mk_tempat_saman" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <button id="btnTindakanSaman" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanA()" disabled>
+                    📄 Jana Saman (Borang A)
+                </button>
+            </div>
+        </div>
+    </div>
+</div> 
+</div> <!-- TAMAT VIEW MAKLUMAT KES -->
 
         <!-- VIEW PENDAFTARAN (FORM) ASAL -->
         <div id="viewPendaftaranKes">
@@ -1883,7 +1916,11 @@ function bukaMaklumatKes(index) {
             document.getElementById('mk_tarikh_sebutan').value = '';
             document.getElementById('mk_masa_sebutan').value = '';
             semakButangSebutan();
-
+            document.getElementById('mk_tarikh_saman').value = '';
+            document.getElementById('mk_masa_saman').value = '';
+            semakButangSaman();
+            const kadSamanHadir = document.getElementById('kad_saman_hadir');
+            if (kadSamanHadir) { kadSamanHadir.style.display = 'none'; }
             const isDraf = kes.noKes.includes('DRAF');
 
 // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---
@@ -6214,9 +6251,10 @@ function bukaPreviewSamanA() {
         </tr>`;
     }
 
-    // Susun Format Tarikh & Masa
-    const tarikhRaw = document.getElementById('mk_tarikh_sebutan')?.value;
-    const masaRaw = document.getElementById('mk_masa_sebutan')?.value;
+    // Susun Format Tarikh, Masa & Tempat (Saman Hadir)
+    const tarikhRaw = document.getElementById('mk_tarikh_saman')?.value;
+    const masaRaw = document.getElementById('mk_masa_saman')?.value;
+    const tempatSamanRaw = document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     let tarikhSebutanDD = ".......";
@@ -6300,9 +6338,9 @@ function bukaPreviewSamanA() {
                     Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD.toUpperCase()}</strong>.
                 </div>
                 
-                <!-- Perenggan 2: Ada Indent (Tabs), Line Spacing 1.25 -->
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">
-                    Kamu adalah dengan ini disaman untuk hadir di Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:
+              <!-- Perenggan 2: Ada Indent (Tabs), Line Spacing 1.25 -->
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">
+                    Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:
                 </div>
 
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">
@@ -6397,43 +6435,70 @@ function bukaPreviewSamanA() {
     document.getElementById('modalPreview').style.display = 'flex';
 }
 
-// --- FUNGSI BARU: Mengawal Paparan Kad Tindakan Pengurusan Kes ---
+// --- FUNGSI MENGUBAH PAPARAN KAD TINDAKAN PENGURUSAN KES ---
 function toggleKadUrus(jenis) {
     const kadSebutan = document.getElementById('kad_sebutan_kes');
+    const kadSamanHadir = document.getElementById('kad_saman_hadir');
     
     if (jenis === 'sebutan') {
-        // Togol papar/sembunyi kad sebutan
+        if (kadSamanHadir) kadSamanHadir.style.display = 'none'; // Tutup kad saman jika terbuka
+        
         if (kadSebutan.style.display === 'none' || kadSebutan.style.display === '') {
             kadSebutan.style.display = 'flex';
-            // Auto scroll supaya pengguna terus nampak kotak sebutan di bawah
             kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
             kadSebutan.style.display = 'none';
         }
     } else if (jenis === 'alamat') {
-        // Tutup kad sebutan jika terbuka
         if (kadSebutan) kadSebutan.style.display = 'none';
-        
-        // Panggil fungsi Preview Notis Alamat Terkini
+        if (kadSamanHadir) kadSamanHadir.style.display = 'none';
         bukaPreviewAlamatTerkini();
         
     } else if (jenis === 'saman_a') {
-        // Tutup kad sebutan jika terbuka
-        if (kadSebutan) kadSebutan.style.display = 'none';
+        if (kadSebutan) kadSebutan.style.display = 'none'; // Tutup kad sebutan jika terbuka
         
-        // Panggil fungsi Preview Saman (Borang A)
-        bukaPreviewSamanA();
+        // Togol papar/sembunyi kad Saman Hadir
+        if (kadSamanHadir.style.display === 'none' || kadSamanHadir.style.display === '') {
+            kadSamanHadir.style.display = 'flex';
+            kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            kadSamanHadir.style.display = 'none';
+        }
         
     } else {
-        // Jika fungsi lain ditekan, pastikan kad sebutan ditutup
         if (kadSebutan) kadSebutan.style.display = 'none';
+        if (kadSamanHadir) kadSamanHadir.style.display = 'none';
         
-        // Peringatan sementara untuk butang yang belum ada borangnya
         const namaTindakan = {
             'saman_memo': 'Saman (Memo Luar Kawasan)',
             'saman_tampal': 'Saman (Tampal)'
         };
         alert("Modul Pembangunan: Fungsi untuk [" + namaTindakan[jenis] + "] akan ditambah dan direalisasikan pada fasa seterusnya.");
+    }
+}
+
+// --- FUNGSI BARU: VALIDASI BUTANG SAMAN HADIR ---
+function semakButangSaman() {
+    const tarikh = document.getElementById('mk_tarikh_saman').value;
+    const masa = document.getElementById('mk_masa_saman').value;
+    const btn = document.getElementById('btnTindakanSaman');
+
+    if (tarikh && masa) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanSamanA() {
+    const tarikh = document.getElementById('mk_tarikh_saman').value;
+    const masa = document.getElementById('mk_masa_saman').value;
+    if (tarikh && masa) {
+        bukaPreviewSamanA(); 
     }
 }
 </script>

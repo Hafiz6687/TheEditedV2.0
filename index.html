@@ -891,9 +891,7 @@ Portal rasmi : jtksm.mohr.gov.my
             </div>
             <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
-                <select id="mk_bandar_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
-                    <option value="">-Sila Pilih-</option>
-                </select>
+                <input type="text" id="mk_bandar_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
 
             <!-- ROW 3 -->
@@ -903,9 +901,7 @@ Portal rasmi : jtksm.mohr.gov.my
             </div>
             <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
-                <select id="mk_negeri_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
-                    <option value="">-Sila Pilih-</option>
-                </select>
+                <input type="text" id="mk_negeri_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
 
             <!-- ROW 4 -->
@@ -926,6 +922,7 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div>
+            
 </div> <!-- TAMAT VIEW MAKLUMAT KES -->
 
         <!-- VIEW PENDAFTARAN (FORM) ASAL -->
@@ -2022,6 +2019,17 @@ function bukaMaklumatKes(index) {
             if (document.getElementById('mk_alamat2_memo')) document.getElementById('mk_alamat2_memo').value = '';
             if (document.getElementById('mk_alamat3_memo')) document.getElementById('mk_alamat3_memo').value = '';
             if (document.getElementById('mk_poskod_memo')) document.getElementById('mk_poskod_memo').value = '';
+            
+            if (document.getElementById('mk_bandar_memo')) {
+                document.getElementById('mk_bandar_memo').value = '';
+                document.getElementById('mk_bandar_memo').placeholder = 'Lengkapkan Poskod';
+                document.getElementById('mk_bandar_memo').setAttribute('readonly', true);
+            }
+            if (document.getElementById('mk_negeri_memo')) {
+                document.getElementById('mk_negeri_memo').value = '';
+                document.getElementById('mk_negeri_memo').placeholder = 'Lengkapkan Poskod';
+                document.getElementById('mk_negeri_memo').setAttribute('readonly', true);
+            }
             if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
             
             const kadSamanMemo = document.getElementById('kad_saman_memo');
@@ -4264,16 +4272,18 @@ function tukarPeranan() {
             semakKelayakanTuntutan(); 
         }
 
-        async function cariPoskodAutomatik(idPoskod, idNegeri, idBandar) {
+async function cariPoskodAutomatik(idPoskod, idNegeri, idBandar) {
             const poskod = document.getElementById(idPoskod).value;
-            const negeriDropdown = document.getElementById(idNegeri);
+            const negeriField = document.getElementById(idNegeri);
             const bandarField = document.getElementById(idBandar);
             const senaraiNegeri = `<option value="">-Sila Pilih Secara Manual-</option><option value="Johor">Johor</option><option value="Kedah">Kedah</option><option value="Kelantan">Kelantan</option><option value="Melaka">Melaka</option><option value="Negeri Sembilan">Negeri Sembilan</option><option value="Pahang">Pahang</option><option value="Perak">Perak</option><option value="Perlis">Perlis</option><option value="Pulau Pinang">Pulau Pinang</option><option value="Sabah">Sabah</option><option value="Sarawak">Sarawak</option><option value="Selangor">Selangor</option><option value="Terengganu">Terengganu</option><option value="W.P Kuala Lumpur">W.P Labuan</option><option value="W.P Putrajaya">W.P Putrajaya</option>`;
 
             if (poskod.length === 5) {
                 try {
-                    negeriDropdown.innerHTML = `<option value="">Mencari...</option>`;
-                    if(bandarField.tagName === 'SELECT') { bandarField.innerHTML = `<option value="">Mencari...</option>`; } else { bandarField.value = "Mencari..."; }
+                    // Tunjuk visual loading sementara API dipanggil
+                    if(negeriField.tagName === 'SELECT') { negeriField.innerHTML = `<option value="">Mencari...</option>`; } else { negeriField.value = "MENCARI..."; }
+                    if(bandarField.tagName === 'SELECT') { bandarField.innerHTML = `<option value="">Mencari...</option>`; } else { bandarField.value = "MENCARI..."; }
+                    
                     const response = await fetch(`https://api.zippopotam.us/MY/${poskod}`);
                     
                     if (response.ok) {
@@ -4284,21 +4294,55 @@ function tukarPeranan() {
                         if(negeri === "Federal Territory of Putrajaya") negeri = "W.P Putrajaya";
                         if(negeri === "Federal Territory of Labuan") negeri = "W.P Labuan";
 
-                        negeriDropdown.innerHTML = `<option value="${negeri}" selected>${negeri}</option>`;
-                        if(bandarField.tagName === 'SELECT') { bandarField.innerHTML = `<option value="${bandar}" selected>${bandar}</option>`; } else { bandarField.value = bandar; }
+                        // Paparkan data yang berjaya ditarik
+                        if(negeriField.tagName === 'SELECT') { 
+                            negeriField.innerHTML = `<option value="${negeri}" selected>${negeri}</option>`; 
+                        } else { 
+                            negeriField.value = negeri.toUpperCase(); 
+                            negeriField.removeAttribute('readonly'); 
+                        }
+                        
+                        if(bandarField.tagName === 'SELECT') { 
+                            bandarField.innerHTML = `<option value="${bandar}" selected>${bandar}</option>`; 
+                        } else { 
+                            bandarField.value = bandar.toUpperCase(); 
+                            bandarField.removeAttribute('readonly'); 
+                        }
                     } else {
-                        alert("⚠️ Poskod tidak ditemui dalam sistem (Mungkin poskod baharu).\n\nSila pastikan poskod dimasukkan dengan betul. Jika ia betul, sila pilih Negeri dan taip nama Bandar anda secara manual.");
-                        negeriDropdown.innerHTML = senaraiNegeri;
+                        // Jika poskod tak dijumpai
+                        alert("⚠️ Poskod tidak ditemui dalam sistem (Mungkin poskod baharu).\n\nSila pastikan poskod dimasukkan dengan betul. Jika ia betul, sila taip/pilih nama Bandar dan Negeri anda secara manual.");
+                        
+                        // Benarkan mod manual
+                        if(negeriField.tagName === 'SELECT') { 
+                            negeriField.innerHTML = senaraiNegeri; 
+                        } else { 
+                            negeriField.value = ""; 
+                            negeriField.placeholder = "Sila taip nama negeri"; 
+                            negeriField.removeAttribute('readonly'); 
+                        }
+                        
                         if(bandarField.tagName === 'SELECT') {
                             const inputManual = document.createElement('input'); inputManual.type = 'text'; inputManual.id = idBandar; inputManual.placeholder = "Sila taip nama bandar";
                             bandarField.parentNode.replaceChild(inputManual, bandarField);
-                        } else { bandarField.value = ""; bandarField.placeholder = "Sila taip nama bandar"; }
+                        } else { 
+                            bandarField.value = ""; 
+                            bandarField.placeholder = "Sila taip nama bandar"; 
+                            bandarField.removeAttribute('readonly'); 
+                        }
                     }
-                } catch (error) { alert("Gangguan capaian internet. Sila pilih secara manual."); negeriDropdown.innerHTML = senaraiNegeri; }
+                } catch (error) { 
+                    alert("Gangguan capaian internet. Sila masukkan secara manual."); 
+                    if(negeriField.tagName === 'SELECT') { negeriField.innerHTML = senaraiNegeri; } else { negeriField.value = ""; negeriField.placeholder = "Sila taip nama negeri"; negeriField.removeAttribute('readonly'); }
+                    if(bandarField.tagName === 'SELECT') {
+                        const inputManual = document.createElement('input'); inputManual.type = 'text'; inputManual.id = idBandar; inputManual.placeholder = "Sila taip nama bandar";
+                        bandarField.parentNode.replaceChild(inputManual, bandarField);
+                    } else { bandarField.value = ""; bandarField.placeholder = "Sila taip nama bandar"; bandarField.removeAttribute('readonly'); }
+                }
             } 
             else if (poskod.length < 5) {
-                negeriDropdown.innerHTML = `<option value="">-Sila Pilih-</option>`;
-                if(bandarField.tagName === 'SELECT') { bandarField.innerHTML = `<option value="">-Sila Pilih-</option>`; } else { bandarField.value = ""; }
+                // Kembalikan ke placeholder asal jika poskod dipadam/kurang 5
+                if(negeriField.tagName === 'SELECT') { negeriField.innerHTML = `<option value="">-Sila Pilih-</option>`; } else { negeriField.value = ""; negeriField.placeholder = "Lengkapkan Poskod"; negeriField.setAttribute('readonly', true); }
+                if(bandarField.tagName === 'SELECT') { bandarField.innerHTML = `<option value="">-Sila Pilih-</option>`; } else { bandarField.value = ""; bandarField.placeholder = "Lengkapkan Poskod"; bandarField.setAttribute('readonly', true); }
             }
         }
 
@@ -6791,23 +6835,36 @@ function bukaPreviewSamanMemo() {
 
     // Dapatkan maklumat asas
     let noKes = kes.noKes.split('<br>')[0].trim();
-    let namaP = "", namaD = "";
+    let namaP = "", namaD = "", alamatD = "";
+    let d_idStr = "(No. Pendaftaran/KP: ....................)";
 
     // Ekstrak Alamat Pengadu dan Defendan
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
         const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
 
+        let almtDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join(', ');
+        let almtPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join(', ');
+
         if (isMajikan) {
             namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
             namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
+            alamatD = almtPeng || '[ALAMAT DEFENDAN]';
+            let idDef = inputs['noPendPengadu'] || '....................';
+            d_idStr = `(No. Kad Pengenalan: ${idDef})`;
         } else {
             namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
             namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
+            alamatD = almtDef || '[ALAMAT DEFENDAN]';
+            let idDef = inputs['noPendDefendan'] || '....................';
+            let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
+            let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
+            d_idStr = `(${labelDef}: ${idDef})`;
         }
     } else {
         namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
         namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
+        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
     }
 
     // Ekstrak Data Dari Kotak Memo Luar Kawasan
@@ -6826,10 +6883,19 @@ function bukaPreviewSamanMemo() {
     if (negeri) alamatMemoArr.push(negeri);
     const alamatMemoLengkap = alamatMemoArr.length > 0 ? alamatMemoArr.join('<br>') : '[ALAMAT PEJABAT]';
 
-    // Format Tarikh Hari Ini untuk Surat
+    // Format Tarikh Hari Ini & Tarikh Dikembalikan
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
+
+    const tarikhKembaliRaw = document.getElementById('mk_tarikh_saman_memo')?.value;
+    let tarikhKembaliText = "........................";
+    if (tarikhKembaliRaw && tarikhKembaliRaw !== "") {
+        let tK = new Date(tarikhKembaliRaw);
+        if (!isNaN(tK)) {
+            tarikhKembaliText = `${tK.getDate()} ${bulanMY[tK.getMonth()]} ${tK.getFullYear()}`;
+        }
+    }
 
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'MOHAMAD HAFIZ BIN ABU BAKAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
@@ -6879,7 +6945,7 @@ function bukaPreviewSamanMemo() {
         <div class="notis-footer-line"></div>
     `;
 
-    // STRUKTUR ASAS (Diambil dari format Notis Sebutan)
+    // STRUKTUR ASAS SAMAN (MEMO)
     const htmlSamanMemo = `
         <style>
             @media print {
@@ -6938,12 +7004,16 @@ function bukaPreviewSamanMemo() {
 
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
 
-                <div class="notis-isi">
-                    2.<span class="jarak-tab"></span>Sila masukkan draf perenggan Saman (Memo Luar Kawasan) anda di sini. Struktur ini menggunakan susun atur yang sama dengan Notis Sebutan supaya mudah untuk anda ubah/edit.
+                <div class="notis-isi" style="text-align: justify;">
+                    2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan BORANG A, SAMAN terhadap <strong>${namaD.toUpperCase()}</strong> <strong>${d_idStr}</strong> yang beralamat di <strong>${alamatD.toUpperCase()}</strong>. Sukacita sekiranya pihak tuan dapat menyerahkan saman tersebut dan kembalikan sesalinan saman tersebut ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> bersama-sama afidavit penyampaian.
                 </div>
 
-                <div class="notis-isi">
-                    3.<span class="jarak-tab"></span>Jika ada perenggan tambahan, boleh senaraikannya untuk saya susunkan ke dalam HTML.
+                <div class="notis-isi" style="text-align: justify;">
+                    3.<span class="jarak-tab"></span>Sekiranya saman tersebut beserta bersama-sama afidavit penyampaian tidak dapat dikembalikan ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> selepas serahan dilakukan, diharap pihak tuan dapat mengemukakan maklum balas berkaitan serahan saman tersebut melalui emel hafizabubakar@mohr.gov.my bagi memastikan kelancaran pengendalian kes ini.
+                </div>
+
+                <div class="notis-isi" style="text-align: justify;">
+                    4.<span class="jarak-tab"></span>Perhatian dan kerjasama tuan/puan dalam perkara ini amatlah kami hargai.
                 </div>
 
                 ${templateFooterHTML}

@@ -756,7 +756,7 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
                             <span>📄 Saman<br>(Borang A)</span>
                         </button>
-                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_tampal')">
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaPreviewSamanTampal()">
                             <span>📄 Saman<br>(Tampal)</span>
                         </button>
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_memo')">
@@ -857,108 +857,71 @@ Portal rasmi : jtksm.mohr.gov.my
     </div>
 </div>
 
-<!-- BAHAGIAN 4.6: Penetapan Tarikh Saman Hadir (Tampal) -->
-<div class="card full-width" id="kad_saman_tampal" style="display: none;">
-    <div class="card-header">Penetapan Tarikh Saman Hadir (Tampal)</div>
-    <div class="card-body">
-        <div class="sebutan-grid-labels">
-            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
-            <div class="info-label" style="margin:0;">Masa Hadir</div>
-            <div class="info-label" style="margin:0; display: flex; align-items: center; gap: 5px;">
-                Tempat Saman Hadir
-                <div class="tooltip-container">
-                    <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                    <div class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                        Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                    </div>
-                </div>
-            </div>
-            <div></div> <!-- Spacer untuk butang -->
-        </div>
-        
-        <div class="sebutan-grid-inputs">
-            <div>
-                <label class="mobile-label">Tarikh Hadir</label>
-                <input type="date" id="mk_tarikh_saman_tampal" onchange="semakButangSamanTampal()" style="margin:0; height: 42px; box-sizing: border-box;">
-            </div>
-            <div>
-                <label class="mobile-label">Masa Hadir</label>
-                <input type="time" id="mk_masa_saman_tampal" onchange="semakButangSamanTampal()" style="margin:0; height: 42px; box-sizing: border-box;">
-            </div>
-            <div>
-                <!-- PEMBETULAN: display flex dialihkan ke dalam span supaya mobile-label boleh tersembunyi di PC -->
-                <label class="mobile-label">
-                    <span style="display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                        Tempat Saman Hadir
-                        <span class="tooltip-container">
-                            <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                            <span class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                                Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                            </span>
-                        </span>
-                    </span>
-                </label>
-                <input type="text" id="mk_tempat_saman_tampal" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-            </div>
-            <div>
-                <button id="btnTindakanSamanTampal" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanTampal()" disabled>
-                    📄 Jana Saman (Tampal)
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-            <!-- BAHAGIAN 4.7: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
+<!-- BAHAGIAN 4.6: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
+<style>
+    .grid-memo { display: grid; grid-template-columns: repeat(4, 1fr) 180px; gap: 15px; align-items: end; }
+    .grid-memo-span3 { grid-column: span 3; }
+    .grid-memo-span1 { grid-column: span 1; }
+    @media (max-width: 950px) {
+        .grid-memo { grid-template-columns: 1fr; gap: 10px; }
+        .grid-memo-span3, .grid-memo-span1 { grid-column: span 1; }
+    }
+</style>
+
 <div class="card full-width" id="kad_saman_memo" style="display: none;">
     <div class="card-header">Penetapan Tarikh Saman (Memo Luar Kawasan)</div>
     <div class="card-body">
-        <div class="sebutan-grid-labels">
-            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
-            <div class="info-label" style="margin:0;">Masa Hadir</div>
-            <div class="info-label" style="margin:0; display: flex; align-items: center; gap: 5px;">
-                Tempat Saman Hadir
-                <div class="tooltip-container">
-                    <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                    <div class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                        Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                    </div>
-                </div>
+        <div class="grid-memo">
+            
+            <!-- ROW 1 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Pejabat Tenaga Kerja Luar Kawasan</label>
+                <input type="text" id="mk_pejabat_memo" placeholder="Cth: Pejabat Tenaga Kerja Segamat" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div></div> <!-- Spacer untuk butang -->
-        </div>
-        
-        <div class="sebutan-grid-inputs">
-            <div>
-                <label class="mobile-label">Tarikh Hadir</label>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                <input type="text" id="mk_poskod_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_memo', 'mk_negeri_memo', 'mk_bandar_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Saman Dikembalikan</label>
                 <input type="date" id="mk_tarikh_saman_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div>
-                <label class="mobile-label">Masa Hadir</label>
-                <input type="time" id="mk_masa_saman_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+
+            <!-- ROW 2 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
+                <input type="text" id="mk_alamat1_memo" placeholder="Baris 1" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div>
-                <label class="mobile-label">
-                    <span style="display: inline-flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                        Tempat Saman Hadir
-                        <span class="tooltip-container">
-                            <span style="font-size: 1.2em; color: var(--primary-blue); cursor: help;">ℹ️</span>
-                            <span class="tooltip-text" style="text-transform: none; font-weight: 500;">
-                                Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim
-                            </span>
-                        </span>
-                    </span>
-                </label>
-                <input type="text" id="mk_tempat_saman_memo" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
+                <select id="mk_bandar_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                </select>
             </div>
-            <div>
+            <div class="grid-memo-span1">
                 <button id="btnTindakanSamanMemo" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.85em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanMemo()" disabled>
                     📄 Jana Saman (Memo)
                 </button>
             </div>
+
+            <!-- ROW 3 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
+                <input type="text" id="mk_alamat2_memo" placeholder="Baris 2" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
+                <select id="mk_negeri_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                </select>
+            </div>
+            <div class="grid-memo-span1">
+                <!-- Ruang Kosong (Card 5 di Row 3) -->
+            </div>
+
         </div>
     </div>
 </div>
-
 </div> <!-- TAMAT VIEW MAKLUMAT KES -->
 
         <!-- VIEW PENDAFTARAN (FORM) ASAL -->
@@ -6611,7 +6574,7 @@ function bukaPreviewSamanTampal() {
         alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
     }
 
-    const tempatSamanRaw = document.getElementById('mk_tempat_saman_tampal')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
+    const tempatSamanRaw = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     // Ekstrak Nama Pejabat dan Negeri
@@ -6735,20 +6698,17 @@ function bukaPreviewSamanTampal() {
 function toggleKadUrus(jenis) {
     const kadSebutan = document.getElementById('kad_sebutan_kes');
     const kadSamanHadir = document.getElementById('kad_saman_hadir');
-    const kadSamanTampal = document.getElementById('kad_saman_tampal');
-    const kadSamanMemo = document.getElementById('kad_saman_memo'); // <-- BARU
+    const kadSamanMemo = document.getElementById('kad_saman_memo');
     
     // Simpan status paparan sebelum ia disembunyikan (untuk fungsi toggle buka/tutup)
     const isSebutanOpen = kadSebutan?.style.display === 'flex';
     const isSamanAOpen = kadSamanHadir?.style.display === 'flex';
-    const isSamanTampalOpen = kadSamanTampal?.style.display === 'flex';
     const isSamanMemoOpen = kadSamanMemo?.style.display === 'flex';
 
     // Sembunyikan semua kad penetapan secara lalai
     if (kadSebutan) kadSebutan.style.display = 'none';
     if (kadSamanHadir) kadSamanHadir.style.display = 'none';
-    if (kadSamanTampal) kadSamanTampal.style.display = 'none';
-    if (kadSamanMemo) kadSamanMemo.style.display = 'none'; // <-- BARU
+    if (kadSamanMemo) kadSamanMemo.style.display = 'none'; 
     
     // Alamat tiada kad penetapan, ia terus jana pop-up
     if (jenis === 'alamat') {
@@ -6761,9 +6721,7 @@ function toggleKadUrus(jenis) {
         if (kadSebutan) { kadSebutan.style.display = 'flex'; setTimeout(() => kadSebutan.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
     } else if (jenis === 'saman_a' && !isSamanAOpen) {
         if (kadSamanHadir) { kadSamanHadir.style.display = 'flex'; setTimeout(() => kadSamanHadir.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
-    } else if (jenis === 'saman_tampal' && !isSamanTampalOpen) {
-        if (kadSamanTampal) { kadSamanTampal.style.display = 'flex'; setTimeout(() => kadSamanTampal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
-    } else if (jenis === 'saman_memo' && !isSamanMemoOpen) { // <-- BARU
+    } else if (jenis === 'saman_memo' && !isSamanMemoOpen) { 
         if (kadSamanMemo) { kadSamanMemo.style.display = 'flex'; setTimeout(() => kadSamanMemo.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); }
     }
 }
@@ -6787,33 +6745,14 @@ function tindakanSamanA() {
     if (tarikh && masa) { bukaPreviewSamanA(); }
 }
 
-// --- VALIDASI BUTANG SAMAN HADIR (TAMPAL) ---
-function semakButangSamanTampal() {
-    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
-    const masa = document.getElementById('mk_masa_saman_tampal').value;
-    const btn = document.getElementById('btnTindakanSamanTampal');
-
-    if (tarikh && masa) {
-        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-    } else {
-        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
-    }
-}
-
-function tindakanSamanTampal() {
-    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
-    const masa = document.getElementById('mk_masa_saman_tampal').value;
-    if (tarikh && masa) { bukaPreviewSamanTampal(); 
-    }
-}
-
 // --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
 function semakButangSamanMemo() {
     const tarikh = document.getElementById('mk_tarikh_saman_memo').value;
-    const masa = document.getElementById('mk_masa_saman_memo').value;
+    const pejabat = document.getElementById('mk_pejabat_memo').value;
     const btn = document.getElementById('btnTindakanSamanMemo');
 
-    if (tarikh && masa) {
+    // Butang hanya hidup jika Tarikh dan Pejabat telah diisi
+    if (tarikh && pejabat.trim() !== '') {
         btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     } else {
         btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
@@ -6822,8 +6761,7 @@ function semakButangSamanMemo() {
 
 function tindakanSamanMemo() {
     const tarikh = document.getElementById('mk_tarikh_saman_memo').value;
-    const masa = document.getElementById('mk_masa_saman_memo').value;
-    if (tarikh && masa) { 
+    if (tarikh) { 
         bukaPreviewSamanMemo(); 
     }
 }
@@ -6895,45 +6833,6 @@ function bukaPreviewSamanMemo() {
     };
 
     document.getElementById('modalPreview').style.display = 'flex';
-}
-
-// --- VALIDASI BUTANG SAMAN HADIR (BORANG A) ---
-function semakButangSaman() {
-    const tarikh = document.getElementById('mk_tarikh_saman').value;
-    const masa = document.getElementById('mk_masa_saman').value;
-    const btn = document.getElementById('btnTindakanSaman');
-
-    if (tarikh && masa) {
-        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-    } else {
-        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
-    }
-}
-
-function tindakanSamanA() {
-    const tarikh = document.getElementById('mk_tarikh_saman').value;
-    const masa = document.getElementById('mk_masa_saman').value;
-    if (tarikh && masa) { bukaPreviewSamanA(); }
-}
-
-// --- VALIDASI BUTANG SAMAN HADIR (TAMPAL) ---
-function semakButangSamanTampal() {
-    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
-    const masa = document.getElementById('mk_masa_saman_tampal').value;
-    const btn = document.getElementById('btnTindakanSamanTampal');
-
-    if (tarikh && masa) {
-        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-    } else {
-        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
-    }
-}
-
-function tindakanSamanTampal() {
-    const tarikh = document.getElementById('mk_tarikh_saman_tampal').value;
-    const masa = document.getElementById('mk_masa_saman_tampal').value;
-    if (tarikh && masa) { bukaPreviewSamanTampal(); 
-    }
 }
 </script>
 </body>

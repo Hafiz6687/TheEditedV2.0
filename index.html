@@ -5970,7 +5970,7 @@ function renderJadualSejarah(index) {
         // Cari index asal di dalam array memori sebelum diterbalikkan (sangat penting supaya sistem tak salah padam)
         const originalIndex = sejarah.length - 1 - i;
 
-// --- LOGIK BARU: Butang Jana Dokumen & Hapus berdasarkan Jenis Tindakan ---
+        // --- LOGIK BARU: Butang Jana Dokumen & Hapus berdasarkan Jenis Tindakan ---
         let btnJana = "-";
         
         // 1. Jika Notis Sebutan (Ekstrak tarikh & masa dari butiran sejarah)
@@ -5986,7 +5986,7 @@ function renderJadualSejarah(index) {
                     <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
                 </div>`;
         } 
-        // 2. Jika Tarik Balik Kes (Panggil semula preview Akuan Tarik Balik)
+        // 2. Jika Tarik Balik Kes
         else if (rekod.tindakan === "Tarik Balik Kes") {
             btnJana = `
                 <div style="display: flex; gap: 5px; justify-content: center;">
@@ -5994,7 +5994,7 @@ function renderJadualSejarah(index) {
                     <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
                 </div>`;
         }
-        // 3. Jika Alamat Terkini Defendan (Panggil preview Alamat Terkini)
+        // 3. Jika Alamat Terkini Defendan
         else if (rekod.tindakan === "Alamat Terkini Defendan") {
             btnJana = `
                 <div style="display: flex; gap: 5px; justify-content: center;">
@@ -6009,8 +6009,24 @@ function renderJadualSejarah(index) {
                     <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA()">📄 Jana</button>
                     <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
                 </div>`;
+        }
+        // 5. Jika Saman (Tampal)
+        else if (rekod.tindakan === "Saman (Tampal)") {
+            btnJana = `
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button>
+                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
+                </div>`;
+        }
+        // 6. Jika Saman (Memo Luar Kawasan)
+        else if (rekod.tindakan === "Saman (Memo)") {
+            btnJana = `
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo()">📄 Jana</button>
+                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
+                </div>`;
         } else {
-            // 5. Jika tindakan lain yang tiada surat, paparkan butang Hapus sahaja
+            // 7. Jika tindakan lain yang tiada surat
             btnJana = `
                 <div style="display: flex; gap: 5px; justify-content: center;">
                     <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>

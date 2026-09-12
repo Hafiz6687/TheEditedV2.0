@@ -773,36 +773,36 @@ Portal rasmi : jtksm.mohr.gov.my
 <!-- BAHAGIAN 4: Penetapan Tarikh Sebutan Kes -->
 <div class="card full-width" id="kad_sebutan_kes">
     <div class="card-header">Penetapan Tarikh Sebutan Kes</div>
-                <div class="card-body">
-                    <!-- Grid Responsive Custom (Baris Label dan Baris Input) -->
-                    <div class="sebutan-grid-labels">
-                        <div class="info-label" style="margin:0;">Tarikh Sebutan</div>
-                        <div class="info-label" style="margin:0;">Masa Sebutan</div>
-                        <div class="info-label" style="margin:0;">Tempat Sebutan</div>
-                        <div></div> <!-- Spacer untuk butang -->
-                    </div>
-                    
-                    <div class="sebutan-grid-inputs">
-                        <div>
-                            <label class="mobile-label">Tarikh Sebutan</label>
-                            <input type="date" id="mk_tarikh_sebutan" onchange="semakButangSebutan()" style="margin:0;">
-                        </div>
-                        <div>
-                            <label class="mobile-label">Masa Sebutan</label>
-                            <input type="time" id="mk_masa_sebutan" onchange="semakButangSebutan()" style="margin:0;">
-                        </div>
-                        <div>
-                            <label class="mobile-label">Tempat Sebutan</label>
-                            <input type="text" id="mk_tempat_sebutan" value="Pejabat Tenaga Kerja Kluang" style="margin:0;">
-                        </div>
-                        <div>
-                            <button id="btnTindakanSebutan" class="btn-save" style="width: 100%; padding: 10px; font-size: 0.95em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed;" onclick="tindakanSebutan()" disabled>
-                                📄 Jana Notis Sebutan
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <div class="card-body">
+        <!-- Grid Responsive Custom (Baris Label dan Baris Input) -->
+        <div class="sebutan-grid-labels">
+            <div class="info-label" style="margin:0;">Tarikh Sebutan</div>
+            <div class="info-label" style="margin:0;">Masa Sebutan</div>
+            <div class="info-label" style="margin:0;">Tempat Sebutan</div>
+            <div></div> <!-- Spacer untuk butang -->
+        </div>
+        
+        <div class="sebutan-grid-inputs">
+            <div>
+                <label class="mobile-label">Tarikh Sebutan</label>
+                <input type="date" id="mk_tarikh_sebutan" onchange="semakButangSebutan()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
+            <div>
+                <label class="mobile-label">Masa Sebutan</label>
+                <input type="time" id="mk_masa_sebutan" onchange="semakButangSebutan()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Tempat Sebutan</label>
+                <input type="text" id="mk_tempat_sebutan" value="Pejabat Tenaga Kerja Kluang" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <button id="btnTindakanSebutan" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSebutan()" disabled>
+                    📄 Jana Notis Sebutan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
         </div> <!-- TAMAT VIEW MAKLUMAT KES -->
 

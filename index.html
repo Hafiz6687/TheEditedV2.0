@@ -861,7 +861,7 @@ Portal rasmi : jtksm.mohr.gov.my
 <style>
     .grid-memo { display: grid; grid-template-columns: repeat(4, 1fr) 180px; gap: 15px; align-items: end; }
     .grid-memo-span3 { grid-column: span 3; }
-    .grid-memo-span2 { grid-column: span 2; } /* TAMBAHAN BARU */
+    .grid-memo-span2 { grid-column: span 2; } 
     .grid-memo-span1 { grid-column: span 1; }
     @media (max-width: 950px) {
         .grid-memo { grid-template-columns: 1fr; gap: 10px; }
@@ -870,14 +870,14 @@ Portal rasmi : jtksm.mohr.gov.my
 </style>
 
 <div class="card full-width" id="kad_saman_memo" style="display: none;">
-    <div class="card-header">Penetapan Tarikh Saman (Memo Luar Kawasan)</div>
+    <div class="card-header">PENETAPAN TARIKH SAMAN (MEMO LUAR KAWASAN)</div>
     <div class="card-body">
         <div class="grid-memo">
             
             <!-- ROW 1 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Pejabat Tenaga Kerja Luar Kawasan</label>
-                <input type="text" id="mk_pejabat_memo" placeholder="Cth: Pejabat Tenaga Kerja Segamat" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+                <input type="text" id="mk_pejabat_memo" placeholder="Cth: PEJABAT TENAGA KERJA SEGAMAT" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Saman Dikembalikan</label>
@@ -887,7 +887,7 @@ Portal rasmi : jtksm.mohr.gov.my
             <!-- ROW 2 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
-                <input type="text" id="mk_alamat1_memo" placeholder="Baris 1" oninput="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
+                <input type="text" id="mk_alamat1_memo" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
@@ -899,7 +899,7 @@ Portal rasmi : jtksm.mohr.gov.my
             <!-- ROW 3 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
-                <input type="text" id="mk_alamat2_memo" placeholder="Baris 2" style="margin:0; height: 42px; box-sizing: border-box;">
+                <input type="text" id="mk_alamat2_memo" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
@@ -911,7 +911,7 @@ Portal rasmi : jtksm.mohr.gov.my
             <!-- ROW 4 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
-                <input type="text" id="mk_alamat3_memo" placeholder="Baris 3" style="margin:0; height: 42px; box-sizing: border-box;">
+                <input type="text" id="mk_alamat3_memo" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div class="grid-memo-span1">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>

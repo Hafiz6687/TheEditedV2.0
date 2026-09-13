@@ -2568,6 +2568,59 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign">Saya yang menjalankan amanah,</div><div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
+    // =========================================================================
+    // LOGIK PENJANAAN KANDUNGAN SURAT BERDASARKAN JENIS TINDAKAN
+    // =========================================================================
+    let tajukPengadu = '';
+    let tajukDefendan = '';
+    let isiPengadu = '';
+    let isiDefendan = '';
+
+    if (kunci === 'sebutan_tangguh') {
+        // --- FORMAT KHAS UNTUK SEBUTAN KES (TANGGUH) ---
+        // 1. Buang ayat 'PERKARA: NOTIS...'
+        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
+        tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
+
+        // 2 & 3. Perenggan 2 dan 3 yang baharu
+        let p2Tangguh = `<div class="notis-isi">2.<span class="jarak-tab"></span>Adalah dimaklumkan, Mahkamah Buruh telah menerima suatu permohonan bagi penangguhan kes daripada pihak <strong>${namaD}</strong>. Mahkamah setelah semakan adalah dengan ini membenarkan permohonan penangguhan kes.</div>`;
+        let p3Tangguh = `<div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir di pejabat ini pada <strong>${tarikhText} ${masaText}</strong> dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Kes ini akan disebut pada hari dan waktu yang tersebut di atas untuk tujuan mencapai penyelesaian. Sekiranya tiada penyelesaian kes pada hari tersebut, satu tarikh perbicaraan akan ditetapkan.</div>`;
+
+        isiPengadu = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            ${p2Tangguh}
+            ${p3Tangguh}
+            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.</div>
+        `;
+
+        isiDefendan = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            ${p2Tangguh}
+            ${p3Tangguh}
+            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
+            <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
+        `;
+    } else {
+        // --- FORMAT LALAI UNTUK SURAT-SURAT LAIN (Sebutan, Bicara, Keputusan, dll) ---
+        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;
+        tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;
+
+        isiPengadu = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Tuan diminta hadir di pejabat ini pada <strong>${tarikhText} ${masaText}</strong> dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Kes ini akan disebut/dibicarakan pada hari dan waktu yang tersebut di atas untuk tujuan mencapai penyelesaian. Sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, satu tarikh perbicaraan akan ditetapkan.</div>
+            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.</div>
+        `;
+
+        isiDefendan = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Dimaklumkan bahawa pengadu dalam kes ini telah memfailkan tuntutan di bawah Akta Kerja 1955 untuk menuntut daripada defendan wang yang dianggarkan berjumlah <strong>RM${jumlahKeseluruhanFormat}</strong>. Butiran tuntutan adalah sebagaimana Lampiran 1 JTKSM(A)06/01.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhText} ${masaText}</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
+            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
+            <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
+        `;
+    }
+
     const htmlNotisGenerik = `
     <style>
         @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } body.print-only-pengadu #kertasNotisDefendan { display: none !important; } body.print-only-defendan #kertasNotisPengadu { display: none !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
@@ -2582,12 +2635,9 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
             <div class="notis-alamat"><strong>${namaP}</strong><br>${alamatP}</div>
             <div style="margin-bottom: 15px;">Tuan,</div>
-            <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>
+            ${tajukPengadu}
             <hr class="notis-garis-tajuk">
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi">2.<span class="jarak-tab"></span>Tuan diminta hadir di pejabat ini pada <strong>${tarikhText} ${masaText}</strong> dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan.</div>
-            <div class="notis-isi">3.<span class="jarak-tab"></span>Kes ini akan disebut/dibicarakan pada hari dan waktu yang tersebut di atas untuk tujuan mencapai penyelesaian. Sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, satu tarikh perbicaraan akan ditetapkan.</div>
-            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.</div>
+            ${isiPengadu}
             ${templateFooterHTML}
         </div>
     </div>
@@ -2599,13 +2649,9 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
             <div class="notis-alamat"><strong>${namaD}</strong><br>${alamatD}</div>
             <div style="margin-bottom: 15px;">Tuan,</div>
-            <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>
+            ${tajukDefendan}
             <hr class="notis-garis-tajuk">
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi">2.<span class="jarak-tab"></span>Dimaklumkan bahawa pengadu dalam kes ini telah memfailkan tuntutan di bawah Akta Kerja 1955 untuk menuntut daripada defendan wang yang dianggarkan berjumlah <strong>RM${jumlahKeseluruhanFormat}</strong>. Butiran tuntutan adalah sebagaimana Lampiran 1 JTKSM(A)06/01.</div>
-            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhText} ${masaText}</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
-            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
-            <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
+            ${isiDefendan}
             ${templateFooterHTML}
         </div>
     </div>

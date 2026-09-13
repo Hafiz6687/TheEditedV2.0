@@ -585,18 +585,18 @@
             </div>
         </div>
 
-        <!-- RADIO BUTTON TANDATANGAN (BAWAH KANAN) -->
-        <div style="position: absolute; bottom: 30px; right: 35px; z-index: 2010; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px; border: 1px solid var(--border-color);">
-            <span style="font-weight: 700; font-size: 0.9em; color: var(--text-main);">Tandatangan Pegawai:</span>
-            <div class="radio-group" style="margin: 0; height: auto;">
-                <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: #10b981; font-size: 0.9em;">
-                    <input type="radio" name="radTandatangan" value="ON" checked onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> ON
-                </label>
-                <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: var(--danger); font-size: 0.9em;">
-                    <input type="radio" name="radTandatangan" value="OFF" onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> OFF
-                </label>
-            </div>
-        </div>
+<!-- RADIO BUTTON TANDATANGAN (BAWAH KANAN) -->
+<div id="bekasSuisTandatangan" style="position: absolute; bottom: 30px; right: 35px; z-index: 2010; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px; border: 1px solid var(--border-color);">
+    <span style="font-weight: 700; font-size: 0.9em; color: var(--text-main);">Tandatangan Pegawai:</span>
+    <div class="radio-group" style="margin: 0; height: auto;">
+        <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: #10b981; font-size: 0.9em;">
+            <input type="radio" name="radTandatangan" value="ON" checked onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> ON
+        </label>
+        <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: var(--danger); font-size: 0.9em;">
+            <input type="radio" name="radTandatangan" value="OFF" onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> OFF
+        </label>
+    </div>
+</div>
         
     </div> <!-- END OF MODAL PREVIEW -->
 
@@ -2174,12 +2174,10 @@ function semakButangSebutan() {
         }
 
 function tindakanSebutan() {
-    const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-    const masa = document.getElementById('mk_masa_sebutan').value;
-    if (tarikh && masa) {
-        bukaPreviewNotisSebutan(); // Panggil fungsi Notis Sebutan
-    } else {
-        bukaPreviewTarikBalik(); // Panggil fungsi Akuan Tarik Balik
+    const elTarikh = document.getElementById('mk_tarikh_sebutan');
+    const elMasa = document.getElementById('mk_masa_sebutan');
+    if (elTarikh && elMasa && elTarikh.value && elMasa.value) {
+        bukaPreviewNotisGenerik('sebutan');
     }
 }
 
@@ -2420,17 +2418,6 @@ function semakButangSebutan() {
 
     if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
     else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
-}
-
-function tindakanSebutan() {
-    const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-    const masa = document.getElementById('mk_masa_sebutan').value;
-    
-    if (tarikh && masa) {
-        bukaPreviewNotisSebutan(); // Panggil fungsi Notis Sebutan
-    } else {
-        alert("Sila tetapkan tarikh dan masa sebutan terlebih dahulu.");
-    }
 }
 
 // VALIDASI BUTANG GENERIK (Tangguh, Bicara, Keputusan)
@@ -2708,9 +2695,12 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const btnBatal = document.getElementById('menuBatal'); btnBatal.style.display = 'flex';
     if (!btnBatal.dataset.hooked) { const oldB = btnBatal.onclick; btnBatal.onclick = function(e) { if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none'; if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none'; if(oldB) oldB(e); }; btnBatal.dataset.hooked = "true"; }
 
-    // Reset Radio Button kepada ON secara lalai
+// Reset Radio Button kepada ON secara lalai
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
+
+    // Tunjukkan suis tandatangan
+    tunjukSuisTandatangan(true);
 
     // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
@@ -5349,6 +5339,9 @@ function bukaPreviewPDF(jenisBorang) {
         const kawasanCetak = document.getElementById('printArea');
         if (kawasanCetak) kawasanCetak.innerHTML = htmlG1;
 
+        // Sembunyikan suis tandatangan
+        tunjukSuisTandatangan(false);
+
         document.getElementById('modalPreview').style.display = 'flex';
         
         document.getElementById('menuCetakAkuan').style.display = 'none';
@@ -5503,6 +5496,9 @@ function bukaPreviewPDF(jenisBorang) {
         const kawasanCetak = document.getElementById('printArea');
         if (kawasanCetak) kawasanCetak.innerHTML = htmlG1;
 
+// Sembunyikan suis tandatangan
+        tunjukSuisTandatangan(false);
+
         document.getElementById('modalPreview').style.display = 'flex';
         
         document.getElementById('menuCetakAkuan').style.display = 'none';
@@ -5534,9 +5530,12 @@ function bukaPreviewPDF(jenisBorang) {
             document.getElementById('menuCetakG1').style.display = 'none'; 
             document.getElementById('menuDaftar').style.display = 'none';
 
-            document.getElementById('modalPreview').style.display = 'flex';
-            document.body.classList.remove('print-only-akuan', 'print-only-kenyataan');
-        }
+// Sembunyikan suis tandatangan
+    tunjukSuisTandatangan(false);
+
+    document.getElementById('modalPreview').style.display = 'flex';
+    document.body.classList.remove('print-only-akuan', 'print-only-kenyataan');
+}
 
 // --- FUNGSI BARU: HTML Khas untuk Preview Pengurusan Kes (Tab 1 & Tab 3 sahaja) ---
 function janaHTMLPreviewUrus() {
@@ -5747,6 +5746,9 @@ function bukaPreviewUrus() {
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuDaftar').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
+
+// Sembunyikan suis tandatangan
+    tunjukSuisTandatangan(false);
 
     document.getElementById('modalPreview').style.display = 'flex';
 }
@@ -6368,6 +6370,9 @@ const templateFooterHTML = `
             tukarView('senarai');
         }, 500);
     };
+
+// Tunjukkan suis tandatangan
+    tunjukSuisTandatangan(true);
 
     // Buka Modal Preview
     document.getElementById('modalPreview').style.display = 'flex';
@@ -7046,6 +7051,9 @@ const templateFooterHTML = `
         }, 500);
     };
 
+// Tunjukkan suis tandatangan
+    tunjukSuisTandatangan(true);
+
     document.getElementById('modalPreview').style.display = 'flex';
 }
 // =========================================================================
@@ -7303,26 +7311,51 @@ const templateFooterHTML = `
             tukarView('senarai');
         }, 500);
     };
-    // Reset Radio Button kepada ON secara lalai
+// Reset Radio Button kepada ON secara lalai
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
+
+    // Tunjukkan suis tandatangan
+    tunjukSuisTandatangan(true);
 
     // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
 }
 // =========================================================================
-// FUNGSI KAWALAN TOGOL TANDATANGAN DIGITAL (KEKALKAN RUANG/POSISI NAMA)
+// FUNGSI KAWALAN TOGOL TANDATANGAN DIGITAL (DENGAN VISIBILITY HIDDEN)
 // =========================================================================
 function kawalTandatanganCetak() {
-    const mode = document.querySelector('input[name="radTandatangan"]:checked').value;
+    const radChecked = document.querySelector('input[name="radTandatangan"]:checked');
+    if (!radChecked) return;
+    
+    const mode = radChecked.value;
     const semuaGambar = document.querySelectorAll('.gambar-sign img');
     
     if (mode === 'ON') {
-        // Paparkan gambar tandatangan
+        // Papar gambar tandatangan
         semuaGambar.forEach(el => el.style.visibility = 'visible');
     } else {
-        // Sembunyikan gambar SAHAJA, tetapi kekalkan ruang gambar & posisi nama (tidak bergerak)
+        // Sembunyi gambar SAHAJA, ruang & posisi nama tidak bergerak langsung
         semuaGambar.forEach(el => el.style.visibility = 'hidden');
+    }
+}
+// =========================================================================
+// FUNGSI KAWAL KEMUNCULAN SUIS TANDATANGAN PADA MODAL
+// =========================================================================
+function tunjukSuisTandatangan(perluTunjuk = true) {
+    const bekasSuis = document.getElementById('bekasSuisTandatangan');
+    if (!bekasSuis) return;
+    
+    if (perluTunjuk) {
+        bekasSuis.style.display = 'flex';
+        // Reset semula radio kepada ON secara lalai
+        const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
+        if (radON) {
+            radON.checked = true;
+            kawalTandatanganCetak();
+        }
+    } else {
+        bekasSuis.style.display = 'none';
     }
 }
 </script>

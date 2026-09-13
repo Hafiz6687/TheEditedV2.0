@@ -560,8 +560,8 @@
             </div>
         </div>
     </div>
-    <!-- PREVIEW MODAL & ACTION ICON BUTTON -->
-  <div class="modal-overlay" id="modalPreview" style="z-index: 2000; flex-direction: column; padding: 0; background: rgba(0,0,0,0.8); position: fixed;">      
+<!-- PREVIEW MODAL & ACTION ICON BUTTON -->
+    <div class="modal-overlay" id="modalPreview" style="z-index: 2000; flex-direction: column; padding: 0; background: rgba(0,0,0,0.8); position: fixed;">      
         <!-- Bahagian Paparan Kertas (A4) -->
         <div style="width: 100%; height: 100vh; overflow-y: auto; background: #525659; display: flex; justify-content: center; padding: 40px 20px;">
             <div id="previewContent" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
@@ -569,28 +569,35 @@
             </div>
         </div>
 
-<!-- Action Dropdown Container -->
+        <!-- Action Dropdown Container (ATAS KANAN) -->
         <div class="action-dropdown-container" style="position: absolute; top: 25px; right: 35px; z-index: 2010;">
             <button class="icon-btn" onclick="document.getElementById('actionMenu').classList.toggle('show')" title="Tindakan">
                 ⋮
             </button>
-            
-            <!-- GANTIKAN KESELURUHAN BLOK ACTION MENU INI -->
             <div id="actionMenu" class="dropdown-menu">
                 <a href="#" id="menuKemaskini" onclick="kemaskiniDariPreview()">✏️ Kemaskini</a>
                 <a href="#" id="menuCetakAkuan" onclick="cetakKhusus('akuan')">🖨️ Cetak Akuan Pemfailan</a>
                 <a href="#" id="menuCetakKenyataan" onclick="cetakKhusus('kenyataan')">🖨️ Cetak Kenyataan Tuntutan</a>
-                
-                <!-- TAMBAH BUTANG CETAK G1 DI SINI -->
                 <a href="#" id="menuCetakG1" onclick="document.getElementById('actionMenu').classList.remove('show'); window.print();" style="display: none;">🖨️ Cetak G1</a>
-                
                 <a href="#" id="menuDaftar" onclick="daftarDariPreview()" style="display: none;">🚀 Daftar</a>
-
-                <!-- TAMBAHAN BARU: Butang Selesai (Sembunyi secara lalai) -->
                 <a href="#" id="menuSelesai" onclick="selesaiPemfailan()" style="display: none; color: #10b981; font-weight: bold;">✅ Selesai</a>
-                <!-- ---------------------------------------------------- -->
-                <a href="#" id="menuBatal" onclick="document.getElementById('modalPreview').style.display='none'; batalPemfailan();" style="color: var(--danger);">🗑️ Batal</a>        </div>
-        </div> <!-- Penutup action-dropdown-container -->
+                <a href="#" id="menuBatal" onclick="document.getElementById('modalPreview').style.display='none'; batalPemfailan();" style="color: var(--danger);">🗑️ Batal</a>        
+            </div>
+        </div>
+
+        <!-- RADIO BUTTON TANDATANGAN (BAWAH KANAN) -->
+        <div style="position: absolute; bottom: 30px; right: 35px; z-index: 2010; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px; border: 1px solid var(--border-color);">
+            <span style="font-weight: 700; font-size: 0.9em; color: var(--text-main);">Tandatangan Pegawai:</span>
+            <div class="radio-group" style="margin: 0; height: auto;">
+                <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: #10b981; font-size: 0.9em;">
+                    <input type="radio" name="radTandatangan" value="ON" checked onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> ON
+                </label>
+                <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: var(--danger); font-size: 0.9em;">
+                    <input type="radio" name="radTandatangan" value="OFF" onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> OFF
+                </label>
+            </div>
+        </div>
+        
     </div> <!-- END OF MODAL PREVIEW -->
 
 <!-- SIDEBAR -->
@@ -2572,11 +2579,14 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
         <div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
-        <div style="position: relative; z-index: 2; pointer-events: none;">
+<!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
+        <!-- TAMBAH class="gambar-sign" DEKAT SINI -->
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block;">
         </div>
-        <div style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        
+        <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
@@ -2696,6 +2706,11 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const btnBatal = document.getElementById('menuBatal'); btnBatal.style.display = 'flex';
     if (!btnBatal.dataset.hooked) { const oldB = btnBatal.onclick; btnBatal.onclick = function(e) { if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none'; if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none'; if(oldB) oldB(e); }; btnBatal.dataset.hooked = "true"; }
 
+    // Reset Radio Button kepada ON secara lalai
+    const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
+    if (radON) radON.checked = true;
+
+    // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
 }
         function toggleWakilMajikan() {
@@ -6234,13 +6249,15 @@ function bukaPreviewAlamatTerkini() {
             <em>"Pekerja MADANI Kesuma Bangsa"</em>
         </div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
-        <div style="position: relative; z-index: 2; pointer-events: none;">
+<!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
+        <!-- TAMBAH class="gambar-sign" DEKAT SINI -->
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block;">
         </div>
-        <div style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br>
-            <span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+        
+        <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
     `;
@@ -6556,7 +6573,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             tukarView('senarai');
         }, 500);
     };
+    // Reset Radio Button kepada ON secara lalai
+    const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
+    if (radON) radON.checked = true;
 
+    // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
 }
 
@@ -6949,11 +6970,14 @@ const templateFooterHTML = `
         <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
         <div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
-        <div style="position: relative; z-index: 2; pointer-events: none;">
+<!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
+        <!-- TAMBAH class="gambar-sign" DEKAT SINI -->
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block;">
         </div>
-        <div style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        
+        <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
@@ -7191,11 +7215,14 @@ function bukaPreviewBatalKes(dataSimpanan = null) {
             " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
         </div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
-        <div style="position: relative; z-index: 2; pointer-events: none;">
+<!-- TRICK TANDATANGAN MENINDIH NAMA DIKEMASKINI -->
+        <!-- TAMBAH class="gambar-sign" DEKAT SINI -->
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block;">
         </div>
-        <div style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        
+        <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         ${skHTML}
@@ -7275,8 +7302,33 @@ function bukaPreviewBatalKes(dataSimpanan = null) {
             tukarView('senarai');
         }, 500);
     };
+    // Reset Radio Button kepada ON secara lalai
+    const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
+    if (radON) radON.checked = true;
 
+    // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
+}
+// =========================================================================
+// FUNGSI KAWALAN TOGOL TANDATANGAN DIGITAL (RADIO BUTTON)
+// =========================================================================
+function kawalTandatanganCetak() {
+    // Cari radio button mana yang sedang ditekan
+    const mode = document.querySelector('input[name="radTandatangan"]:checked').value;
+    
+    // Cari semua elemen gambar dan teks nama di kawasan preview
+    const semuaGambar = document.querySelectorAll('.gambar-sign');
+    const semuaNama = document.querySelectorAll('.teks-nama-sign');
+    
+    if (mode === 'ON') {
+        // Tunjuk gambar tandatangan, tarik nama naik atas (-40px)
+        semuaGambar.forEach(el => el.style.display = 'block');
+        semuaNama.forEach(el => el.style.marginTop = '-40px'); // <--- TUKAR KEPADA -40px
+    } else {
+        // Sorok gambar tandatangan, tolak nama ke bawah (50px) untuk ruang kosong
+        semuaGambar.forEach(el => el.style.display = 'none');
+        semuaNama.forEach(el => el.style.marginTop = '50px');
+    }
 }
 </script>
 </body>

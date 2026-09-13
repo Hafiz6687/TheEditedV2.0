@@ -2143,10 +2143,10 @@ function bukaMaklumatKes(index) {
             const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
             
             if (kadSejarah) {
-                // KITA BUANG SYARAT 'urus'. Asalkan dia BUKAN DRAF, tunjuk je semua!
+                // Asalkan dia BUKAN Draf, kita tunjukkan menu dan sejarah!
                 if (!isDraf) { 
                     kadSejarah.style.display = 'flex';
-                    renderJadualSejarah(indexKesSemasa); // Render data sejarah
+                    renderJadualSejarah(indexKesSemasa); 
                     
                     if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
                 } else {

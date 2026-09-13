@@ -2070,18 +2070,18 @@ function bukaMaklumatKes(index) {
     const kadSejarah = document.getElementById('kad_sejarah_tindakan');
     const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
     
-    if (kadSejarah) {
-        // SYARAT BARU: Tunjuk semua selagi BUKAN DRAF
-        if (!isDraf) { 
-            kadSejarah.style.display = 'flex';
-            if (typeof renderJadualSejarah === 'function') renderJadualSejarah(indexKesSemasa); 
-            if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
-        } else {
-            kadSejarah.style.display = 'none';
-            if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
-        }
-    }
-
+if (kadSejarah) {
+                // Tunjuk selagi bukan draf, tak kira dari tab mana ia dibuka
+                if (!isDraf) {
+                    kadSejarah.style.display = 'flex';
+                    try { renderJadualSejarah(indexKesSemasa); } catch(e) { console.error(e); }
+                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
+                } else {
+                    kadSejarah.style.display = 'none';
+                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
+                }
+            }
+    
     const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
     if (btnKemaskiniPendaftaran) {
         btnKemaskiniPendaftaran.style.display = 'flex';
@@ -5830,7 +5830,7 @@ function rekodSejarahTindakan(index, tindakan, butiran) {
 
 // --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
 function renderJadualSejarah(index) {
-    try { // <--- INI PERISAI UNTUK HALANG CRASH. Mesti ada!
+    try {
         const kes = memoriSenaraiKes[index];
         const tbody = document.getElementById('mk_body_sejarah');
         if (!tbody) return;
@@ -5843,7 +5843,6 @@ function renderJadualSejarah(index) {
             return;
         }
 
-        // Terbalikkan array supaya tindakan yang terbaharu berada di atas sekali
         const sejarahTerbalik = [...sejarah].reverse();
         
         sejarahTerbalik.forEach((rekod, i) => {
@@ -5851,7 +5850,7 @@ function renderJadualSejarah(index) {
             const originalIndex = sejarah.length - 1 - i;
             let btnJana = "-";
 
-            // PERLINDUNGAN: Kalau data lama kosong, elak javascript mati
+            // PERLINDUNGAN: Kalau data lama kosong, panggil string kosong ("")
             let tdk = rekod.tindakan || "";
             let btr = rekod.butiran || "";
             let trk = rekod.tarikhMasa || "-";

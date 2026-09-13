@@ -2091,17 +2091,24 @@ function bukaMaklumatKes(index) {
     const kadSejarah = document.getElementById('kad_sejarah_tindakan');
     const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
     
+// 1. Kawal Kotak Sejarah
 if (kadSejarah) {
-                // Tunjuk selagi bukan draf, tak kira dari tab mana ia dibuka
-                if (!isDraf) {
-                    kadSejarah.style.display = 'flex';
-                    try { renderJadualSejarah(indexKesSemasa); } catch(e) { console.error(e); }
-                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
-                } else {
-                    kadSejarah.style.display = 'none';
-                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
-                }
-            }
+    if (!isDraf) {
+        kadSejarah.style.display = 'flex';
+        try { renderJadualSejarah(indexKesSemasa); } catch(e) { console.error(e); }
+    } else {
+        kadSejarah.style.display = 'none';
+    }
+}
+
+// 2. Kawal Menu Butang Tindakan Secara Berasingan
+if (menuTindakanUrus) {
+    if (!isDraf) {
+        menuTindakanUrus.style.display = 'flex';
+    } else {
+        menuTindakanUrus.style.display = 'none';
+    }
+}
     
     const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
     if (btnKemaskiniPendaftaran) {
@@ -2407,9 +2414,14 @@ function semakButangSebutan() {
 }
 
 function tindakanSebutan() {
-    const elTarikh = document.getElementById('mk_tarikh_sebutan');
-    const elMasa = document.getElementById('mk_masa_sebutan');
-    if (elTarikh && elMasa && elTarikh.value && elMasa.value) { bukaPreviewNotisGenerik('sebutan'); }
+    const tarikh = document.getElementById('mk_tarikh_sebutan').value;
+    const masa = document.getElementById('mk_masa_sebutan').value;
+    
+    if (tarikh && masa) {
+        bukaPreviewNotisSebutan(); // Panggil fungsi Notis Sebutan
+    } else {
+        alert("Sila tetapkan tarikh dan masa sebutan terlebih dahulu.");
+    }
 }
 
 // VALIDASI BUTANG GENERIK (Tangguh, Bicara, Keputusan)

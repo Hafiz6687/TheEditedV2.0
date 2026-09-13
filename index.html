@@ -521,11 +521,12 @@
         <div class="modal-box">
             <div class="modal-title">Maklumat Pembatalan Kes</div>
             
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+<div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                 <label style="text-align: left;">Kebebasan memfailkan semula kes <span>*</span></label>
                 <div class="input-wrapper radio-group">
                     <label><input type="radio" name="bk_kebebasan" value="Ya" checked> Ya</label>
                     <label><input type="radio" name="bk_kebebasan" value="Tidak"> Tidak</label>
+                    <label><input type="radio" name="bk_kebebasan" value="Natural"> Natural</label>
                 </div>
             </div>
 
@@ -7040,13 +7041,22 @@ function bukaPreviewBatalKes() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // LOGIK PERENGGAN BERDASARKAN POP-UP
-    let kebebasanTeks = window.tempDataBatal.kebebasan === 'Ya' ? 'dengan kebebasan' : 'tanpa kebebasan';
-    let p2HTML = `2.<span class="jarak-tab"></span>Dukacita dimaklumkan bahawa aduan / tuntutan kes buruh tuan/puan seperti nombor rujukan di atas telah <strong>DIBATALKAN</strong> ${kebebasanTeks} memfailkan semula kes.`;
+// LOGIK PERENGGAN BERDASARKAN POP-UP
+    let kebebasanTeks = "";
+    if (window.tempDataBatal.kebebasan === 'Ya') {
+        kebebasanTeks = " dengan kebebasan memfailkan semula kes.";
+    } else if (window.tempDataBatal.kebebasan === 'Tidak') {
+        kebebasanTeks = " tanpa kebebasan memfailkan semula kes.";
+    } else {
+        kebebasanTeks = "."; // Jika pilih Natural, ayat noktah terus.
+    }
+    
+    let p2HTML = `2.<span class="jarak-tab"></span>Dukacita dimaklumkan bahawa aduan / tuntutan kes buruh tuan/puan seperti nombor rujukan di atas telah <strong>DIBATALKAN</strong>${kebebasanTeks}`;
 
     let p3HTML = '';
     if (window.tempDataBatal.sebab === 'Sebab-sebab lain') {
-        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:<br><br><div style="margin-left: 40px; font-weight: bold;">${window.tempDataBatal.sebabLain}</div>`;
+        // Satu <br> telah dibuang di sini untuk rapatkan jarak (tinggal 1 enter sahaja)
+        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:<br><div style="margin-left: 40px; font-weight: bold;">${window.tempDataBatal.sebabLain}</div>`;
     } else {
         p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh ${window.tempDataBatal.sebab}`;
     }

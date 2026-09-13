@@ -2568,7 +2568,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
-    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div><img src="tandatangan.png" alt="Tandatangan" style="height: 60px; width: auto; mix-blend-mode: multiply; margin-bottom: 5px;"></div><div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
+    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div><img src="tandatangan.png" alt="Tandatangan" style="height: 100px; width: auto; mix-blend-mode: multiply; margin-bottom: 5px;"></div><div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 // =========================================================================
     // LOGIK PENJANAAN KANDUNGAN SURAT BERDASARKAN JENIS TINDAKAN
     // =========================================================================
@@ -5910,6 +5910,48 @@ function rekodSejarahTindakan(index, tindakan, butiran) {
     }
 }
 
+// =========================================================
+// JANA TERUS DARI SEJARAH TINDAKAN
+// =========================================================
+function janaTerusDariSejarah(kunci, tarikhHst, masaHst, pihak) {
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    if (!kes) return;
+
+    const conf = {
+        'sebutan': { idPrefix: 'sebutan', tindakan: 'Notis Sebutan', label: 'sebutan' },
+        'sebutan_tangguh': { idPrefix: 'sebutan_tangguh', tindakan: 'Notis Sebutan (Tangguh)', label: 'sebutan' },
+        'bicara': { idPrefix: 'bicara', tindakan: 'Notis Perbicaraan', label: 'perbicaraan' },
+        'bicara_tangguh': { idPrefix: 'bicara_tangguh', tindakan: 'Notis Perbicaraan (Tangguh)', label: 'perbicaraan' },
+        'bicara_sambung': { idPrefix: 'bicara_sambung', tindakan: 'Notis Perbicaraan (Sambung)', label: 'perbicaraan' },
+        'keputusan': { idPrefix: 'keputusan', tindakan: 'Notis Keputusan', label: 'keputusan' }
+    };
+
+    const c = conf[kunci];
+    if (!c) return;
+
+    // Simpan data sejarah untuk dipanggil oleh fungsi jana
+    window.dataNotisSemasa = {
+        tarikhStr: tarikhHst, masaStr: masaHst, tindakan: c.tindakan, label: c.label, kunci: kunci, dariSejarah: true
+    };
+
+    // Jana kandungan dokumen di belakang skrin
+    bukaPreviewNotisGenerik(kunci, tarikhHst, masaHst);
+
+    // Sembunyikan pop-up preview serta-merta
+    const modal = document.getElementById('modalPreview');
+    if (modal) modal.style.display = 'none';
+
+    // Tentukan dokumen mana yang patut dicetak (Pengadu / Defendan)
+    const jenisCetak = pihak === 'defendan' ? 'defendan' : 'pengadu';
+
+    // Terus tembak arahan print
+    setTimeout(() => {
+        document.body.classList.add('print-only-' + jenisCetak);
+        window.print();
+        document.body.classList.remove('print-only-' + jenisCetak);
+    }, 100);
+}
+       
 // --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
 function renderJadualSejarah(index) {
     try {
@@ -5955,8 +5997,22 @@ function renderJadualSejarah(index) {
                 else if (tdk.includes("Notis Perbicaraan")) kunci = 'bicara';
                 else if (tdk.includes("Notis Keputusan")) kunci = 'keputusan';
                 
-                if (kunci !== '') {
-                    btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewNotisGenerik('${kunci}', '${tarikhHst}', '${masaHst}')">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+if (kunci !== '') {
+                    // Semak sama ada sejarah ini milik Defendan atau Pengadu
+                    const pihakSejarah = tdk.includes("(Defendan)") ? "defendan" : "pengadu";
+
+                    btnJana = `
+                        <div style="display: flex; gap: 5px; justify-content: center;">
+                            <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
+                                onclick="janaTerusDariSejarah('${kunci}', '${tarikhHst}', '${masaHst}', '${pihakSejarah}')">
+                                📄 Jana
+                            </button>
+                            <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
+                                onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
+                                🗑️
+                            </button>
+                        </div>
+                    `;
                 }
             } 
             else if (tdk === "Tarik Balik Kes") {

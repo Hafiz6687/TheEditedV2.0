@@ -2586,7 +2586,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         </div>
         
         <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -50px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
@@ -6256,7 +6256,7 @@ function bukaPreviewAlamatTerkini() {
         </div>
         
         <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -50px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
@@ -6977,7 +6977,7 @@ const templateFooterHTML = `
         </div>
         
         <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -50px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         <div class="notis-footer-line"></div>
@@ -7222,7 +7222,7 @@ function bukaPreviewBatalKes(dataSimpanan = null) {
         </div>
         
         <!-- TAMBAH class="teks-nama-sign" DEKAT SINI -->
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -50px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         ${skHTML}
@@ -7321,9 +7321,9 @@ function kawalTandatanganCetak() {
     const semuaNama = document.querySelectorAll('.teks-nama-sign');
     
     if (mode === 'ON') {
-        // Tunjuk gambar tandatangan, tarik nama naik atas (-40px)
+        // Tunjuk gambar tandatangan, tarik nama naik atas (-50px)
         semuaGambar.forEach(el => el.style.display = 'block');
-        semuaNama.forEach(el => el.style.marginTop = '-40px'); // <--- TUKAR KEPADA -40px
+        semuaNama.forEach(el => el.style.marginTop = '-50px'); // <--- TUKAR KEPADA -50px
     } else {
         // Sorok gambar tandatangan, tolak nama ke bawah (50px) untuk ruang kosong
         semuaGambar.forEach(el => el.style.display = 'none');

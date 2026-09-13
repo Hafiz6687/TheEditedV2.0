@@ -2469,29 +2469,64 @@ function toggleKadUrus(jenis) {
 
 // VALIDASI BUTANG SEBUTAN (ASAL)
 function semakButangSebutan() {
-    const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-    const masa = document.getElementById('mk_masa_sebutan').value;
+    const elTarikh = document.getElementById('mk_tarikh_sebutan');
+    const elMasa = document.getElementById('mk_masa_sebutan');
     const btn = document.getElementById('btnTindakanSebutan');
-    if (tarikh && masa) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
+    if (!elTarikh || !elMasa || !btn) return; // <-- PERLINDUNGAN CRASH
+
+    if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
     else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
 }
 
 function tindakanSebutan() {
-    const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-    const masa = document.getElementById('mk_masa_sebutan').value;
-    if (tarikh && masa) { bukaPreviewNotisGenerik('sebutan'); }
+    const elTarikh = document.getElementById('mk_tarikh_sebutan');
+    const elMasa = document.getElementById('mk_masa_sebutan');
+    if (elTarikh && elMasa && elTarikh.value && elMasa.value) { bukaPreviewNotisGenerik('sebutan'); }
 }
 
 // VALIDASI BUTANG GENERIK (Tangguh, Bicara, Keputusan)
 function semakButangNotis(idPrefix) {
-    const tarikh = document.getElementById(`mk_tarikh_${idPrefix}`).value;
-    const masa = document.getElementById(`mk_masa_${idPrefix}`).value;
+    const elTarikh = document.getElementById(`mk_tarikh_${idPrefix}`);
+    const elMasa = document.getElementById(`mk_masa_${idPrefix}`);
     const btn = document.getElementById(`btnTindakan_${idPrefix}`);
-    if(btn) {
-        if (tarikh && masa) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
-        else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
-    }
+    if (!elTarikh || !elMasa || !btn) return; // <-- PERLINDUNGAN CRASH
+
+    if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
+    else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
 }
+
+// --- VALIDASI BUTANG SAMAN HADIR (BORANG A) ---
+function semakButangSaman() {
+    const elTarikh = document.getElementById('mk_tarikh_saman');
+    const elMasa = document.getElementById('mk_masa_saman');
+    const btn = document.getElementById('btnTindakanSaman');
+    if (!elTarikh || !elMasa || !btn) return; // <-- PERLINDUNGAN CRASH
+
+    if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
+    else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+}
+
+function tindakanSamanA() {
+    const elTarikh = document.getElementById('mk_tarikh_saman');
+    const elMasa = document.getElementById('mk_masa_saman');
+    if (elTarikh && elMasa && elTarikh.value && elMasa.value) { bukaPreviewSamanA(); }
+}
+
+// --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
+function semakButangSamanMemo() {
+    const elTarikh = document.getElementById('mk_tarikh_saman_memo');
+    const elPejabat = document.getElementById('mk_pejabat_memo');
+    const btn = document.getElementById('btnTindakanSamanMemo');
+    if (!elTarikh || !elPejabat || !btn) return; // <-- PERLINDUNGAN CRASH
+
+    if (elTarikh.value && elPejabat.value.trim() !== '') { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
+    else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+}
+
+function tindakanSamanMemo() {
+    const elTarikh = document.getElementById('mk_tarikh_saman_memo');
+    if (elTarikh && elTarikh.value) { bukaPreviewSamanMemo(); }
+    }
 
 // =========================================================================
 // FUNGSI GENERIK MENCETAK DAN PREVIEW NOTIS (Sebutan, Bicara, Keputusan)

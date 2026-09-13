@@ -2143,16 +2143,12 @@ function bukaMaklumatKes(index) {
             const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
             
             if (kadSejarah) {
-                if (kes.sumberFlow === 'urus') {
+                // KITA BUANG SYARAT 'urus'. Asalkan dia BUKAN DRAF, tunjuk je semua!
+                if (!isDraf) { 
                     kadSejarah.style.display = 'flex';
                     renderJadualSejarah(indexKesSemasa); // Render data sejarah
                     
-                    // Paparkan butang-butang tindakan jika ia dari Pengurusan Kes & bukan draf
-                    if (menuTindakanUrus && !isDraf) {
-                        menuTindakanUrus.style.display = 'flex';
-                    } else if (menuTindakanUrus) {
-                        menuTindakanUrus.style.display = 'none';
-                    }
+                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
                 } else {
                     kadSejarah.style.display = 'none';
                     if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';

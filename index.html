@@ -5915,19 +5915,17 @@ function renderJadualSejarah(index) {
     try {
         const kes = memoriSenaraiKes[index];
         const tbody = document.getElementById('mk_body_sejarah');
-        const kadSejarah = document.getElementById('kad_sejarah_tindakan'); // <--- TANGKAP ID KAD SEJARAH
+        const kadSejarah = document.getElementById('kad_sejarah_tindakan');
         if (!tbody) return;
 
         tbody.innerHTML = '';
         const sejarah = kes.sejarahTindakan || [];
 
-        // --- LOGIK BARU: JIKA TIADA SEJARAH, TERUS SOROK KAD ---
         if (sejarah.length === 0) {
             if (kadSejarah) kadSejarah.style.display = 'none';
             return;
         }
 
-        // --- LOGIK BARU: JIKA ADA SEJARAH, PASTIKAN KAD MUNCUL ---
         if (kadSejarah) kadSejarah.style.display = 'flex';
 
         const sejarahTerbalik = [...sejarah].reverse();
@@ -5941,7 +5939,6 @@ function renderJadualSejarah(index) {
             let btr = rekod.butiran || "";
             let trk = rekod.tarikhMasa || "-";
 
-            // Buang tag data rahsia dari pandangan UI user
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
             
             if (tdk.includes("Notis")) {
@@ -5963,13 +5960,14 @@ function renderJadualSejarah(index) {
                 }
             } 
             else if (tdk === "Tarik Balik Kes") {
-                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewTarikBalik()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+                let dMatch = btr.match(/\[DATA_TARIK:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewTarikBalik(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Alamat Terkini Defendan") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Saman (Borang A)") {
-                // Ekstrak data rahsia jika ada
                 let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
                 let param = dMatch ? `'${dMatch[1]}'` : 'null';
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
@@ -5978,13 +5976,15 @@ function renderJadualSejarah(index) {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Saman (Memo)") {
-                // Ekstrak data rahsia jika ada
                 let dMatch = btr.match(/\[DATA_MEMO:(.*?)\]/);
                 let param = dMatch ? `'${dMatch[1]}'` : 'null';
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Batal Kes") {
-                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+                // WARNA BIRU (#0ea5e9) DAN SERAP DATA DARI SEJARAH
+                let dMatch = btr.match(/\[DATA_BATAL:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             } else {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
@@ -6996,15 +6996,24 @@ function janaBatalKes() {
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT NOTIS PEMBATALAN KES
 // =========================================================================
-function bukaPreviewBatalKes() {
+function bukaPreviewBatalKes(dataSimpanan = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
-    // 1. TANGKAP DAN PAPAR POP-UP JIKA MAKLUMAT BELUM DIISI (Untuk cetakan dari Sejarah)
-    if (!window.tempDataBatal) {
+    // Buka bungkusan data dari sejarah (jika klik dari jadual sejarah)
+    let memoData = null;
+    if (dataSimpanan && dataSimpanan !== 'null') {
+        try { memoData = JSON.parse(decodeURIComponent(escape(atob(dataSimpanan)))); } catch(e){}
+    }
+
+    // TANGKAP DAN PAPAR POP-UP JIKA MAKLUMAT BELUM DIISI (Untuk cetakan dari menu tindakan utama)
+    if (!memoData && !window.tempDataBatal) {
         bukaModalBatalKes();
         return; 
     }
+
+    // Guna data dari Sejarah, atau data dari Pop-up baru
+    let dataBatal = memoData || window.tempDataBatal;
 
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
@@ -7017,21 +7026,15 @@ function bukaPreviewBatalKes() {
         let almtDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join('<br>');
 
         if (isMajikan) {
-            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
-            alamatP = almtDef || '[ALAMAT PENGADU]';
-            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
-            alamatD = almtPeng || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]'; alamatP = almtDef || '[ALAMAT PENGADU]';
+            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]'; alamatD = almtPeng || '[ALAMAT DEFENDAN]';
         } else {
-            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
-            alamatP = almtPeng || '[ALAMAT PENGADU]';
-            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
-            alamatD = almtDef || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]'; alamatP = almtPeng || '[ALAMAT PENGADU]';
+            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]'; alamatD = almtDef || '[ALAMAT DEFENDAN]';
         }
     } else {
-        namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
-        alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
-        namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
-        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
+        namaP = kes.namaPengadu.replace(/<br>.*$/g, ''); alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
+        namaD = kes.namaDefendan.replace(/<br>.*$/g, ''); alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
     }
 
     const tH = new Date();
@@ -7041,28 +7044,27 @@ function bukaPreviewBatalKes() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-// LOGIK PERENGGAN BERDASARKAN POP-UP
+    // LOGIK PERENGGAN BERDASARKAN POP-UP / MEMORI SEJARAH
     let kebebasanTeks = "";
-    if (window.tempDataBatal.kebebasan === 'Ya') {
+    if (dataBatal.kebebasan === 'Ya') {
         kebebasanTeks = " dengan kebebasan memfailkan semula kes.";
-    } else if (window.tempDataBatal.kebebasan === 'Tidak') {
+    } else if (dataBatal.kebebasan === 'Tidak') {
         kebebasanTeks = " tanpa kebebasan memfailkan semula kes.";
     } else {
-        kebebasanTeks = "."; // Jika pilih Natural, ayat noktah terus.
+        kebebasanTeks = "."; // Jika pilih Natural
     }
     
     let p2HTML = `2.<span class="jarak-tab"></span>Dukacita dimaklumkan bahawa aduan / tuntutan kes buruh tuan/puan seperti nombor rujukan di atas telah <strong>DIBATALKAN</strong>${kebebasanTeks}`;
 
     let p3HTML = '';
-    if (window.tempDataBatal.sebab === 'Sebab-sebab lain') {
-        // Satu <br> telah dibuang di sini untuk rapatkan jarak (tinggal 1 enter sahaja)
-        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:<br><div style="margin-left: 40px; font-weight: bold;">${window.tempDataBatal.sebabLain}</div>`;
+    if (dataBatal.sebab === 'Sebab-sebab lain') {
+        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh perkara berikut:<br><div style="margin-left: 40px; font-weight: bold;">${dataBatal.sebabLain}</div>`;
     } else {
-        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh ${window.tempDataBatal.sebab}`;
+        p3HTML = `3.<span class="jarak-tab"></span>Pembatalan ini adalah disebabkan oleh ${dataBatal.sebab}`;
     }
 
     let skHTML = '';
-    if (window.tempDataBatal.salinan === 'Ya') {
+    if (dataBatal.salinan === 'Ya') {
         skHTML = `
             <div style="margin-top: 30px;">
                 <table style="border: none; font-size: 10pt; width: 100%; border-collapse: collapse;">
@@ -7081,9 +7083,7 @@ function bukaPreviewBatalKes() {
     const templateHeaderHTML = `
         <div class="notis-header">
             <div class="notis-header-kiri">
-                <div class="notis-logo">
-                    <img src="jata-negara.png" alt="Logo Jata Negara">
-                </div>
+                <div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div>
                 <div class="notis-jabatan">
                     <div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div>
                     <div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div>
@@ -7094,7 +7094,6 @@ function bukaPreviewBatalKes() {
                     <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div>
                 </div>
             </div>
-            
             <div class="notis-hubungi">
                 <table style="font-family: Arial, sans-serif; font-size: 8pt;">
                     <tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr>
@@ -7106,18 +7105,16 @@ function bukaPreviewBatalKes() {
         </div>
     `;
 
-    // TEMPLATE PENUTUP (Dengan penambahan S.K secara dinamik)
+    // PENAMBAHAN KEMBALI TANDATANGAN PADA TEMPLATE FOOTER
     const templateFooterHTML = `
         <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
         <div class="notis-slogan">
-            " MALAYSIA MADANI "<br>
-            " BERKHIDMAT UNTUK NEGARA "<br>
-            <em>"Pekerja MADANI Kesuma Bangsa"</em>
+            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
         </div>
-        <div class="notis-sign">Saya yang menjalankan amanah,</div>
+        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+        <div><img src="tandatangan.png" alt="Tandatangan" style="height: 60px; width: auto; mix-blend-mode: multiply; margin-bottom: 5px;"></div>
         <div style="font-weight: bold; text-transform: uppercase;">
-            ${namaPegawai}<br>
-            <span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         ${skHTML}
         <div class="notis-footer-line"></div>
@@ -7125,35 +7122,9 @@ function bukaPreviewBatalKes() {
 
     const htmlNotisBatal = `
         <style>
-            @media print {
-                @page { margin: 0; }
-                body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                body > *:not(#printArea) { display: none !important; }
-                #printArea { display: block !important; }
-                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; }
-                .kertas-notis:last-child { page-break-after: auto; }
-            }
+            @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
-            .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
-            .notis-logo { flex-shrink: 0; }
-            .notis-logo img { width: 120px; height: auto; display: block; }
-            .notis-jabatan { text-align: left; line-height: 1.2; }
-            .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; }
-            .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; }
-            .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; }
-            .kol-label { width: 40%; white-space: nowrap; }
-            .kol-titik { width: 5%; text-align: center; }
-            .notis-body-wrapper { padding: 0 1.23cm; } 
-            .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; }
-            .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
-            .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-            .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
-            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
-            .jarak-tab { display: inline-block; width: 30px; }
-            .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
-            .notis-sign { margin-bottom: 50px; font-size: 10pt; }
-            .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
         <div class="kertas-notis" id="kertasNotisBatal">
@@ -7164,7 +7135,6 @@ function bukaPreviewBatalKes() {
                     Rujukan Kami : ${noKes}<br>
                     Tarikh : ${tarikhSurat}
                 </div>
-
                 <div class="notis-alamat">
                     <strong>${namaP}</strong><br>
                     ${alamatP}
@@ -7181,14 +7151,8 @@ function bukaPreviewBatalKes() {
                 <hr class="notis-garis-tajuk">
 
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-
-                <div class="notis-isi" style="text-align: justify;">
-                    ${p2HTML}
-                </div>
-
-                <div class="notis-isi" style="text-align: justify;">
-                    ${p3HTML}
-                </div>
+                <div class="notis-isi" style="text-align: justify;">${p2HTML}</div>
+                <div class="notis-isi" style="text-align: justify;">${p3HTML}</div>
 
                 ${templateFooterHTML}
             </div>
@@ -7198,7 +7162,6 @@ function bukaPreviewBatalKes() {
     document.getElementById('previewContent').innerHTML = htmlNotisBatal;
     document.getElementById('printArea').innerHTML = htmlNotisBatal;
 
-    // Sembunyikan semua butang yang tidak berkaitan
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
@@ -7218,12 +7181,14 @@ function bukaPreviewBatalKes() {
         document.getElementById('actionMenu').classList.remove('show');
         window.print();
         
-        let sebabPendek = window.tempDataBatal.sebabLain ? "Sebab lain." : "Pengadu tidak hadir/saman gagal diserah.";
-        rekodSejarahTindakan(indexKesSemasa, "Batal Kes", `Surat makluman pembatalan kes telah dijana dan dicetak. (${sebabPendek})`);
+        let sebabPendek = dataBatal.sebabLain ? "Sebab lain." : "Pengadu tidak hadir/saman gagal diserah.";
+        
+        // Simpan data pop-up ke dalam sejarah (Bungkus Base64)
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(dataBatal))));
+        rekodSejarahTindakan(indexKesSemasa, "Batal Kes", `Surat makluman pembatalan kes telah dijana dan dicetak. (${sebabPendek}) [DATA_BATAL:${d64}]`);
         
         setTimeout(() => {
             document.getElementById('modalPreview').style.display = 'none';
-            // Membersihkan memori temp supaya pop-up sentiasa tanya soalan baru jika kes lain dibatalkan
             window.tempDataBatal = null;
             tukarView('senarai');
         }, 500);

@@ -1799,415 +1799,324 @@ if (posDisimpan) {
     }
 
 function bukaMaklumatKes(index) {
-            indexKesSemasa = index;
-            const kes = memoriSenaraiKes[index];
-            const isMajikan = kes.jenisAduan === 'Majikan';
-            const isBerkumpulan = kes.jenisAduan === 'Berkumpulan';
-            
-            document.getElementById('mk_header_kes').innerHTML = `Maklumat Kes (${kes.noKes})`;
-            document.getElementById('mk_tarikh_daftar').innerText = kes.tarikh;
-            document.getElementById('mk_tarikh_sah').innerText = kes.tarikh; 
-            document.getElementById('mk_tarikh_tugas').innerText = kes.tarikh; 
-            
-            // =====================================================================
-            // PEMBETULAN KRITIKAL: Tarik data dari MEMORI, bukan dari Borang Kosong
-            // =====================================================================
-            let dataSistem = {};
-            if (kes.dataBorang && kes.dataBorang.inputs) {
-                dataSistem = kes.dataBorang.inputs;
-            } else {
-                // Fallback jika kes Dummy (tiada dataBorang)
-                document.querySelectorAll('#viewPendaftaranKes input, #viewPendaftaranKes select, #viewPendaftaranKes textarea').forEach(el => {
-                    if (el.id) dataSistem[el.id] = el.value;
-                });
-            }
-
-// NAMA sentiasa betul dari memoriSenaraiKes
-            const p_nama = kes.namaPengadu.replace(/<br>.*$/g, '');
-            const d_nama = kes.namaDefendan;
-
-            // ALAMAT KAD 1 (Pekerja)
-            const p_a1 = dataSistem['alamatPengadu1'] || "";
-            const p_a2 = dataSistem['alamatPengadu2'] || "";
-            const p_a3 = dataSistem['alamatPengadu3'] || "";
-            const p_pos = dataSistem['poskodPengadu'] || "";
-            const p_bdr = dataSistem['bandarPengadu'] || "";
-            const p_ngr = dataSistem['negeriPengadu'] || "";
-            let p_alamatArr = [p_a1, p_a2, p_a3].filter(Boolean);
-            let p_posBdr = [p_pos, p_bdr].filter(Boolean).join(' ');
-            if(p_posBdr) p_alamatArr.push(p_posBdr);
-            if(p_ngr) p_alamatArr.push(p_ngr);
-            const alamatKad1 = p_alamatArr.length > 0 ? p_alamatArr.join('<br>') : "-";
-
-            // ALAMAT KAD 2 (Majikan / Syarikat)
-            const d_a1 = dataSistem['alamatDefendan1'] || "";
-            const d_a2 = dataSistem['alamatDefendan2'] || "";
-            const d_a3 = dataSistem['alamatDefendan3'] || "";
-            const d_pos = dataSistem['poskodDefendan'] || "";
-            const d_bdr = dataSistem['bandarDefendan'] || "";
-            const d_ngr = dataSistem['negeriDefendan'] || "";
-            let d_alamatArr = [d_a1, d_a2, d_a3].filter(Boolean);
-            let d_posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
-            if(d_posBdr) d_alamatArr.push(d_posBdr);
-            if(d_ngr) d_alamatArr.push(d_ngr);
-            const alamatKad2 = d_alamatArr.length > 0 ? d_alamatArr.join('<br>') : "-";
-
-            const p_bil_pengadu = dataSistem['bilPengadu'] ? dataSistem['bilPengadu'] + " Orang" : "-";
-
-            // --- PEMBOLEHUBAH DINAMIK UNTUK DIPAPARKAN ---
-            let p_id, p_tel, p_hp, p_emel, p_alamat;
-            let d_id, d_tel, d_hp, d_emel, d_alamat;
-            let lbl_p_id = "No. MyKad";
-            const regexMyKad = /^\d{6}-?\d{2}-?\d{4}$/;
-            
-            const headerPengadu = document.getElementById('mk_header_pengadu');
-
-            if (isMajikan) {
-                // TUKAR TAJUK HEADER
-                if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu (Majikan)';
-                
-                // PENGADU = DATA DARI KAD 2 (MAJIKAN)
-                p_id = dataSistem['noPendDefendan'] || "-";
-                p_tel = dataSistem['telDefendan'] || "-";
-                p_hp = dataSistem['hpDefendan'] || "-";
-                p_emel = dataSistem['emelDefendan'] || "-";
-                p_alamat = alamatKad2;
-                
-                // DEFENDAN = DATA DARI KAD 1 (PEKERJA)
-                d_id = dataSistem['noPendPengadu'] || "-";
-                d_tel = dataSistem['telPengadu'] || "-";
-                d_hp = dataSistem['hpPengadu'] || "-";
-                d_emel = dataSistem['emelPengadu'] || "-";
-                d_alamat = alamatKad1;
-                
-                // LOGIK LABEL ID: Semak jika Majikan guna MyKad atau SSM
-                const jenisPendMajikan = dataSistem['jenisDaftarDefendan'] || "";
-                if (jenisPendMajikan === 'MyKad') {
-                    lbl_p_id = 'No. MyKad';
-                } else {
-                    lbl_p_id = 'No. Pendaftaran';
-                }
-                
-            } else {
-                // KEMBALIKAN TAJUK HEADER ASAL
-                if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu';
-                
-                // PENGADU = DATA DARI KAD 1 (PEKERJA)
-                p_id = dataSistem['noPendPengadu'] || "-";
-                p_tel = dataSistem['telPengadu'] || "-";
-                p_hp = dataSistem['hpPengadu'] || "-";
-                p_emel = dataSistem['emelPengadu'] || "-";
-                p_alamat = alamatKad1;
-                
-                // DEFENDAN = DATA DARI KAD 2 (MAJIKAN)
-                d_id = dataSistem['noPendDefendan'] || "-";
-                d_tel = dataSistem['telDefendan'] || "-";
-                d_hp = dataSistem['hpDefendan'] || "-";
-                d_emel = dataSistem['emelDefendan'] || "-";
-                d_alamat = alamatKad2;
-                
-                // LOGIK LABEL ID: Semak jika Pekerja guna MyKad atau Pasport
-                const p_isMyKad = regexMyKad.test(p_id);
-                lbl_p_id = p_isMyKad ? 'No. MyKad' : 'No. Pasport';
-            }
-
-            const d_isMyKad = regexMyKad.test(d_id);
+    isSelesaiDaftar = false;
+    isEditMode = true; 
+    indexKesSemasa = index;
     
-            // Tarik Kenyataan dari Memori
-            let kenyataanPenuh = "-";
-            if (kes.dataBorang && kes.dataBorang.inputs) {
-                const kenyataanAwal = kes.dataBorang.inputs['kenyataanAwal'] || "";
-                const kronologiKes = kes.dataBorang.inputs['kronologiKes'] || "";
-                if (kenyataanAwal || kronologiKes) {
-                    kenyataanPenuh = (kenyataanAwal + "\n\n" + kronologiKes).trim();
-                }
-            }
-            document.getElementById('mk_kenyataan_pengadu').innerText = kenyataanPenuh || "-";
-
-            let tempatKerjaPaparan = '';
-            const alamatBerbeza = dataSistem['alamatBerbeza'] === true || dataSistem['alamatBerbeza'] === "true";
-            
-            if (!alamatBerbeza) {
-                const syarikatNama = dataSistem['namaDefendan'] || d_nama.replace(/<br>.*$/g, '');
-                let alamatArr = [syarikatNama, d_a1, d_a2, d_a3].filter(Boolean);
-                let posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
-                if(posBdr) alamatArr.push(posBdr);
-                if(d_ngr) alamatArr.push(d_ngr);
-                tempatKerjaPaparan = alamatArr.join(',<br>') || '-'; 
-            } else {
-                const namaTK = dataSistem['namaTempatKerja'] || "";
-                const a1 = dataSistem['alamatKerja1'] || "";
-                const a2 = dataSistem['alamatKerja2'] || "";
-                const a3 = dataSistem['alamatKerja3'] || "";
-                const pos = dataSistem['poskodKerja'] || "";
-                const bdr = dataSistem['bandarKerja'] || "";
-                const ngr = dataSistem['negeriKerja'] || "";
-                
-                let alamatArr = [namaTK, a1, a2, a3].filter(Boolean);
-                let posBdr = [pos, bdr].filter(Boolean).join(' ');
-                if(posBdr) alamatArr.push(posBdr);
-                if(ngr) alamatArr.push(ngr);
-                tempatKerjaPaparan = alamatArr.join(',<br>') || '-';
-            }
-
-            let htmlPengadu = '';
-            if (isMajikan) {
-                htmlPengadu = `
-                    <div>
-                        <div class="info-label">Nama Pengadu</div><div class="info-value">${p_nama}</div>
-                        <div class="info-label" style="margin-top:15px;">${lbl_p_id}</div><div class="info-value" style="margin-bottom:0;">${p_id}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat Pengadu</div><div class="info-value" style="margin-bottom:0;">${p_alamat}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat tempat pekerjaan defendan</div><div class="info-value" style="margin-bottom:0;">${tempatKerjaPaparan}</div>
-                    </div>
-                    
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">No. Tel.:</span>
-                        <a href="tel:${p_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${p_tel}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">No. Tel. (H/P):</span>
-                        <a href="https://wa.me/6${p_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${p_hp}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">Emel:</span>
-                        <a href="mailto:${p_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${p_emel}</a>
-                    </div>
-                `;
-            } else {
-                htmlPengadu = `
-                    <div>
-                        <div class="info-label">Nama Pengadu</div><div class="info-value">${p_nama}</div>
-                        <div class="info-label" style="margin-top:15px;">${lbl_p_id}</div><div class="info-value" style="margin-bottom:0;">${p_id}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat Pengadu</div><div class="info-value" style="margin-bottom:0;">${p_alamat}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat tempat pekerjaan</div><div class="info-value" style="margin-bottom:0;">${tempatKerjaPaparan}</div>
-                        ${isBerkumpulan ? `<div class="info-label" style="margin-top:15px;">Bilangan pengadu (Termasuk ketua)</div><div class="info-value" style="margin-bottom:0;">${p_bil_pengadu}</div>` : ''}
-                    </div>
-                    
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">No. Tel.:</span>
-                        <a href="tel:${p_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${p_tel}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">No. Tel. (H/P):</span>
-                        <a href="https://wa.me/6${p_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${p_hp}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                        <span class="info-label" style="margin:0;">Emel:</span>
-                        <a href="mailto:${p_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${p_emel}</a>
-                    </div>
-                `;
-            }
-            document.getElementById('mk_grid_pengadu').innerHTML = htmlPengadu;
-
-            let htmlDefendan = '';
-            if (isMajikan) {
-                document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Pekerja)';
-                htmlDefendan = `
-                    <div>
-                        <div class="info-label">Nama Defendan</div><div class="info-value" style="margin-bottom:0;">${d_nama}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat Defendan</div><div class="info-value" style="margin-bottom:0;">${d_alamat}</div>
-                    </div>
-                    
-                    <div>
-                        <div class="info-label">No. MyKad atau No. Passport</div><div class="info-value" style="margin-bottom:0;">${d_id}</div>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">No. Tel. (H/P):</span>
-                        <a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a>
-                    </div>
-                    
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">No. Tel.:</span>
-                        <a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">Emel:</span>
-                        <a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a>
-                    </div>
-                `;
-            } else {
-                document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Majikan)';
-                let lbl_id = d_isMyKad ? 'No. MyKad' : 'No. Pendaftaran';
-                htmlDefendan = `
-                    <div>
-                        <div class="info-label">Nama Defendan</div><div class="info-value" style="margin-bottom:0;">${d_nama}</div>
-                    </div>
-                    <div>
-                        <div class="info-label">Alamat Defendan</div><div class="info-value" style="margin-bottom:0;">${d_alamat}</div>
-                    </div>
-                    
-                    <div>
-                        <div class="info-label">${lbl_id}</div><div class="info-value" style="margin-bottom:0;">${d_id}</div>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">No. Tel. (H/P):</span>
-                        <a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a>
-                    </div>
-                    
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">No. Tel.:</span>
-                        <a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span class="info-label" style="margin:0;">Emel:</span>
-                        <a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a>
-                    </div>
-                `;
-            }
-            document.getElementById('mk_grid_defendan').innerHTML = htmlDefendan;
-            
-            const tbodyTuntutan = document.getElementById('mk_body_tuntutan');
-            tbodyTuntutan.innerHTML = '';
-            
-            let senaraiTuntutanSemasa = [];
-            if (kes.dataBorang && kes.dataBorang.tuntutanBiasa && kes.dataBorang.tuntutanBiasa.length > 0) {
-                senaraiTuntutanSemasa = kes.dataBorang.tuntutanBiasa;
-            } else if (!kes.dataBorang) {
-                senaraiTuntutanSemasa = [
-                    {jenis: "Baki Gaji", keterangan: "(MEI 2026)", jumlah: "2645.00"},
-                    {jenis: "Baki Gaji", keterangan: "(JUN 2026)", jumlah: "1600.00"}
-                ];
-            }
-
-            let jumlahKeseluruhan = 0;
-            senaraiTuntutanSemasa.forEach((item, idx) => {
-                const jumlahNum = parseFloat(item.jumlah);
-                jumlahKeseluruhan += isNaN(jumlahNum) ? 0 : jumlahNum;
-                
-                tbodyTuntutan.innerHTML += `
-                    <tr>
-                        <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${idx + 1}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${item.jenis}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${item.keterangan}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid var(--border-color); text-align: right; font-weight: 500;">RM ${Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    </tr>
-                `;
-            });
-            
-            tbodyTuntutan.innerHTML += `
-                <tr style="background-color: #f1f5f9; font-weight: bold;">
-                    <td colspan="3" style="text-align:right; padding: 12px 15px;">JUMLAH KESELURUHAN</td>
-                    <td style="text-align: right; padding: 12px;">RM ${jumlahKeseluruhan.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-            `;
-
-// Reset Semua Input Tarikh & Sembunyikan Kad Notis Generik
-            const listKad = ['sebutan', 'sebutan_tangguh', 'bicara', 'bicara_tangguh', 'bicara_sambung', 'keputusan'];
-            listKad.forEach(idPrefix => {
-                if (document.getElementById(`mk_tarikh_${idPrefix}`)) document.getElementById(`mk_tarikh_${idPrefix}`).value = '';
-                if (document.getElementById(`mk_masa_${idPrefix}`)) document.getElementById(`mk_masa_${idPrefix}`).value = '';
-                if (idPrefix === 'sebutan' && typeof semakButangSebutan === 'function') semakButangSebutan();
-                else if (typeof semakButangNotis === 'function') semakButangNotis(idPrefix);
-                
-                const kad = document.getElementById(`kad_${idPrefix}`);
-                if (kad) kad.style.display = 'none';
-            });
-            
-            // Reset Saman A
-            if (document.getElementById('mk_tarikh_saman')) document.getElementById('mk_tarikh_saman').value = '';
-            if (document.getElementById('mk_masa_saman')) document.getElementById('mk_masa_saman').value = '';
-            if (typeof semakButangSaman === 'function') semakButangSaman();
-            const kadSamanHadir = document.getElementById('kad_saman_hadir');
-            if (kadSamanHadir) { kadSamanHadir.style.display = 'none'; }
-
-            // Reset Saman Memo Luar Kawasan
-            if (document.getElementById('mk_tarikh_saman_memo')) document.getElementById('mk_tarikh_saman_memo').value = '';
-            if (document.getElementById('mk_pejabat_memo')) document.getElementById('mk_pejabat_memo').value = '';
-            if (document.getElementById('mk_alamat1_memo')) document.getElementById('mk_alamat1_memo').value = '';
-            if (document.getElementById('mk_alamat2_memo')) document.getElementById('mk_alamat2_memo').value = '';
-            if (document.getElementById('mk_alamat3_memo')) document.getElementById('mk_alamat3_memo').value = '';
-            if (document.getElementById('mk_poskod_memo')) document.getElementById('mk_poskod_memo').value = '';
-            
-            if (document.getElementById('mk_bandar_memo')) {
-                document.getElementById('mk_bandar_memo').value = ''; document.getElementById('mk_bandar_memo').placeholder = 'Lengkapkan Poskod'; document.getElementById('mk_bandar_memo').setAttribute('readonly', true);
-            }
-            if (document.getElementById('mk_negeri_memo')) {
-                document.getElementById('mk_negeri_memo').value = ''; document.getElementById('mk_negeri_memo').placeholder = 'Lengkapkan Poskod'; document.getElementById('mk_negeri_memo').setAttribute('readonly', true);
-            }
-            if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
-            const kadSamanMemo = document.getElementById('kad_saman_memo');
-            if (kadSamanMemo) { kadSamanMemo.style.display = 'none'; }
-
-    const isDraf = kes.noKes.includes('DRAF'); // <--- INI KOD YANG HILANG TU!
-
-            // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---
-            const kadSejarah = document.getElementById('kad_sejarah_tindakan');
-            const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
-            
-            if (kadSejarah) {
-                // Asalkan dia BUKAN Draf, kita tunjukkan menu dan sejarah!
-                if (!isDraf) { 
-                    kadSejarah.style.display = 'flex';
-                    renderJadualSejarah(indexKesSemasa); 
-                    
-                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
-                } else {
-                    kadSejarah.style.display = 'none';
-                    if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
-                }
-            }
-            // --------------------------------------------------------
+    const kes = memoriSenaraiKes[index];
+    const isMajikan = kes.jenisAduan === 'Majikan';
+    const isBerkumpulan = kes.jenisAduan === 'Berkumpulan';
     
-            const kadSebutan = document.getElementById('kad_sebutan_kes');
-            if (kadSebutan) {
-                // Sembunyikan secara lalai. Ia akan dibuka secara manual melalui butang 'Sebutan Kes'
-                kadSebutan.style.display = 'none'; 
-            }
-
-const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+    document.getElementById('mk_header_kes').innerHTML = `Maklumat Kes (${kes.noKes})`;
+    document.getElementById('mk_tarikh_daftar').innerText = kes.tarikh;
+    document.getElementById('mk_tarikh_sah').innerText = kes.tarikh; 
+    document.getElementById('mk_tarikh_tugas').innerText = kes.tarikh; 
     
-            if (btnKemaskiniPendaftaran) {
-                // Sentiasa paparkan butang kemaskini tidak kira Draf atau Daftar
-                btnKemaskiniPendaftaran.style.display = 'flex'; // Ditukar ke 'flex' supaya sejajar dengan butang Kembali
-                btnKemaskiniPendaftaran.innerHTML = '<span style="font-size: 1.2em; line-height: 1;">✏️</span> Kemaskini';
+    // =====================================================================
+    // PEMBETULAN KRITIKAL: Tarik data dari MEMORI, bukan dari Borang Kosong
+    // =====================================================================
+    let dataSistem = {};
+    if (kes.dataBorang && kes.dataBorang.inputs) {
+        dataSistem = kes.dataBorang.inputs;
+    } else {
+        // Fallback jika kes Dummy (tiada dataBorang)
+        document.querySelectorAll('#viewPendaftaranKes input, #viewPendaftaranKes select, #viewPendaftaranKes textarea').forEach(el => {
+            if (el.id) dataSistem[el.id] = el.value;
+        });
+    }
+
+    // NAMA sentiasa betul dari memoriSenaraiKes
+    const p_nama = kes.namaPengadu.replace(/<br>.*$/g, '');
+    const d_nama = kes.namaDefendan;
+
+    // ALAMAT KAD 1 (Pekerja)
+    const p_a1 = dataSistem['alamatPengadu1'] || "";
+    const p_a2 = dataSistem['alamatPengadu2'] || "";
+    const p_a3 = dataSistem['alamatPengadu3'] || "";
+    const p_pos = dataSistem['poskodPengadu'] || "";
+    const p_bdr = dataSistem['bandarPengadu'] || "";
+    const p_ngr = dataSistem['negeriPengadu'] || "";
+    let p_alamatArr = [p_a1, p_a2, p_a3].filter(Boolean);
+    let p_posBdr = [p_pos, p_bdr].filter(Boolean).join(' ');
+    if(p_posBdr) p_alamatArr.push(p_posBdr);
+    if(p_ngr) p_alamatArr.push(p_ngr);
+    const alamatKad1 = p_alamatArr.length > 0 ? p_alamatArr.join('<br>') : "-";
+
+    // ALAMAT KAD 2 (Majikan / Syarikat)
+    const d_a1 = dataSistem['alamatDefendan1'] || "";
+    const d_a2 = dataSistem['alamatDefendan2'] || "";
+    const d_a3 = dataSistem['alamatDefendan3'] || "";
+    const d_pos = dataSistem['poskodDefendan'] || "";
+    const d_bdr = dataSistem['bandarDefendan'] || "";
+    const d_ngr = dataSistem['negeriDefendan'] || "";
+    let d_alamatArr = [d_a1, d_a2, d_a3].filter(Boolean);
+    let d_posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
+    if(d_posBdr) d_alamatArr.push(d_posBdr);
+    if(d_ngr) d_alamatArr.push(d_ngr);
+    const alamatKad2 = d_alamatArr.length > 0 ? d_alamatArr.join('<br>') : "-";
+
+    const p_bil_pengadu = dataSistem['bilPengadu'] ? dataSistem['bilPengadu'] + " Orang" : "-";
+
+    // --- PEMBOLEHUBAH DINAMIK UNTUK DIPAPARKAN ---
+    let p_id, p_tel, p_hp, p_emel, p_alamat;
+    let d_id, d_tel, d_hp, d_emel, d_alamat;
+    let lbl_p_id = "No. MyKad";
+    const regexMyKad = /^\d{6}-?\d{2}-?\d{4}$/;
+    
+    const headerPengadu = document.getElementById('mk_header_pengadu');
+
+    if (isMajikan) {
+        // TUKAR TAJUK HEADER
+        if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu (Majikan)';
+        
+        p_id = dataSistem['noPendDefendan'] || "-";
+        p_tel = dataSistem['telDefendan'] || "-";
+        p_hp = dataSistem['hpDefendan'] || "-";
+        p_emel = dataSistem['emelDefendan'] || "-";
+        p_alamat = alamatKad2;
+        
+        d_id = dataSistem['noPendPengadu'] || "-";
+        d_tel = dataSistem['telPengadu'] || "-";
+        d_hp = dataSistem['hpPengadu'] || "-";
+        d_emel = dataSistem['emelPengadu'] || "-";
+        d_alamat = alamatKad1;
+        
+        // LOGIK LABEL ID
+        const jenisPendMajikan = dataSistem['jenisDaftarDefendan'] || "";
+        if (jenisPendMajikan === 'MyKad') {
+            lbl_p_id = 'No. MyKad';
+        } else {
+            lbl_p_id = 'No. Pendaftaran';
+        }
+    } else {
+        // KEMBALIKAN TAJUK HEADER ASAL
+        if (headerPengadu) headerPengadu.innerText = 'Maklumat Pengadu';
+        
+        p_id = dataSistem['noPendPengadu'] || "-";
+        p_tel = dataSistem['telPengadu'] || "-";
+        p_hp = dataSistem['hpPengadu'] || "-";
+        p_emel = dataSistem['emelPengadu'] || "-";
+        p_alamat = alamatKad1;
+        
+        d_id = dataSistem['noPendDefendan'] || "-";
+        d_tel = dataSistem['telDefendan'] || "-";
+        d_hp = dataSistem['hpDefendan'] || "-";
+        d_emel = dataSistem['emelDefendan'] || "-";
+        d_alamat = alamatKad2;
+        
+        const p_isMyKad = regexMyKad.test(p_id);
+        lbl_p_id = p_isMyKad ? 'No. MyKad' : 'No. Pasport';
+    }
+
+    const d_isMyKad = regexMyKad.test(d_id);
+
+    // Tarik Kenyataan dari Memori
+    let kenyataanPenuh = "-";
+    if (kes.dataBorang && kes.dataBorang.inputs) {
+        const kenyataanAwal = kes.dataBorang.inputs['kenyataanAwal'] || "";
+        const kronologiKes = kes.dataBorang.inputs['kronologiKes'] || "";
+        if (kenyataanAwal || kronologiKes) { kenyataanPenuh = (kenyataanAwal + "\n\n" + kronologiKes).trim(); }
+    }
+    document.getElementById('mk_kenyataan_pengadu').innerText = kenyataanPenuh || "-";
+
+    let tempatKerjaPaparan = '';
+    const alamatBerbeza = dataSistem['alamatBerbeza'] === true || dataSistem['alamatBerbeza'] === "true";
+    
+    if (!alamatBerbeza) {
+        const syarikatNama = dataSistem['namaDefendan'] || d_nama.replace(/<br>.*$/g, '');
+        let alamatArr = [syarikatNama, d_a1, d_a2, d_a3].filter(Boolean);
+        let posBdr = [d_pos, d_bdr].filter(Boolean).join(' ');
+        if(posBdr) alamatArr.push(posBdr);
+        if(d_ngr) alamatArr.push(d_ngr);
+        tempatKerjaPaparan = alamatArr.join(',<br>') || '-'; 
+    } else {
+        const namaTK = dataSistem['namaTempatKerja'] || "";
+        const a1 = dataSistem['alamatKerja1'] || ""; const a2 = dataSistem['alamatKerja2'] || ""; const a3 = dataSistem['alamatKerja3'] || "";
+        const pos = dataSistem['poskodKerja'] || ""; const bdr = dataSistem['bandarKerja'] || ""; const ngr = dataSistem['negeriKerja'] || "";
+        let alamatArr = [namaTK, a1, a2, a3].filter(Boolean);
+        let posBdr = [pos, bdr].filter(Boolean).join(' ');
+        if(posBdr) alamatArr.push(posBdr);
+        if(ngr) alamatArr.push(ngr);
+        tempatKerjaPaparan = alamatArr.join(',<br>') || '-';
+    }
+
+    let htmlPengadu = '';
+    if (isMajikan) {
+        htmlPengadu = `
+            <div><div class="info-label">Nama Pengadu</div><div class="info-value">${p_nama}</div><div class="info-label" style="margin-top:15px;">${lbl_p_id}</div><div class="info-value" style="margin-bottom:0;">${p_id}</div></div>
+            <div><div class="info-label">Alamat Pengadu</div><div class="info-value" style="margin-bottom:0;">${p_alamat}</div></div>
+            <div><div class="info-label">Alamat tempat pekerjaan defendan</div><div class="info-value" style="margin-bottom:0;">${tempatKerjaPaparan}</div></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${p_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${p_tel}</a></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">No. Tel. (H/P):</span><a href="https://wa.me/6${p_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${p_hp}</a></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${p_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${p_emel}</a></div>
+        `;
+    } else {
+        htmlPengadu = `
+            <div><div class="info-label">Nama Pengadu</div><div class="info-value">${p_nama}</div><div class="info-label" style="margin-top:15px;">${lbl_p_id}</div><div class="info-value" style="margin-bottom:0;">${p_id}</div></div>
+            <div><div class="info-label">Alamat Pengadu</div><div class="info-value" style="margin-bottom:0;">${p_alamat}</div></div>
+            <div><div class="info-label">Alamat tempat pekerjaan</div><div class="info-value" style="margin-bottom:0;">${tempatKerjaPaparan}</div>${isBerkumpulan ? `<div class="info-label" style="margin-top:15px;">Bilangan pengadu (Termasuk ketua)</div><div class="info-value" style="margin-bottom:0;">${p_bil_pengadu}</div>` : ''}</div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${p_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${p_tel}</a></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">No. Tel. (H/P):</span><a href="https://wa.me/6${p_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${p_hp}</a></div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:10px;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${p_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${p_emel}</a></div>
+        `;
+    }
+    document.getElementById('mk_grid_pengadu').innerHTML = htmlPengadu;
+
+    let htmlDefendan = '';
+    if (isMajikan) {
+        document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Pekerja)';
+        htmlDefendan = `
+            <div><div class="info-label">Nama Defendan</div><div class="info-value" style="margin-bottom:0;">${d_nama}</div></div>
+            <div><div class="info-label">Alamat Defendan</div><div class="info-value" style="margin-bottom:0;">${d_alamat}</div></div>
+            <div><div class="info-label">No. MyKad atau No. Passport</div><div class="info-value" style="margin-bottom:0;">${d_id}</div></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel. (H/P):</span><a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a></div>
+        `;
+    } else {
+        document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Majikan)';
+        let lbl_id = d_isMyKad ? 'No. MyKad' : 'No. Pendaftaran';
+        htmlDefendan = `
+            <div><div class="info-label">Nama Defendan</div><div class="info-value" style="margin-bottom:0;">${d_nama}</div></div>
+            <div><div class="info-label">Alamat Defendan</div><div class="info-value" style="margin-bottom:0;">${d_alamat}</div></div>
+            <div><div class="info-label">${lbl_id}</div><div class="info-value" style="margin-bottom:0;">${d_id}</div></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel. (H/P):</span><a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a></div>
+            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a></div>
+        `;
+    }
+    document.getElementById('mk_grid_defendan').innerHTML = htmlDefendan;
+    
+    const tbodyTuntutan = document.getElementById('mk_body_tuntutan');
+    tbodyTuntutan.innerHTML = '';
+    
+    let senaraiTuntutanSemasa = [];
+    if (kes.dataBorang && kes.dataBorang.tuntutanBiasa && kes.dataBorang.tuntutanBiasa.length > 0) {
+        senaraiTuntutanSemasa = kes.dataBorang.tuntutanBiasa;
+    } else if (!kes.dataBorang) {
+        senaraiTuntutanSemasa = [
+            {jenis: "Baki Gaji", keterangan: "(MEI 2026)", jumlah: "2645.00"},
+            {jenis: "Baki Gaji", keterangan: "(JUN 2026)", jumlah: "1600.00"}
+        ];
+    }
+
+    let jumlahKeseluruhan = 0;
+    senaraiTuntutanSemasa.forEach((item, idx) => {
+        const jumlahNum = parseFloat(item.jumlah);
+        jumlahKeseluruhan += isNaN(jumlahNum) ? 0 : jumlahNum;
+        
+        tbodyTuntutan.innerHTML += `
+            <tr>
+                <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${idx + 1}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${item.jenis}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${item.keterangan}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color); text-align: right; font-weight: 500;">RM ${Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>
+        `;
+    });
+    
+    tbodyTuntutan.innerHTML += `
+        <tr style="background-color: #f1f5f9; font-weight: bold;">
+            <td colspan="3" style="text-align:right; padding: 12px 15px;">JUMLAH KESELURUHAN</td>
+            <td style="text-align: right; padding: 12px;">RM ${jumlahKeseluruhan.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+    `;
+
+    // =========================================================================
+    // RESET SEMUA INPUT TARIKH DENGAN PERLINDUNGAN KALIS RALAT 
+    // =========================================================================
+    const listKad = ['sebutan', 'sebutan_tangguh', 'bicara', 'bicara_tangguh', 'bicara_sambung', 'keputusan'];
+    listKad.forEach(idPrefix => {
+        const elT = document.getElementById(`mk_tarikh_${idPrefix}`);
+        const elM = document.getElementById(`mk_masa_${idPrefix}`);
+        if (elT) elT.value = '';
+        if (elM) elM.value = '';
+        
+        if (idPrefix === 'sebutan' && typeof semakButangSebutan === 'function') semakButangSebutan();
+        else if (typeof semakButangNotis === 'function') semakButangNotis(idPrefix);
+        
+        const kad = document.getElementById(`kad_${idPrefix}`);
+        if (kad) kad.style.display = 'none';
+    });
+    
+    // Reset Saman A
+    if (document.getElementById('mk_tarikh_saman')) document.getElementById('mk_tarikh_saman').value = '';
+    if (document.getElementById('mk_masa_saman')) document.getElementById('mk_masa_saman').value = '';
+    if (typeof semakButangSaman === 'function') semakButangSaman();
+    if (document.getElementById('kad_saman_hadir')) document.getElementById('kad_saman_hadir').style.display = 'none';
+
+    // Reset Saman Memo Luar Kawasan
+    if (document.getElementById('mk_tarikh_saman_memo')) document.getElementById('mk_tarikh_saman_memo').value = '';
+    if (document.getElementById('mk_pejabat_memo')) document.getElementById('mk_pejabat_memo').value = '';
+    if (document.getElementById('mk_alamat1_memo')) document.getElementById('mk_alamat1_memo').value = '';
+    if (document.getElementById('mk_alamat2_memo')) document.getElementById('mk_alamat2_memo').value = '';
+    if (document.getElementById('mk_alamat3_memo')) document.getElementById('mk_alamat3_memo').value = '';
+    if (document.getElementById('mk_poskod_memo')) document.getElementById('mk_poskod_memo').value = '';
+    
+    if (document.getElementById('mk_bandar_memo')) {
+        document.getElementById('mk_bandar_memo').value = ''; document.getElementById('mk_bandar_memo').placeholder = 'Lengkapkan Poskod'; document.getElementById('mk_bandar_memo').setAttribute('readonly', true);
+    }
+    if (document.getElementById('mk_negeri_memo')) {
+        document.getElementById('mk_negeri_memo').value = ''; document.getElementById('mk_negeri_memo').placeholder = 'Lengkapkan Poskod'; document.getElementById('mk_negeri_memo').setAttribute('readonly', true);
+    }
+    if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
+    if (document.getElementById('kad_saman_memo')) document.getElementById('kad_saman_memo').style.display = 'none';
+
+    const isDraf = kes.noKes.includes('DRAF');
+
+    // =========================================================================
+    // KAWALAN PAPARAN SEJARAH & MENU TINDAKAN PENGURUSAN
+    // =========================================================================
+    const kadSejarah = document.getElementById('kad_sejarah_tindakan');
+    const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
+    
+    if (kadSejarah) {
+        // SYARAT BARU: Tunjuk semua selagi BUKAN DRAF
+        if (!isDraf) { 
+            kadSejarah.style.display = 'flex';
+            if (typeof renderJadualSejarah === 'function') renderJadualSejarah(indexKesSemasa); 
+            if (menuTindakanUrus) menuTindakanUrus.style.display = 'flex';
+        } else {
+            kadSejarah.style.display = 'none';
+            if (menuTindakanUrus) menuTindakanUrus.style.display = 'none';
+        }
+    }
+
+    const btnKemaskiniPendaftaran = document.getElementById('btnEditRekodKes');
+    if (btnKemaskiniPendaftaran) {
+        btnKemaskiniPendaftaran.style.display = 'flex';
+        btnKemaskiniPendaftaran.innerHTML = '<span style="font-size: 1.2em; line-height: 1;">✏️</span> Kemaskini';
+    }
+
+    document.getElementById('btnEditRekodKes').onclick = function() {
+        bukaKesDidaftar(indexKesSemasa);
+    };
+
+    const kadKenyataanView = document.getElementById('kad_kenyataan_pengadu_view');
+    const kandunganKenyataan = document.getElementById('kandunganKenyataanPengaduView');
+    const labelKenyataan = document.getElementById('labelTogolKenyataanView');
+    
+    if (kadKenyataanView) {
+        if (kes.sumberFlow === 'urus') {
+            kadKenyataanView.style.display = 'none';
+        } else {
+            kadKenyataanView.style.display = 'flex';
+            if (kandunganKenyataan && labelKenyataan) {
+                kandunganKenyataan.style.display = 'none';
+                labelKenyataan.innerHTML = '▼ Buka';
+                labelKenyataan.style.backgroundColor = '#f1f5f9';
+                labelKenyataan.style.color = 'var(--text-muted)';
             }
+        }
+    }
 
-            document.getElementById('btnEditRekodKes').onclick = function() {
-                bukaKesDidaftar(indexKesSemasa);
-            };
-
-
-// --- TAMBAHAN BARU: Auto-Sembunyi Kenyataan Pengadu bila maklumat kes dibuka ---
-            const kadKenyataanView = document.getElementById('kad_kenyataan_pengadu_view');
-            const kandunganKenyataan = document.getElementById('kandunganKenyataanPengaduView');
-            const labelKenyataan = document.getElementById('labelTogolKenyataanView');
-            
-            if (kadKenyataanView) {
-                if (kes.sumberFlow === 'urus') {
-                    // Jika kes dari PENGURUSAN KES, sembunyikan keseluruhan Kad Kenyataan
-                    kadKenyataanView.style.display = 'none';
-                } else {
-                    // Jika kes dari PENDAFTARAN KES, paparkan Kad Kenyataan
-                    kadKenyataanView.style.display = 'flex';
-                    
-                    // Pastikan kandungan di dalamnya kekal tertutup secara lalai (▼ Buka)
-                    if (kandunganKenyataan && labelKenyataan) {
-                        kandunganKenyataan.style.display = 'none';
-                        labelKenyataan.innerHTML = '▼ Buka';
-                        labelKenyataan.style.backgroundColor = '#f1f5f9';
-                        labelKenyataan.style.color = 'var(--text-muted)';
-                    }
-                }
-            }
-            // -------------------------------------------------------------------------------
-
-            document.getElementById('viewSenaraiTugas').style.display = 'none';
-            document.getElementById('viewPendaftaranKes').style.display = 'none';
-            document.getElementById('viewMaklumatKes').style.display = 'block';
-            
-            document.getElementById('tajukHalamanAtas').innerHTML = 'Maklumat Kes Terperinci';
-            document.getElementById('butangCetakHeader').style.display = 'none'; 
-        } // <--- HANYA ADA SATU SAHAJA PENUTUP INI
+    document.getElementById('viewSenaraiTugas').style.display = 'none';
+    document.getElementById('viewPendaftaranKes').style.display = 'none';
+    document.getElementById('viewMaklumatKes').style.display = 'block';
+    
+    document.getElementById('tajukHalamanAtas').innerHTML = 'Maklumat Kes Terperinci';
+    document.getElementById('butangCetakHeader').style.display = 'none'; 
+}
 
 function semakButangSebutan() {
             const tarikh = document.getElementById('mk_tarikh_sebutan').value;

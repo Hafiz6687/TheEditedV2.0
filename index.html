@@ -7184,15 +7184,18 @@ function bukaPreviewBatalKes(dataSimpanan = null) {
         </div>
     `;
 
-    // PENAMBAHAN KEMBALI TANDATANGAN PADA TEMPLATE FOOTER
+// PENAMBAHAN KEMBALI TANDATANGAN PADA TEMPLATE FOOTER
     const templateFooterHTML = `
         <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
         <div class="notis-slogan">
             " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
         </div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <div><img src="tandatangan.png" alt="Tandatangan" style="height: 100px; width: auto; mix-blend-mode: multiply; margin-bottom: 5px;"></div>
-        <div style="font-weight: bold; text-transform: uppercase;">
+        <!-- TRICK TANDATANGAN MENINDIH NAMA -->
+        <div style="position: relative; z-index: 2; pointer-events: none;">
+            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; margin-bottom: -40px;">
+        </div>
+        <div style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         ${skHTML}

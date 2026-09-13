@@ -2138,7 +2138,9 @@ function bukaMaklumatKes(index) {
             const kadSamanMemo = document.getElementById('kad_saman_memo');
             if (kadSamanMemo) { kadSamanMemo.style.display = 'none'; }
 
-// --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---
+    const isDraf = kes.noKes.includes('DRAF'); // <--- INI KOD YANG HILANG TU!
+
+            // --- LOGIK BARU: Kawalan Paparan Kad Sejarah Tindakan & Menu Tindakan ---
             const kadSejarah = document.getElementById('kad_sejarah_tindakan');
             const menuTindakanUrus = document.getElementById('menu_tindakan_urus');
             

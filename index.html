@@ -5914,15 +5914,20 @@ function renderJadualSejarah(index) {
     try {
         const kes = memoriSenaraiKes[index];
         const tbody = document.getElementById('mk_body_sejarah');
+        const kadSejarah = document.getElementById('kad_sejarah_tindakan'); // <--- TANGKAP ID KAD SEJARAH
         if (!tbody) return;
 
         tbody.innerHTML = '';
         const sejarah = kes.sejarahTindakan || [];
 
+        // --- LOGIK BARU: JIKA TIADA SEJARAH, TERUS SOROK KAD ---
         if (sejarah.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
+            if (kadSejarah) kadSejarah.style.display = 'none';
             return;
         }
+
+        // --- LOGIK BARU: JIKA ADA SEJARAH, PASTIKAN KAD MUNCUL ---
+        if (kadSejarah) kadSejarah.style.display = 'flex';
 
         const sejarahTerbalik = [...sejarah].reverse();
         

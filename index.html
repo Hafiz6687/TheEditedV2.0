@@ -5830,118 +5830,85 @@ function rekodSejarahTindakan(index, tindakan, butiran) {
 
 // --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
 function renderJadualSejarah(index) {
-    const kes = memoriSenaraiKes[index];
-    const tbody = document.getElementById('mk_body_sejarah');
-    if (!tbody) return;
+    try { // <--- INI PERISAI UNTUK HALANG CRASH. Mesti ada!
+        const kes = memoriSenaraiKes[index];
+        const tbody = document.getElementById('mk_body_sejarah');
+        if (!tbody) return;
 
-    tbody.innerHTML = '';
-    const sejarah = kes.sejarahTindakan || [];
+        tbody.innerHTML = '';
+        const sejarah = kes.sejarahTindakan || [];
 
-    if (sejarah.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
-        return;
-    }
+        if (sejarah.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-row" style="text-align: center; padding: 15px;">Tiada rekod tindakan setakat ini.</td></tr>`;
+            return;
+        }
 
-    // Terbalikkan array supaya tindakan yang terbaharu berada di atas sekali
-    const sejarahTerbalik = [...sejarah].reverse();
-    
-    sejarahTerbalik.forEach((rekod, i) => {
-        const num = sejarah.length - i; 
+        // Terbalikkan array supaya tindakan yang terbaharu berada di atas sekali
+        const sejarahTerbalik = [...sejarah].reverse();
         
-        // Cari index asal di dalam array memori sebelum diterbalikkan (sangat penting supaya sistem tak salah padam)
-        const originalIndex = sejarah.length - 1 - i;
+        sejarahTerbalik.forEach((rekod, i) => {
+            const num = sejarah.length - i; 
+            const originalIndex = sejarah.length - 1 - i;
+            let btnJana = "-";
 
-// --- LOGIK BARU: Butang Jana Dokumen & Hapus berdasarkan Jenis Tindakan ---
-        let btnJana = "-";
-        
-        // 1. Jika Semua Jenis Notis Generik (Sebutan, Bicara, Keputusan)
-        if (rekod.tindakan.includes("Notis")) {
-            let tMatch = rekod.butiran.match(/pada (.*?) jam/);
-            let mMatch = rekod.butiran.match(/jam (.*?)\./);
-            let tarikhHst = tMatch ? tMatch[1] : '';
-            let masaHst = mMatch ? mMatch[1] : '';
+            // PERLINDUNGAN: Kalau data lama kosong, elak javascript mati
+            let tdk = rekod.tindakan || "";
+            let btr = rekod.butiran || "";
+            let trk = rekod.tarikhMasa || "-";
             
-            let kunci = '';
-            if (rekod.tindakan.includes("Notis Sebutan (Pengadu)") || rekod.tindakan.includes("Notis Sebutan (Defendan)")) kunci = 'sebutan';
-            else if (rekod.tindakan.includes("Notis Sebutan (Tangguh)")) kunci = 'sebutan_tangguh';
-            else if (rekod.tindakan.includes("Notis Perbicaraan (Tangguh)")) kunci = 'bicara_tangguh';
-            else if (rekod.tindakan.includes("Notis Perbicaraan (Sambung)")) kunci = 'bicara_sambung';
-            else if (rekod.tindakan.includes("Notis Perbicaraan")) kunci = 'bicara';
-            else if (rekod.tindakan.includes("Notis Keputusan")) kunci = 'keputusan';
-            
-            if (kunci !== '') {
-                btnJana = `
-                    <div style="display: flex; gap: 5px; justify-content: center;">
-                        <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewNotisGenerik('${kunci}', '${tarikhHst}', '${masaHst}')">📄 Jana</button>
-                        <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                    </div>`;
+            if (tdk.includes("Notis")) {
+                let tMatch = btr.match(/pada (.*?) jam/);
+                let mMatch = btr.match(/jam (.*?)\./);
+                let tarikhHst = tMatch ? tMatch[1] : '';
+                let masaHst = mMatch ? mMatch[1] : '';
+                
+                let kunci = '';
+                if (tdk.includes("Notis Sebutan (Pengadu)") || tdk.includes("Notis Sebutan (Defendan)")) kunci = 'sebutan';
+                else if (tdk.includes("Notis Sebutan (Tangguh)")) kunci = 'sebutan_tangguh';
+                else if (tdk.includes("Notis Perbicaraan (Tangguh)")) kunci = 'bicara_tangguh';
+                else if (tdk.includes("Notis Perbicaraan (Sambung)")) kunci = 'bicara_sambung';
+                else if (tdk.includes("Notis Perbicaraan")) kunci = 'bicara';
+                else if (tdk.includes("Notis Keputusan")) kunci = 'keputusan';
+                
+                if (kunci !== '') {
+                    btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewNotisGenerik('${kunci}', '${tarikhHst}', '${masaHst}')">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+                }
+            } 
+            else if (tdk === "Tarik Balik Kes") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewTarikBalik()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
-        } 
-        // 2. Jika Tarik Balik Kes
-        else if (rekod.tindakan === "Tarik Balik Kes") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewTarikBalik()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
-        // 3. Jika Alamat Terkini Defendan
-        else if (rekod.tindakan === "Alamat Terkini Defendan") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
-        // 4. Jika Saman (Borang A)
-        else if (rekod.tindakan === "Saman (Borang A)") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
-        // 5. Jika Saman (Tampal)
-        else if (rekod.tindakan === "Saman (Tampal)") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
-        // 6. Jika Saman (Memo Luar Kawasan)
-        else if (rekod.tindakan === "Saman (Memo)") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
-        // 7. Jika Batal Kes (TAMBAHAN BARU)
-        else if (rekod.tindakan === "Batal Kes") {
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes()">📄 Jana</button>
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        } else {
-            // 8. Jika tindakan lain yang tiada surat
-            btnJana = `
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button>
-                </div>`;
-        }
+            else if (tdk === "Alamat Terkini Defendan") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
+            else if (tdk === "Saman (Borang A)") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
+            else if (tdk === "Saman (Tampal)") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
+            else if (tdk === "Saman (Memo)") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
+            else if (tdk === "Batal Kes") {
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #dc2626; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            } else {
+                // 8. Jika tindakan lain yang tiada surat
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${num}</td>
-            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${rekod.tarikhMasa}</td>
-            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-blue); font-weight: bold;">${rekod.tindakan}</td>
-            <td style="padding: 10px; border-bottom: 1px solid var(--border-color); line-height: 1.4;">${rekod.butiran}</td>
-            <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${btnJana}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${num}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color); font-weight: 500;">${trk}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-blue); font-weight: bold;">${tdk}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color); line-height: 1.4;">${btr}</td>
+                <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${btnJana}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (e) {
+        console.error("Ralat dipintas! Sistem dilindungi dari crash:", e);
+    }
 }
 
 // --- FUNGSI BARU: Hapus Sejarah Tindakan ---

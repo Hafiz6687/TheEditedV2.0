@@ -2388,31 +2388,7 @@ function bukaPreviewTarikBalik() {
     alert("Dokumen Akuan Penarikan Balik Kes sedia untuk dijana dan dicetak.");
     document.getElementById('modalPreview').style.display = 'flex';
 }
-// --- FUNGSI MENGUBAH PAPARAN KAD TINDAKAN PENGURUSAN KES ---
-function toggleKadUrus(jenis) {
-    const ids = ['kad_sebutan_kes', 'kad_sebutan_tangguh', 'kad_bicara', 'kad_bicara_tangguh', 'kad_bicara_sambung', 'kad_keputusan', 'kad_saman_hadir', 'kad_saman_memo'];
-    
-    // Sembunyikan semua kecuali yang diminta
-    ids.forEach(id => {
-        let kad = document.getElementById(id);
-        if (kad) kad.style.display = 'none';
-    });
 
-    if (jenis === 'alamat') { bukaPreviewAlamatTerkini(); return; }
-
-    // Map jenis ke ID Kad
-    const map = {
-        'sebutan': 'kad_sebutan_kes', 'sebutan_tangguh': 'kad_sebutan_tangguh', 'bicara': 'kad_bicara', 'bicara_tangguh': 'kad_bicara_tangguh', 'bicara_sambung': 'kad_bicara_sambung', 'keputusan': 'kad_keputusan', 'saman_a': 'kad_saman_hadir', 'saman_memo': 'kad_saman_memo'
-    };
-
-    if (map[jenis]) {
-        let kadTerpilih = document.getElementById(map[jenis]);
-        if (kadTerpilih) {
-            kadTerpilih.style.display = 'flex';
-            setTimeout(() => kadTerpilih.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
-        }
-    }
-}
 
 // VALIDASI BUTANG SEBUTAN (ASAL)
 function semakButangSebutan() {

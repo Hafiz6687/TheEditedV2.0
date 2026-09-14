@@ -6846,30 +6846,6 @@ function toggleKadUrus(jenis) {
     }, 50);
 }
 
-// --- VALIDASI BUTANG SAMAN HADIR (BORANG A) ---
-function semakButangSaman() {
-    const elTarikh = document.getElementById('mk_tarikh_saman');
-    const elMasa = document.getElementById('mk_masa_saman');
-    const btn = document.getElementById('btnTindakanSaman');
-
-    if (!elTarikh || !elMasa || !btn) return;
-
-    const lengkap = elTarikh.value.trim() !== '' && elMasa.value.trim() !== '';
-
-    btn.disabled = !lengkap;
-    btn.style.opacity = lengkap ? '1' : '0.5';
-    btn.style.cursor = lengkap ? 'pointer' : 'not-allowed';
-}
-
-function tindakanSamanA() {
-    const elTarikh = document.getElementById('mk_tarikh_saman');
-    const elMasa = document.getElementById('mk_masa_saman');
-
-    if (!elTarikh || !elMasa || !elTarikh.value.trim() || !elMasa.value.trim()) {
-        alert("Sila masukkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
-        return;
-    }
-
     bukaPreviewSamanA();
 }
        

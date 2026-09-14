@@ -6863,16 +6863,8 @@ function semakButangSaman() {
 }
 
 function tindakanSamanA() {
-    const elTarikh = document.getElementById('mk_tarikh_saman');
-    const elMasa = document.getElementById('mk_masa_saman');
-
-    if (!elTarikh || !elMasa) return;
-
-    if (elTarikh.value.trim() !== '' && elMasa.value.trim() !== '') {
-        bukaPreviewSamanA();
-    }
+    bukaPreviewSamanA();
 }
-
 // --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
 function semakButangSamanMemo() {
     const tarikh = document.getElementById('mk_tarikh_saman_memo').value;

@@ -2389,6 +2389,34 @@ function bukaPreviewTarikBalik() {
     document.getElementById('modalPreview').style.display = 'flex';
 }
 
+function semakButangSaman() {
+    const elTarikh = document.getElementById('mk_tarikh_saman');
+    const elMasa = document.getElementById('mk_masa_saman');
+    const btn = document.getElementById('btnTindakanSaman');
+    
+    if (!elTarikh || !elMasa || !btn) return;
+
+    if (elTarikh.value && elMasa.value) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanSamanA() {
+    const elTarikh = document.getElementById('mk_tarikh_saman');
+    const elMasa = document.getElementById('mk_masa_saman');
+    
+    if (elTarikh && elMasa && elTarikh.value && elMasa.value) {
+        bukaPreviewSamanA();
+    } else {
+        alert("Sila lengkapkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
+    }
+}
 
 // VALIDASI BUTANG SEBUTAN (ASAL)
 function semakButangSebutan() {

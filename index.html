@@ -2660,7 +2660,7 @@ const conf = {
         <div class="notis-footer-line"></div>
     `;
 
-    // =========================================================================
+// =========================================================================
     // LOGIK PENJANAAN KANDUNGAN SURAT BERDASARKAN JENIS TINDAKAN
     // =========================================================================
     let tajukPengadu = '';
@@ -2670,11 +2670,9 @@ const conf = {
 
     if (kunci === 'sebutan_tangguh') {
         // --- FORMAT KHAS UNTUK SEBUTAN KES (TANGGUH) ---
-        // 1. Buang ayat 'PERKARA: NOTIS...' untuk kedua-dua surat
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
 
-        // --- ISI SURAT PENGADU (Muka Surat 1) ---
         let p2Pengadu = `<div class="notis-isi">2.<span class="jarak-tab"></span>Adalah dimaklumkan, Mahkamah Buruh telah menerima suatu permohonan bagi penangguhan kes daripada pihak <strong>${namaD}</strong>. Mahkamah setelah semakan adalah dengan ini membenarkan permohonan penangguhan kes.</div>`;
         let p3Pengadu = `<div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir di pejabat ini pada <strong>${tarikhText} ${masaText}</strong> dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Kes ini akan disebut pada hari dan waktu yang tersebut di atas untuk tujuan mencapai penyelesaian. Sekiranya tiada penyelesaian kes pada hari tersebut, satu tarikh perbicaraan akan ditetapkan.</div>`;
         
@@ -2685,13 +2683,69 @@ const conf = {
             <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.</div>
         `;
 
-        // --- ISI SURAT DEFENDAN (Muka Surat 2) ---
         let p2Defendan = `<div class="notis-isi">2.<span class="jarak-tab"></span>Adalah dimaklumkan, berhubung suatu permohonan penangguhan kes yang dikemukakan oleh pihak tuan, Mahkamah setelah semakan adalah dengan ini membenarkan permohonan penangguhan kes kepada <strong>${tarikhText} ${masaText}</strong>.</div>`;
         
         isiDefendan = `
             <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
             ${p2Defendan}
-            <!-- Perenggan 3, 4, 5 telah dibuang mengikut arahan -->
+        `;
+
+    } else if (kunci === 'sebutan_semula') {
+        // --- FORMAT KHAS UNTUK SEBUTAN KES (PENETAPAN SEMULA) ---
+        let tarikhSebutanLamaText = "[Tarikh Sebutan Terakhir]";
+        let masaSebutanLamaText = "[Masa Sebutan Terakhir]";
+
+        const sejarah = kes.sejarahTindakan || [];
+        const rekodSebutanLama = [...sejarah].reverse().find(s => 
+            s.tindakan && (s.tindakan.includes("Notis Sebutan") || s.tindakan.includes("Saman"))
+        );
+
+        if (rekodSebutanLama && rekodSebutanLama.butiran) {
+            let tMatch = rekodSebutanLama.butiran.match(/pada\s+(.*?)\s+jam/i);
+            let mMatch = rekodSebutanLama.butiran.match(/jam\s+([\d:]+(?:\s*[a-zA-Z]+)?)/i);
+            
+            if (tMatch && tMatch[1]) {
+                let tL = new Date(tMatch[1]);
+                if (!isNaN(tL.getTime())) {
+                    tarikhSebutanLamaText = `${tL.getDate()} ${bulanMY[tL.getMonth()]} ${tL.getFullYear()}`;
+                } else {
+                    tarikhSebutanLamaText = tMatch[1];
+                }
+            }
+            
+            if (mMatch && mMatch[1]) {
+                let masaStr = mMatch[1].trim();
+                if (masaStr.includes(':')) {
+                    let [jamL, minitL] = masaStr.split(':');
+                    let jamNumL = parseInt(jamL, 10);
+                    if (!isNaN(jamNumL)) {
+                        let ampmL = jamNumL >= 12 ? "petang" : "pagi";
+                        let jamFormatL = jamNumL % 12 || 12;
+                        masaSebutanLamaText = `${jamFormatL}:${minitL} ${ampmL}`;
+                    } else {
+                        masaSebutanLamaText = masaStr;
+                    }
+                } else {
+                    masaSebutanLamaText = masaStr;
+                }
+            }
+        }
+
+        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
+        tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
+
+        isiPengadu = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanLamaText} (${masaSebutanLamaText})</strong> namun defendan gagal hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhText} (${masaText})</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
+        `;
+
+        isiDefendan = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Dimaklumkan bahawa pengadu dalam kes ini telah memfailkan tuntutan di bawah Akta Kerja 1955 untuk menuntut daripada defendan wang yang dianggarkan berjumlah <strong>RM${jumlahKeseluruhanFormat}</strong>. Butiran tuntutan adalah sebagaimana Lampiran 1 JTKSM(A)06/01.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhText} (${masaText})</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
+            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
+            <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
         `;
 
     } else {
@@ -2709,7 +2763,7 @@ const conf = {
         isiDefendan = `
             <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
             <div class="notis-isi">2.<span class="jarak-tab"></span>Dimaklumkan bahawa pengadu dalam kes ini telah memfailkan tuntutan di bawah Akta Kerja 1955 untuk menuntut daripada defendan wang yang dianggarkan berjumlah <strong>RM${jumlahKeseluruhanFormat}</strong>. Butiran tuntutan adalah sebagaimana Lampiran 1 JTKSM(A)06/01.</div>
-            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhText} ${masaText}</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhText} (${masaText})</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
             <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
             <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
         `;

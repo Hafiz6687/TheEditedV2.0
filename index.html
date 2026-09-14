@@ -2389,6 +2389,14 @@ function bukaPreviewTarikBalik() {
     document.getElementById('modalPreview').style.display = 'flex';
 }
 
+// =========================================================================
+// FIX: SAMAN GENERATION & BUTTON HANDLERS
+// =========================================================================
+
+/**
+ * Checks if Tarikh Hadir and Masa Hadir are filled in for Saman Hadir (Borang A).
+ * Enables or disables the '📄 Jana Saman (Borang A)' button.
+ */
 function semakButangSaman() {
     const elTarikh = document.getElementById('mk_tarikh_saman');
     const elMasa = document.getElementById('mk_masa_saman');
@@ -2407,6 +2415,9 @@ function semakButangSaman() {
     }
 }
 
+/**
+ * Triggers document preview generation for Saman (Borang A).
+ */
 function tindakanSamanA() {
     const elTarikh = document.getElementById('mk_tarikh_saman');
     const elMasa = document.getElementById('mk_masa_saman');
@@ -2416,6 +2427,61 @@ function tindakanSamanA() {
     } else {
         alert("Sila lengkapkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
     }
+}
+
+/**
+ * Toggles management card visibility.
+ */
+function toggleKadUrus(jenis) {
+    const idsKad = [
+        'kad_sebutan_kes',
+        'kad_sebutan_tangguh',
+        'kad_bicara',
+        'kad_bicara_tangguh',
+        'kad_bicara_sambung',
+        'kad_keputusan',
+        'kad_saman_hadir',
+        'kad_saman_memo'
+    ];
+
+    idsKad.forEach(id => {
+        const kad = document.getElementById(id);
+        if (kad) kad.style.display = 'none';
+    });
+
+    if (jenis === 'alamat') {
+        bukaPreviewAlamatTerkini();
+        return;
+    }
+
+    const mapKad = {
+        'sebutan':          'kad_sebutan_kes',
+        'sebutan_tangguh':  'kad_sebutan_tangguh',
+        'bicara':           'kad_bicara',
+        'bicara_tangguh':   'kad_bicara_tangguh',
+        'bicara_sambung':   'kad_bicara_sambung',
+        'keputusan':        'kad_keputusan',
+        'saman_a':          'kad_saman_hadir',
+        'saman_memo':       'kad_saman_memo'
+    };
+
+    const idKadDipilih = mapKad[jenis];
+    if (!idKadDipilih) return;
+
+    const kadTerpilih = document.getElementById(idKadDipilih);
+    if (!kadTerpilih) return;
+
+    kadTerpilih.style.display = 'flex';
+
+    if (jenis === 'saman_a') {
+        semakButangSaman();
+    } else if (jenis === 'saman_memo') {
+        semakButangSamanMemo();
+    }
+
+    setTimeout(() => {
+        kadTerpilih.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
 }
 
 // VALIDASI BUTANG SEBUTAN (ASAL)
@@ -3691,37 +3757,56 @@ function bukaModalTuntutan(jenisJadual = 'biasa', indexEdit = -1) {
         }
 
 function simpanTuntutan() {
-            let jenis = document.getElementById('jenisTuntutan').value;
-            let jenisLain = document.getElementById('jenisTuntutanLain').value.trim();
-            let keterangan = document.getElementById('keteranganTuntutan').value.trim();
-            let jumlah = document.getElementById('jumlahTuntutan').value.replace(/,/g, ''); 
-            const index = parseInt(document.getElementById('indexTuntutanEdit').value);
-            const jenisJadual = document.getElementById('jenisJadualTuntutan').value; 
+    let jenis = document.getElementById('jenisTuntutan').value;
+    let jenisLain = document.getElementById('jenisTuntutanLain').value.trim();
+    let keterangan = document.getElementById('keteranganTuntutan').value.trim();
+    let jumlah = document.getElementById('jumlahTuntutan').value.replace(/,/g, ''); 
+    const index = parseInt(document.getElementById('indexTuntutanEdit').value);
+    const jenisJadual = document.getElementById('jenisJadualTuntutan').value; 
 
-            if (jenis === 'Lain-lain') { if (jenisLain === "") { alert("Sila nyatakan jenis tuntutan lain."); return; } jenis = jenisLain; }
-            if (jenis === "" || keterangan === "" || jumlah.trim() === "" || isNaN(jumlah)) { alert("Sila lengkapkan Jenis, Keterangan, dan pastikan Jumlah Tuntutan adalah nombor."); return; }
-            if (!keterangan.startsWith('(')) { keterangan = '(' + keterangan; } if (!keterangan.endsWith(')')) { keterangan = keterangan + ')'; }
+    if (jenis === 'Lain-lain') { 
+        if (jenisLain === "") { 
+            alert("Sila nyatakan jenis tuntutan lain."); 
+            return; 
+        } 
+        jenis = jenisLain; 
+    }
+    if (jenis === "" || keterangan === "" || jumlah.trim() === "" || isNaN(jumlah)) { 
+        alert("Sila lengkapkan Jenis, Keterangan, dan pastikan Jumlah Tuntutan adalah nombor."); 
+        return; 
+    }
+    if (!keterangan.startsWith('(')) { keterangan = '(' + keterangan; } 
+    if (!keterangan.endsWith(')')) { keterangan = keterangan + ')'; }
 
-            if (jenisJadual === 'ketua') {
-                if (index > -1) { memoriTuntutanKetua[index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; } 
-                else { memoriTuntutanKetua.push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); }
-                autoKiraTuntutanBerkumpulan(); // <-- KIRA SEMULA
-                renderJadualTuntutan();
-            } else if (jenisJadual.startsWith('tambahan_')) {
-                let idxTambahan = parseInt(jenisJadual.split('_')[1]);
-                if (index > -1) { memoriTuntutanTambahan[idxTambahan][index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; } 
-                else { memoriTuntutanTambahan[idxTambahan].push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); }
-                autoKiraTuntutanBerkumpulan(); // <-- KIRA SEMULA
-                renderJadualTuntutanTambahan(idxTambahan);
-                renderJadualTuntutan(); // <-- UPDATE JADUAL BAWAH
-            } else {
-                if (index > -1) { memoriTuntutan[index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; } 
-                else { memoriTuntutan.push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); }
-                renderJadualTuntutan();
-            }
-
-            tutupModalTuntutan(); 
+    if (jenisJadual === 'ketua') {
+        if (index > -1) { 
+            memoriTuntutanKetua[index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; 
+        } else { 
+            memoriTuntutanKetua.push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); 
         }
+        autoKiraTuntutanBerkumpulan(); 
+        renderJadualTuntutan();
+    } else if (jenisJadual.startsWith('tambahan_')) {
+        let idxTambahan = parseInt(jenisJadual.split('_')[1]);
+        if (index > -1) { 
+            memoriTuntutanTambahan[idxTambahan][index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; 
+        } else { 
+            memoriTuntutanTambahan[idxTambahan].push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); 
+        }
+        autoKiraTuntutanBerkumpulan(); 
+        renderJadualTuntutanTambahan(idxTambahan);
+        renderJadualTuntutan(); 
+    } else {
+        if (index > -1) { 
+            memoriTuntutan[index] = { jenis: jenis, keterangan: keterangan, jumlah: jumlah }; 
+        } else { 
+            memoriTuntutan.push({ jenis: jenis, keterangan: keterangan, jumlah: jumlah }); 
+        }
+        renderJadualTuntutan();
+    }
+
+    tutupModalTuntutan(); 
+}
 
         function hapusTuntutan(index, jenisJadual = 'biasa') { 
             if (confirm("Adakah anda pasti mahu memadam tuntutan ini?")) { 
@@ -6372,7 +6457,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
-    // --- TAMBAH BARIS INI UNTUK Selesaikan ISU CRASH SAMAN A ---
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
 
     // Buka bungkusan data dari sejarah (jika ada)
@@ -6383,7 +6467,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
 
     // Dapatkan maklumat asas
     let noKes = kes.noKes.split('<br>')[0].trim();
-    let namaP = "", namaD = "", alamatD = "";
+    let namaP = "", namaD = "", alamatD = "", alamatP = "";
     let d_idStr = "(No. Pendaftaran/KP: ....................)";
 
     if (kes.dataBorang && kes.dataBorang.inputs) {
@@ -6395,12 +6479,14 @@ function bukaPreviewSamanA(dataSimpanan = null) {
 
         if (isMajikan) {
             namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
+            alamatP = almtDef || '[ALAMAT PENGADU]';
             namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
             alamatD = almtPeng || '[ALAMAT DEFENDAN]';
             let idDef = inputs['noPendPengadu'] || '....................';
             d_idStr = `(No. Kad Pengenalan: ${idDef})`;
         } else {
             namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
+            alamatP = almtPeng || '[ALAMAT PENGADU]';
             namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
             alamatD = almtDef || '[ALAMAT DEFENDAN]';
             let idDef = inputs['noPendDefendan'] || '....................';
@@ -6412,6 +6498,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
         namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
         alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
+        alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
     }
 
     let htmlJadualTuntutan = "";
@@ -6442,8 +6529,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </tr>`;
     }
 
-
-// Ekstrak Tarikh & Masa Sebutan Asal/Terkini dari Sejarah atau Input Sebutan
+    // Ekstrak Tarikh & Masa Sebutan Asal
     const tarikhSebutanAsalRaw = document.getElementById('mk_tarikh_sebutan')?.value;
     const masaSebutanAsalRaw = document.getElementById('mk_masa_sebutan')?.value;
 
@@ -6492,6 +6578,48 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
+    const templateHeaderHTML = `
+        <div class="notis-header">
+            <div class="notis-header-kiri">
+                <div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div>
+                <div class="notis-jabatan">
+                    <div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div>
+                </div>
+            </div>
+            <div class="notis-hubungi">
+                <table style="font-family: Arial, sans-serif; font-size: 8pt;">
+                    <tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr>
+                    <tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr>
+                    <tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr>
+                    <tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr>
+                </table>
+            </div>
+        </div>
+    `;
+
+    const templateFooterHTML = `
+        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+        <div class="notis-slogan">
+            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+        </div>
+        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+        
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+        </div>
+        
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+        </div>
+        <div class="notis-footer-line"></div>
+    `;
+
     const htmlSamanA = `
         <style>
             @media print {
@@ -6523,7 +6651,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
-<!-- MUKA SURAT 1: SAMAN BORANG A (UNTUK DEFENDAN) -->
+        <!-- MUKA SURAT 1: SAMAN BORANG A (UNTUK DEFENDAN) -->
         <div class="kertas-notis" id="kertasSamanA">
             <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
             <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
@@ -6639,7 +6767,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         document.getElementById('actionMenu').classList.remove('show');
         window.print();
         
-        // Simpan maklumat ke dalam sejarah
         let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen Saman (Borang A) telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
@@ -6650,14 +6777,10 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         }, 500);
     };
 
-    // Reset Radio Button kepada ON secara lalai
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
 
-    // Tunjukkan suis tandatangan
     tunjukSuisTandatangan(true);
-
-    // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
 }
 

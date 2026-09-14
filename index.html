@@ -6630,8 +6630,12 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
+            /* 1. Kertas Notis Utama (Header & Footer mengikut jarak 1.27 cm ini) */
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
-            .notis-body-wrapper { padding: 0; } 
+            
+            /* 2. Isi Kandungan / Teks Surat (Menambah 1.23 cm supaya Jumlah Jarak Teks = EXACT 2.5 cm) */
+            .notis-body-wrapper { padding: 0 1.23cm !important; box-sizing: border-box; } 
+            
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
             .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
@@ -6648,16 +6652,20 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
             .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
+            
+            /* 3. Garisan Bawah (Footer Line) diselaraskan ke 2.5 cm */
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
         <!-- MUKA SURAT 1: SAMAN BORANG A (UNTUK DEFENDAN) -->
         <div class="kertas-notis" id="kertasSamanA">
-            <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
-            <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
-                BORANG A<br>SAMAN<br><span style="font-weight: normal; font-size: 10pt;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
-            </div>
+            <!-- Dibungkus dengan notis-body-wrapper supaya tepi kiri-kanan jadi 2.5cm -->
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
+                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
+                <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
+                    BORANG A<br>SAMAN<br><span style="font-weight: normal; font-size: 10pt;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
+                </div>
+
                 <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
                 <div style="text-align: center; margin-bottom: 10px;">Antara</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>

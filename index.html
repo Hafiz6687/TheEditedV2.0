@@ -6457,12 +6457,29 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </tr>`;
     }
 
-    // Ekstrak Tarikh & Tempat dari memori ATAU dari kotak input
+
+// Ekstrak Tarikh & Masa Sebutan Asal/Terkini dari Sejarah atau Input Sebutan
+    const tarikhSebutanAsalRaw = document.getElementById('mk_tarikh_sebutan')?.value;
+    const masaSebutanAsalRaw = document.getElementById('mk_masa_sebutan')?.value;
+
+    let tarikhSebutanAsalText = "[Tarikh Sebutan]";
+    if (tarikhSebutanAsalRaw && tarikhSebutanAsalRaw !== "") {
+        let tA = new Date(tarikhSebutanAsalRaw);
+        if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
+    }
+
+    let masaSebutanAsalText = "[Masa Sebutan]";
+    if (masaSebutanAsalRaw && masaSebutanAsalRaw !== "") {
+        let [jamA, minitA] = masaSebutanAsalRaw.split(':');
+        let jamNumA = parseInt(jamA);
+        let ampmA = jamNumA >= 12 ? "petang" : "pagi";
+        let jamFormatA = jamNumA % 12 || 12;
+        masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+    }
+
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_saman')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
-    
-    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
@@ -6497,14 +6514,31 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
-                .kertas-notis { margin: 0 !important; padding: 0.75cm 2cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
-            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 0.75cm 2cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.25; box-sizing: border-box; position: relative; }
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             .notis-body-wrapper { padding: 0; } 
-            .jarak-tab { display: inline-block; width: 40px; }
+            .jarak-tab { display: inline-block; width: 30px; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
+            .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
+            .notis-logo img { width: 120px; height: auto; display: block; }
+            .notis-jabatan { text-align: left; line-height: 1.2; }
+            .notis-hubungi { flex-shrink: 0; width: 200px; font-size: 8pt; line-height: 1.3; }
+            .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; }
+            .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; }
+            .kol-label { width: 40%; white-space: nowrap; }
+            .kol-titik { width: 5%; text-align: center; }
+            .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; }
+            .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
+            .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+            .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
+            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
+            .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
+            .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
+<!-- MUKA SURAT 1: SAMAN BORANG A (UNTUK DEFENDAN) -->
         <div class="kertas-notis" id="kertasSamanA">
             <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
             <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
@@ -6540,13 +6574,60 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
 
                 <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 60px; page-break-inside: avoid; line-height: 1.25;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
                     <div></div> 
                     <div style="text-align: center;">
                         <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
                         <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- MUKA SURAT 2: NOTIS MAKLUMAN PENGADU -->
+        <div class="kertas-notis" id="kertasNotisSamanPengadu">
+            ${templateHeaderHTML}
+
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                <div class="notis-rujukan">
+                    Rujukan Kami : ${noKes}<br>
+                    Tarikh : ${tarikhSamanDD} ${tarikhSamanMMYYYY}
+                </div>
+
+                <div class="notis-alamat">
+                    <strong>${namaP}</strong><br>
+                    ${alamatP || '[ALAMAT PENGADU]'}
+                </div>
+
+                <div style="margin-bottom: 15px;">Tuan,</div>
+
+                <div class="notis-tajuk">
+                    KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>
+                    ANTARA PENGADU : ${namaP}<br>
+                    TERHADAP DEFENDAN : ${namaD}<br>
+                    PERKARA: NOTIS SEBUTAN KES (SAMAN)
+                </div>
+                <hr class="notis-garis-tajuk">
+
+                <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+
+                <div class="notis-isi">
+                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                </div>
+
+                <div class="notis-isi">
+                    3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.
+                </div>
+
+                <div class="notis-isi">
+                    4.<span class="jarak-tab"></span>Sila ambil perhatian, surat wakil kuasa yang ditandatangani oleh Pengarah Syarikat/ Pengerusi, salinan maklumat syarikat (SSM) dan sesalinan KWSP/PERKESO (menunjukkan nama wakil yang hadir) hendaklah dikemukakan dalam hal berkaitan perwakilan tersebut untuk semakan pegawai pendengar.
+                </div>
+
+                <div class="notis-isi">
+                    5.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
+                </div>
+
+                ${templateFooterHTML}
             </div>
         </div>
     `;
@@ -6583,9 +6664,13 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             tukarView('senarai');
         }, 500);
     };
+
     // Reset Radio Button kepada ON secara lalai
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
+
+    // Tunjukkan suis tandatangan
+    tunjukSuisTandatangan(true);
 
     // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';

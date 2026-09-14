@@ -6368,6 +6368,9 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
+    // --- TAMBAH BARIS INI UNTUK Selesaikan ISU CRASH SAMAN A ---
+    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+
     // Buka bungkusan data dari sejarah (jika ada)
     let memoData = {};
     if (dataSimpanan && dataSimpanan !== 'null') {

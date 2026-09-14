@@ -6828,9 +6828,7 @@ function toggleKadUrus(jenis) {
 
     idsKad.forEach(id => {
         const kad = document.getElementById(id);
-        if (kad) {
-            kad.style.display = 'none';
-        }
+        if (kad) kad.style.display = 'none';
     });
 
     if (jenis === 'alamat') {
@@ -6850,14 +6848,11 @@ function toggleKadUrus(jenis) {
     };
 
     const idKadDipilih = mapKad[jenis];
-
     if (!idKadDipilih) return;
 
     const kadTerpilih = document.getElementById(idKadDipilih);
-
     if (!kadTerpilih) return;
 
-// Paparkan kad yang dipilih
     kadTerpilih.style.display = 'flex';
 
     if (jenis === 'saman_a') {
@@ -6867,10 +6862,7 @@ function toggleKadUrus(jenis) {
     }
 
     setTimeout(() => {
-        kadTerpilih.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
+        kadTerpilih.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
 }
        

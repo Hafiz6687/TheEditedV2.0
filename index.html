@@ -6829,10 +6829,9 @@ function toggleKadUrus(jenis) {
 
     if (!kadTerpilih) return;
 
-    // Paparkan kad yang dipilih
+// Paparkan kad yang dipilih
     kadTerpilih.style.display = 'flex';
 
-    // ✅ PEMBETULAN: Panggil semakan butang apabila Saman A atau Saman Memo dibuka
     if (jenis === 'saman_a') {
         semakButangSaman();
     } else if (jenis === 'saman_memo') {
@@ -6863,8 +6862,17 @@ function semakButangSaman() {
 }
 
 function tindakanSamanA() {
+    const elTarikh = document.getElementById('mk_tarikh_saman');
+    const elMasa = document.getElementById('mk_masa_saman');
+
+    if (!elTarikh || !elMasa || !elTarikh.value.trim() || !elMasa.value.trim()) {
+        alert("Sila masukkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
+        return;
+    }
+
     bukaPreviewSamanA();
 }
+       
 // --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
 function semakButangSamanMemo() {
     const tarikh = document.getElementById('mk_tarikh_saman_memo').value;

@@ -6810,17 +6810,7 @@ function bukaPreviewSamanTampal() {
     document.getElementById('modalPreview').style.display = 'flex';
 }
        
-// =========================================================
-// FIX: PAPARAN KAD TINDAKAN PENGURUSAN KES
-// =========================================================
-// Fungsi ini menggantikan definisi toggleKadUrus() kedua.
-// Jangan ganggu fungsi lain.
-// =========================================================
 function toggleKadUrus(jenis) {
-
-    // ---------------------------------------------------------
-    // 1. Senarai SEMUA kad penetapan yang dikawal oleh menu
-    // ---------------------------------------------------------
     const idsKad = [
         'kad_sebutan_kes',
         'kad_sebutan_tangguh',
@@ -6832,9 +6822,6 @@ function toggleKadUrus(jenis) {
         'kad_saman_memo'
     ];
 
-    // ---------------------------------------------------------
-    // 2. Sembunyikan SEMUA kad penetapan dahulu
-    // ---------------------------------------------------------
     idsKad.forEach(id => {
         const kad = document.getElementById(id);
         if (kad) {
@@ -6842,19 +6829,11 @@ function toggleKadUrus(jenis) {
         }
     });
 
-    // ---------------------------------------------------------
-    // 3. Alamat Terkini Defendan
-    //    Tiada kad penetapan.
-    //    Terus buka preview sedia ada.
-    // ---------------------------------------------------------
     if (jenis === 'alamat') {
         bukaPreviewAlamatTerkini();
         return;
     }
 
-    // ---------------------------------------------------------
-    // 4. Pemetaan Button → Kad Penetapan
-    // ---------------------------------------------------------
     const mapKad = {
         'sebutan':          'kad_sebutan_kes',
         'sebutan_tangguh':  'kad_sebutan_tangguh',
@@ -6868,31 +6847,22 @@ function toggleKadUrus(jenis) {
 
     const idKadDipilih = mapKad[jenis];
 
-    // ---------------------------------------------------------
-    // 5. Paparkan kad yang dipilih
-    // ---------------------------------------------------------
-    if (!idKadDipilih) {
-        return;
-    }
+    if (!idKadDipilih) return;
 
     const kadTerpilih = document.getElementById(idKadDipilih);
 
-    if (!kadTerpilih) {
-        console.warn(
-            'toggleKadUrus: Kad tidak ditemui untuk jenis:',
-            jenis,
-            '→',
-            idKadDipilih
-        );
-        return;
-    }
+    if (!kadTerpilih) return;
 
-    // Paparkan ruang input / borang penetapan
+    // Paparkan kad yang dipilih
     kadTerpilih.style.display = 'flex';
 
-    // ---------------------------------------------------------
-    // 6. Smooth Scroll automatik ke kad yang baru dibuka
-    // ---------------------------------------------------------
+    // ✅ PEMBETULAN: Panggil semakan butang apabila Saman A atau Saman Memo dibuka
+    if (jenis === 'saman_a') {
+        semakButangSaman();
+    } else if (jenis === 'saman_memo') {
+        semakButangSamanMemo();
+    }
+
     setTimeout(() => {
         kadTerpilih.scrollIntoView({
             behavior: 'smooth',

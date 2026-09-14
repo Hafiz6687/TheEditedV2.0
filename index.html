@@ -2147,10 +2147,15 @@ if (menuTindakanUrus) {
         }
     }
 
+    // Pastikan suis tandatangan disembunyikan untuk paparan maklumat kes
+    if (typeof tunjukSuisTandatangan === 'function') {
+        tunjukSuisTandatangan(false);
+    }
+
     document.getElementById('viewSenaraiTugas').style.display = 'none';
     document.getElementById('viewPendaftaranKes').style.display = 'none';
     document.getElementById('viewMaklumatKes').style.display = 'block';
-    
+
     document.getElementById('tajukHalamanAtas').innerHTML = 'Maklumat Kes Terperinci';
     document.getElementById('butangCetakHeader').style.display = 'none'; 
 }

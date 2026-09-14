@@ -6183,10 +6183,10 @@ function bukaPreviewAlamatTerkini() {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
-    // 1. Semak Sejarah Tindakan untuk kesan situasi (Saman vs Notis Sebutan)
-    let jenisDokumenGagal = "notis sebutan"; // Lalai kepada Notis Sebutan
+    // 1. SEMAK SEJARAH TINDAKAN UNTUK KESAN SITUASI (Saman vs Notis Sebutan)
+    let jenisDokumenGagal = "notis sebutan"; // Default kepada Notis Sebutan
     if (kes.sejarahTindakan && kes.sejarahTindakan.some(s => s.tindakan && s.tindakan.includes("Saman"))) {
-        jenisDokumenGagal = "saman"; // Jika pernah jana Saman, tukar ke Saman
+        jenisDokumenGagal = "saman"; // Jika sejarah ada "Saman", tukar kepada "saman"
     }
 
     // Dapatkan maklumat asas
@@ -6229,7 +6229,9 @@ function bukaPreviewAlamatTerkini() {
     const templateHeaderHTML = `
         <div class="notis-header">
             <div class="notis-header-kiri">
-                <div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div>
+                <div class="notis-logo">
+                    <img src="jata-negara.png" alt="Logo Jata Negara">
+                </div>
                 <div class="notis-jabatan">
                     <div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div>
                     <div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div>
@@ -6240,6 +6242,7 @@ function bukaPreviewAlamatTerkini() {
                     <div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div>
                 </div>
             </div>
+            
             <div class="notis-hubungi">
                 <table style="font-family: Arial, sans-serif; font-size: 8pt;">
                     <tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr>
@@ -6282,6 +6285,7 @@ function bukaPreviewAlamatTerkini() {
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
             .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
+            .notis-logo flex-shrink: 0;
             .notis-logo img { width: 120px; height: auto; display: block; }
             .notis-jabatan { text-align: left; line-height: 1.2; }
             .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; }
@@ -6297,6 +6301,7 @@ function bukaPreviewAlamatTerkini() {
             .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
+            .notis-sign { margin-bottom: 50px; font-size: 10pt; }
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
@@ -6361,7 +6366,7 @@ function bukaPreviewAlamatTerkini() {
         document.getElementById('actionMenu').classList.remove('show');
         window.print();
         
-        rekodSejarahTindakan(indexKesSemasa, "Alamat Terkini Defendan", `Surat permohonan alamat terkini defendan (${jenisDokumenGagal} gagal diserah) telah dijana dan dicetak.`);
+        rekodSejarahTindakan(indexKesSemasa, "Alamat Terkini Defendan", `Surat maklumat/permohonan alamat terkini defendan (${jenisDokumenGagal} gagal diserah) telah dijana dan dicetak.`);
         
         setTimeout(() => {
             document.getElementById('modalPreview').style.display = 'none';

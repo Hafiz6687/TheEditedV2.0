@@ -2745,7 +2745,6 @@ const conf = {
         );
 
         if (rekodSebutanLama && rekodSebutanLama.butiran) {
-            // Ekstrak tarikh (YYYY-MM-DD) dan masa (HH:MM) daripada ayat sejarah
             let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
             let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
 
@@ -2760,8 +2759,8 @@ const conf = {
         // Format tarikh & masa baharu untuk sebutan semula
         let tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
 
+        // MUKA SURAT 1: TAJUK & ISI PENGADU (KEKAL)
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
-        tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
         isiPengadu = `
             <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
@@ -2769,12 +2768,118 @@ const conf = {
             <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
         `;
 
+        // =========================================================================
+        // MUKA SURAT 2: PENUH KOD BORANG A SAMAN (COPY-PASTE 100% UNTUK DEFENDAN)
+        // =========================================================================
+        let d_idStr = "(No. Pendaftaran/KP: ....................)";
+        let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
+        let isMajikanForm = inputs['majikan'] === true || inputs['majikan'] === "true";
+
+        if (isMajikanForm) {
+            let idDef = inputs['noPendPengadu'] || '....................';
+            d_idStr = `(No. Kad Pengenalan: ${idDef})`;
+        } else {
+            let idDef = inputs['noPendDefendan'] || '....................';
+            let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
+            let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
+            d_idStr = `(${labelDef}: ${idDef})`;
+        }
+
+        let htmlJadualTuntutanSaman = "";
+        let jumlahKeseluruhanSaman = 0;
+        let senaraiTuntutanSemasa = (kes.dataBorang && kes.dataBorang.tuntutanBiasa && kes.dataBorang.tuntutanBiasa.length > 0) ? kes.dataBorang.tuntutanBiasa : [];
+
+        if (senaraiTuntutanSemasa.length === 0) { 
+            htmlJadualTuntutanSaman = `<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">Tiada tuntutan direkodkan.</td></tr>`; 
+        } else {
+            senaraiTuntutanSemasa.forEach((item, index) => {
+                const jumlahNum = parseFloat(item.jumlah);
+                jumlahKeseluruhanSaman += isNaN(jumlahNum) ? 0 : jumlahNum;
+                let keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+                htmlJadualTuntutanSaman += `
+                <tr>
+                    <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${index + 1}</td>
+                    <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>
+                    <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>`;
+            });
+            htmlJadualTuntutanSaman += `
+            <tr>
+                <td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH KESELURUHAN</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; background-color: #e2e8f0;">RM ${jumlahKeseluruhanSaman.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>`;
+        }
+
+        let tempatSamanRaw = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
+        let tarikhSebutanDD = ".......";
+        let tarikhSebutanMMYYYY = "........................";
+        if (tarikhRaw && tarikhRaw !== "") {
+            let t = new Date(tarikhRaw);
+            if (!isNaN(t.getTime())) {
+                tarikhSebutanDD = t.getDate();
+                tarikhSebutanMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+            }
+        }
+
+        let masaSebutanText = ".......";
+        if (masaRaw && masaRaw !== "") {
+            let [jam, minit] = masaRaw.split(':');
+            let jamNum = parseInt(jam, 10);
+            let ampm = jamNum >= 12 ? "petang" : "pagi";
+            let jamFormat = jamNum % 12 || 12;
+            masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+        }
+
+        const tH = new Date();
+        const tarikhSamanDD = tH.getDate();
+        const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
+
+        // MUKA SURAT 2 DITUKAR KEPADA SAMAN BORANG A
+        tajukDefendan = '';
         isiDefendan = `
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi">2.<span class="jarak-tab"></span>Dimaklumkan bahawa pengadu dalam kes ini telah memfailkan tuntutan di bawah Akta Kerja 1955 untuk menuntut daripada defendan wang yang dianggarkan berjumlah <strong>RM${jumlahKeseluruhanFormat}</strong>. Butiran tuntutan adalah sebagaimana Lampiran 1 JTKSM(A)06/01.</div>
-            <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan diminta hadir ke pejabat ini pada <strong>${tarikhMasaBaruGabung}</strong> untuk sebutan/perbicaraan kes. Sila ambil perhatian sekiranya kes ini tidak dapat diselesaikan pada hari tersebut, suatu tarikh perbicaraan akan ditetapkan.</div>
-            <div class="notis-isi">4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya wakil yang hadir, surat wakil yang ditandatangani oleh Pengarah syarikat, salinan maklumat syarikat (SSM) dan sesalinan KWSP terkini (menunjukkan nama wakil yang hadir) hendaklah ditunjukkan untuk semakan pegawai pendengar.</div>
-            <div class="notis-isi">5.<span class="jarak-tab"></span>Saman akan dikeluarkan sekiranya pihak tuan gagal hadir pada tarikh dan masa yang ditetapkan.</div>
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0;">
+                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
+                <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
+                    BORANG A<br>SAMAN<br><span style="font-weight: normal; font-size: 10pt;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
+                </div>
+
+                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
+                <div style="text-align: center; margin-bottom: 10px;">Antara</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
+                <div style="text-align: center; margin-bottom: 10px;">Dan</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
+
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.15;">Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD.replace(/<br>/g, ', ').toUpperCase()}</strong>.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
+                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
+                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>
+
+                <div style="margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; line-height: 1.25;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; background-color: #e2e8f0;">Jenis & Keterangan Tuntutan</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Jumlah (RM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>${htmlJadualTuntutanSaman}</tbody>
+                    </table>
+                </div>
+
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Sila ambil perhatian bahawa kamu boleh membawa saksi-saksi yang kamu ingin panggil bagi pihak kamu ke perbicaraan aduan di atas, dan bahawa kamu boleh memohon kepada Ketua Pengarah bagi saman-saman kepada orang-orang yang harus hadir dan memberi keterangan.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
+
+                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
+                    <div></div> 
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    </div>
+                </div>
+            </div>
         `;
     
     } else {

@@ -2903,9 +2903,44 @@ const conf = {
         `;
     }
 
+// LOGIK PAPARAN MUKA SURAT 2:
+    // Jika 'sebutan_semula', Borang A tidak memerlukan Letterhead di atasnya.
+    let mukaSuratDefendanHTML = '';
+    if (kunci === 'sebutan_semula') {
+        mukaSuratDefendanHTML = `
+            <div class="kertas-notis" id="kertasNotisDefendan" style="padding: 1.5cm 2.5cm;">
+                ${isiDefendan}
+            </div>
+        `;
+    } else {
+        mukaSuratDefendanHTML = `
+            <div class="kertas-notis" id="kertasNotisDefendan">
+                ${templateHeaderHTML}
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                    <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
+                    <div class="notis-alamat"><strong>${namaD}</strong><br>${alamatD}</div>
+                    <div style="margin-bottom: 15px;">Tuan,</div>
+                    ${tajukDefendan}
+                    <hr class="notis-garis-tajuk">
+                    ${isiDefendan}
+                    ${templateFooterHTML}
+                </div>
+            </div>
+        `;
+    }
+
     const htmlNotisGenerik = `
     <style>
-        @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } body.print-only-pengadu #kertasNotisDefendan { display: none !important; } body.print-only-defendan #kertasNotisPengadu { display: none !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
+        @media print { 
+            @page { margin: 0; } 
+            body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+            body > *:not(#printArea) { display: none !important; } 
+            #printArea { display: block !important; } 
+            body.print-only-pengadu #kertasNotisDefendan { display: none !important; } 
+            body.print-only-defendan #kertasNotisPengadu { display: none !important; } 
+            .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
+            .kertas-notis:last-child { page-break-after: auto; } 
+        }
         .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
         .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
     </style>
@@ -2925,18 +2960,7 @@ const conf = {
     </div>
 
     <!-- MUKA SURAT 2: DEFENDAN -->
-    <div class="kertas-notis" id="kertasNotisDefendan">
-        ${templateHeaderHTML}
-        <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-            <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-            <div class="notis-alamat"><strong>${namaD}</strong><br>${alamatD}</div>
-            <div style="margin-bottom: 15px;">Tuan,</div>
-            ${tajukDefendan}
-            <hr class="notis-garis-tajuk">
-            ${isiDefendan}
-            ${templateFooterHTML}
-        </div>
-    </div>
+    ${mukaSuratDefendanHTML}
     `;
 
     document.getElementById('previewContent').innerHTML = htmlNotisGenerik;

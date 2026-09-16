@@ -2621,15 +2621,15 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
-const conf = {
-    'sebutan': { idPrefix: 'sebutan', tajukSurat: 'SEBUTAN KES', tindakan: 'Notis Sebutan', label: 'sebutan' },
-    'sebutan_tangguh': { idPrefix: 'sebutan_tangguh', tajukSurat: 'SEBUTAN KES (TANGGUH)', tindakan: 'Notis Sebutan (Tangguh)', label: 'sebutan' },
-    'sebutan_semula': { idPrefix: 'sebutan_semula', tajukSurat: 'SEBUTAN KES (PENETAPAN SEMULA)', tindakan: 'Notis Sebutan (Penetapan Semula)', label: 'sebutan' }, // <-- TAMBAH INI
-    'bicara': { idPrefix: 'bicara', tajukSurat: 'PERBICARAAN KES', tindakan: 'Notis Perbicaraan', label: 'perbicaraan' },
-    'bicara_tangguh': { idPrefix: 'bicara_tangguh', tajukSurat: 'PERBICARAAN KES (TANGGUH)', tindakan: 'Notis Perbicaraan (Tangguh)', label: 'perbicaraan' },
-    'bicara_sambung': { idPrefix: 'bicara_sambung', tajukSurat: 'PERBICARAAN KES (SAMBUNG)', tindakan: 'Notis Perbicaraan (Sambung)', label: 'perbicaraan' },
-    'keputusan': { idPrefix: 'keputusan', tajukSurat: 'KEPUTUSAN KES', tindakan: 'Notis Keputusan', label: 'keputusan' }
-};
+    const conf = {
+        'sebutan': { idPrefix: 'sebutan', tajukSurat: 'SEBUTAN KES', tindakan: 'Notis Sebutan', label: 'sebutan' },
+        'sebutan_tangguh': { idPrefix: 'sebutan_tangguh', tajukSurat: 'SEBUTAN KES (TANGGUH)', tindakan: 'Notis Sebutan (Tangguh)', label: 'sebutan' },
+        'sebutan_semula': { idPrefix: 'sebutan_semula', tajukSurat: 'SEBUTAN KES (PENETAPAN SEMULA)', tindakan: 'Notis Sebutan (Penetapan Semula)', label: 'sebutan' },
+        'bicara': { idPrefix: 'bicara', tajukSurat: 'PERBICARAAN KES', tindakan: 'Notis Perbicaraan', label: 'perbicaraan' },
+        'bicara_tangguh': { idPrefix: 'bicara_tangguh', tajukSurat: 'PERBICARAAN KES (TANGGUH)', tindakan: 'Notis Perbicaraan (Tangguh)', label: 'perbicaraan' },
+        'bicara_sambung': { idPrefix: 'bicara_sambung', tajukSurat: 'PERBICARAAN KES (SAMBUNG)', tindakan: 'Notis Perbicaraan (Sambung)', label: 'perbicaraan' },
+        'keputusan': { idPrefix: 'keputusan', tajukSurat: 'KEPUTUSAN KES', tindakan: 'Notis Keputusan', label: 'keputusan' }
+    };
     const c = conf[kunci];
 
     window.isNotisPengaduPrinted = false;
@@ -2638,26 +2638,49 @@ const conf = {
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
 
+    // PENGENDALIAN ALAMAT BERSIH (PEMBERSIHAN TAG <br> UNTUK BORANG A)
+    let alamatPengaduBersih = "";
+    let alamatDefendanBersih = "";
+
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
         const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
-        let almtDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join('<br>');
-        let almtPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join('<br>');
+        
+        let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
+        let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
+
+        let almtDefHTML = arrDef.join('<br>');
+        let almtPengHTML = arrPeng.join('<br>');
+
+        alamatDefendanBersih = arrDef.join(', ').toUpperCase();
+        alamatPengaduBersih = arrPeng.join(', ').toUpperCase();
 
         if (isMajikan) {
-            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]'; alamatP = almtDef || '[ALAMAT PENGADU]';
-            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]'; alamatD = almtPeng || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]'; alamatP = almtDefHTML || '[ALAMAT PENGADU]';
+            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]'; alamatD = almtPengHTML || '[ALAMAT DEFENDAN]';
         } else {
-            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]'; alamatP = almtPeng || '[ALAMAT PENGADU]';
-            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]'; alamatD = almtDef || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]'; alamatP = almtPengHTML || '[ALAMAT PENGADU]';
+            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]'; alamatD = almtDefHTML || '[ALAMAT DEFENDAN]';
         }
     } else {
         namaP = kes.namaPengadu.replace(/<br>.*$/g, ''); alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
         namaD = kes.namaDefendan.replace(/<br>.*$/g, ''); alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
+        alamatDefendanBersih = alamatD;
     }
 
-    const tarikhRaw = tarikhHst || document.getElementById(`mk_tarikh_${c.idPrefix}`).value;
-    const masaRaw = masaHst || document.getElementById(`mk_masa_${c.idPrefix}`).value;
+    // PENGENDALIAN TARIKH & MASA (SAMA ADA DARI HISTORI ATAU INPUT BORANG)
+    let tarikhRaw = tarikhHst;
+    let masaRaw = masaHst;
+
+    if (!tarikhRaw) {
+        const elT = document.getElementById(`mk_tarikh_${c.idPrefix}`);
+        if (elT && elT.value) tarikhRaw = elT.value;
+    }
+    if (!masaRaw) {
+        const elM = document.getElementById(`mk_masa_${c.idPrefix}`);
+        if (elM && elM.value) masaRaw = elM.value;
+    }
+
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     let tarikhText = "[Tarikh]";
@@ -2684,12 +2707,9 @@ const conf = {
             " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
         </div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        
-        <!-- TRICK TANDATANGAN -->
         <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
         </div>
-        
         <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
@@ -2697,19 +2717,14 @@ const conf = {
         <div class="notis-footer-line"></div>
     `;
 
-// =========================================================================
-    // LOGIK PENJANAAN KANDUNGAN SURAT BERDASARKAN JENIS TINDAKAN
-    // =========================================================================
     let tajukPengadu = '';
     let tajukDefendan = '';
     let isiPengadu = '';
     let isiDefendan = '';
 
-// Formatkan tarikh & masa semasa daripada input form mengikut format: "12 Ogos 2026, jam 10:00 pagi"
     let tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
 
     if (kunci === 'sebutan_tangguh') {
-        // --- FORMAT KHAS UNTUK SEBUTAN KES (TANGGUH) ---
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}</div>`;
 
@@ -2730,13 +2745,10 @@ const conf = {
             ${p2Defendan}
         `;
 
-} else if (kunci === 'sebutan_semula') {
-        // --- PENARIKAN TARIKH & MASA DARIPADA SEJARAH TINDAKAN TERKINI ---
+    } else if (kunci === 'sebutan_semula') {
         let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
-
         const sejarah = kes.sejarahTindakan || [];
         
-        // Cari rekod sebutan/saman paling terkini di dalam sejarah
         const rekodSebutanLama = [...sejarah].reverse().find(s => 
             s.tindakan && (
                 s.tindakan.includes("Notis Sebutan") || 
@@ -2756,10 +2768,6 @@ const conf = {
             }
         }
 
-        // Format tarikh & masa baharu untuk sebutan semula
-        let tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
-
-        // MUKA SURAT 1: TAJUK & ISI PENGADU (KEKAL)
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
         isiPengadu = `
@@ -2768,9 +2776,6 @@ const conf = {
             <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
         `;
 
-        // =========================================================================
-        // MUKA SURAT 2: PENUH KOD BORANG A SAMAN (COPY-PASTE 100% UNTUK DEFENDAN)
-        // =========================================================================
         let d_idStr = "(No. Pendaftaran/KP: ....................)";
         let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
         let isMajikanForm = inputs['majikan'] === true || inputs['majikan'] === "true";
@@ -2813,6 +2818,7 @@ const conf = {
         let tempatSamanRaw = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
         let tarikhSebutanDD = ".......";
         let tarikhSebutanMMYYYY = "........................";
+        
         if (tarikhRaw && tarikhRaw !== "") {
             let t = new Date(tarikhRaw);
             if (!isNaN(t.getTime())) {
@@ -2825,16 +2831,18 @@ const conf = {
         if (masaRaw && masaRaw !== "") {
             let [jam, minit] = masaRaw.split(':');
             let jamNum = parseInt(jam, 10);
-            let ampm = jamNum >= 12 ? "petang" : "pagi";
-            let jamFormat = jamNum % 12 || 12;
-            masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+            if (!isNaN(jamNum)) {
+                let ampm = jamNum >= 12 ? "petang" : "pagi";
+                let jamFormat = jamNum % 12 || 12;
+                masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+            }
         }
 
         const tH = new Date();
         const tarikhSamanDD = tH.getDate();
         const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
 
-        // MUKA SURAT 2 DITUKAR KEPADA SAMAN BORANG A
+        // PEMBETULAN UNTUK ALAMAT BERSIH & FORMAT TARIKH MASA BORANG A
         tajukDefendan = '';
         isiDefendan = `
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0;">
@@ -2849,7 +2857,7 @@ const conf = {
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD.replace(/<br>/g, ', ').toUpperCase()}</strong>.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatDefendanBersih}</strong>.</div>
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>
@@ -2883,7 +2891,6 @@ const conf = {
         `;
     
     } else {
-        // --- FORMAT LALAI UNTUK SURAT-SURAT LAIN (Sebutan, Bicara, Keputusan, dll) ---
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;
         
@@ -2903,12 +2910,10 @@ const conf = {
         `;
     }
 
-// LOGIK PAPARAN MUKA SURAT 2:
-    // Jika 'sebutan_semula', Borang A tidak memerlukan Letterhead di atasnya.
     let mukaSuratDefendanHTML = '';
     if (kunci === 'sebutan_semula') {
         mukaSuratDefendanHTML = `
-            <div class="kertas-notis" id="kertasNotisDefendan" style="padding: 1.5cm 2.5cm;">
+            <div class="kertas-notis" id="kertasNotisDefendan">
                 ${isiDefendan}
             </div>
         `;
@@ -2929,11 +2934,10 @@ const conf = {
         `;
     }
 
-// Tambah penanda khas jika dokumen adalah Sebutan Semula
+    // OVERRIDE PADDING UNTUK MUKA SURAT 2 SEBUTAN SEMULA (2.5cm)
     let cssSebutanSemulaKhas = "";
     if (kunci === 'sebutan_semula') {
         cssSebutanSemulaKhas = `
-            /* Khusus untuk Muka 2 Sebutan Semula (Borang A Saman - Tiada Letterhead) */
             #kertasNotisDefendan { padding: 1.5cm 2.5cm !important; }
             #kertasNotisDefendan .notis-body-wrapper { padding: 0 !important; }
         `;
@@ -2951,8 +2955,7 @@ const conf = {
             .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
             .kertas-notis:last-child { page-break-after: auto; } 
 
-            /* Override khas untuk Muka 2 Sebutan Semula semasa Print */
-            #kertasNotisDefendan { padding: 1.5cm 2.5cm !important; }
+            ${kunci === 'sebutan_semula' ? '#kertasNotisDefendan { padding: 1.5cm 2.5cm !important; }' : ''}
         }
         .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
         .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
@@ -2960,7 +2963,7 @@ const conf = {
         ${cssSebutanSemulaKhas}
     </style>
 
-    <!-- MUKA SURAT 1: PENGADU (ADA LETTERHEAD) -->
+    <!-- MUKA SURAT 1: PENGADU -->
     <div class="kertas-notis" id="kertasNotisPengadu">
         ${templateHeaderHTML}
         <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -2974,7 +2977,7 @@ const conf = {
         </div>
     </div>
 
-    <!-- MUKA SURAT 2: DEFENDAN (SAMAN BORANG A - TIADA LETTERHEAD) -->
+    <!-- MUKA SURAT 2: DEFENDAN -->
     ${mukaSuratDefendanHTML}
     `;
 
@@ -3001,14 +3004,10 @@ const conf = {
     const btnBatal = document.getElementById('menuBatal'); btnBatal.style.display = 'flex';
     if (!btnBatal.dataset.hooked) { const oldB = btnBatal.onclick; btnBatal.onclick = function(e) { if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none'; if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none'; if(oldB) oldB(e); }; btnBatal.dataset.hooked = "true"; }
 
-// Reset Radio Button kepada ON secara lalai
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
 
-    // Tunjukkan suis tandatangan
     tunjukSuisTandatangan(true);
-
-    // Paparkan modal
     document.getElementById('modalPreview').style.display = 'flex';
 }
         function toggleWakilMajikan() {

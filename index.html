@@ -6862,22 +6862,20 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
-                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
+                .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
-                
-                /* PENAMBAHAN KHUSUS PRINT UNTUK MUKA SURAT 1 BORANG A */
-                #kertasSamanA { padding: 1.5cm 2.5cm !important; }
-                #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
             }
             
-            .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
+            /* Tetapan Umum untuk Semua Kertas */
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             
-            /* Tetapan Umum untuk Muka Surat 2 (Ada Letterhead: 1.27cm + 1.23cm = 2.5cm) */
-            .notis-body-wrapper { padding: 0 1.23cm; box-sizing: border-box; } 
-
-            /* Tetapan Skrin Khusus Muka Surat 1 Borang A sahaja (Tiada Letterhead) */
-            #kertasSamanA { padding: 1.5cm 2.5cm; }
-            #kertasSamanA .notis-body-wrapper { padding: 0; }
+            /* MUKA 1 (BORANG A - TIADA LETTERHEAD): Padding terus 2.5cm dari tepi */
+            #kertasSamanA { padding: 1.5cm 2.5cm !important; }
+            #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
+            
+            /* MUKA 2 (NOTIS PENGADU - ADA LETTERHEAD): Padding luar 1.27cm, wrapper dalam 1.23cm = 2.5cm */
+            #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
+            #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
             
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }

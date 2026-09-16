@@ -2180,23 +2180,6 @@ if (menuTindakanUrus) {
     document.getElementById('butangCetakHeader').style.display = 'none'; 
 }
 
-function semakButangSebutan() {
-            const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-            const masa = document.getElementById('mk_masa_sebutan').value;
-            const btn = document.getElementById('btnTindakanSebutan');
-
-            if (tarikh && masa) {
-                // Jika tarikh dan masa diisi, hidupkan butang
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-            } else {
-                // Jika belum diisi, matikan butang
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-            }
-        }
 
 function tindakanSebutan() {
     const elTarikh = document.getElementById('mk_tarikh_sebutan');
@@ -2449,61 +2432,6 @@ function tindakanSamanA() {
     }
 }
 
-/**
- * Toggles management card visibility.
- */
-function toggleKadUrus(jenis) {
-    const idsKad = [
-        'kad_sebutan_kes',
-        'kad_sebutan_tangguh',
-        'kad_bicara',
-        'kad_bicara_tangguh',
-        'kad_bicara_sambung',
-        'kad_keputusan',
-        'kad_saman_hadir',
-        'kad_saman_memo'
-    ];
-
-    idsKad.forEach(id => {
-        const kad = document.getElementById(id);
-        if (kad) kad.style.display = 'none';
-    });
-
-    if (jenis === 'alamat') {
-        bukaPreviewAlamatTerkini();
-        return;
-    }
-
-    const mapKad = {
-        'sebutan':          'kad_sebutan_kes',
-        'sebutan_tangguh':  'kad_sebutan_tangguh',
-        'bicara':           'kad_bicara',
-        'bicara_tangguh':   'kad_bicara_tangguh',
-        'bicara_sambung':   'kad_bicara_sambung',
-        'keputusan':        'kad_keputusan',
-        'saman_a':          'kad_saman_hadir',
-        'saman_memo':       'kad_saman_memo'
-    };
-
-    const idKadDipilih = mapKad[jenis];
-    if (!idKadDipilih) return;
-
-    const kadTerpilih = document.getElementById(idKadDipilih);
-    if (!kadTerpilih) return;
-
-    kadTerpilih.style.display = 'flex';
-
-    if (jenis === 'saman_a') {
-        semakButangSaman();
-    } else if (jenis === 'saman_memo') {
-        semakButangSamanMemo();
-    }
-
-    setTimeout(() => {
-        kadTerpilih.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50);
-}
-
 // VALIDASI BUTANG SEBUTAN (ASAL)
 function semakButangSebutan() {
     const elTarikh = document.getElementById('mk_tarikh_sebutan');
@@ -2523,17 +2451,6 @@ function semakButangNotis(idPrefix) {
     if (!elTarikh || !elMasa || !btn) return; // <-- PERLINDUNGAN CRASH
 
     if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
-    else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
-}
-
-// --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
-function semakButangSamanMemo() {
-    const elTarikh = document.getElementById('mk_tarikh_saman_memo');
-    const elPejabat = document.getElementById('mk_pejabat_memo');
-    const btn = document.getElementById('btnTindakanSamanMemo');
-    if (!elTarikh || !elPejabat || !btn) return; // <-- PERLINDUNGAN CRASH
-
-    if (elTarikh.value && elPejabat.value.trim() !== '') { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
     else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
 }
 

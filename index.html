@@ -6308,7 +6308,9 @@ function janaTerusDariSejarah(kunci, tarikhHst, masaHst, pihak) {
     }, 100);
 }
        
-// --- FUNGSI DIKEMASKINI: Memaparkan rekod ke dalam jadual sejarah ---
+// =========================================================================
+// FUNGSI MEMAPARKAN REKOD SEJARAH TINDAKAN KE DALAM JADUAL (DIBAIKI)
+// =========================================================================
 function renderJadualSejarah(index) {
     try {
         const kes = memoriSenaraiKes[index];
@@ -6338,13 +6340,20 @@ function renderJadualSejarah(index) {
             let trk = rekod.tarikhMasa || "-";
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
+
+            // PEMBETULAN: Ekstrak Tarikh & Masa dari Butiran Sejarah (kalis pelbagai format)
+            let matchTarikh = btr.match(/\b\d{4}-\d{2}-\d{2}\b/);
+            let matchMasa = btr.match(/\b\d{1,2}:\d{2}\b/);
+            let tHst = matchTarikh ? matchTarikh[0] : '';
+            let mHst = matchMasa ? matchMasa[0] : '';
             
-            // PEMBETULAN: Mengendalikan tindakanNotis termasuk Notis Saman (Pengadu)
-            if (tdk.includes("Notis Saman (Pengadu)")) {
+            if (tdk.includes("Notis Saman (Pengadu)") || tdk === "Saman (Borang A)") {
+                let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
                 btnJana = `
                     <div style="display: flex; gap: 5px; justify-content: center;">
                         <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
-                            onclick="bukaPreviewSamanA()">
+                            onclick="bukaPreviewSamanA(${param})">
                             📄 Jana
                         </button>
                         <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
@@ -6355,11 +6364,6 @@ function renderJadualSejarah(index) {
                 `;
             }
             else if (tdk.includes("Notis")) {
-                let tMatch = btr.match(/pada (.*?) jam/);
-                let mMatch = btr.match(/jam (.*?)\./);
-                let tarikhHst = tMatch ? tMatch[1] : '';
-                let masaHst = mMatch ? mMatch[1] : '';
-                
                 let kunci = '';
                 if (tdk.includes("Notis Sebutan (Pengadu)") || tdk.includes("Notis Sebutan (Defendan)")) kunci = 'sebutan';
                 else if (tdk.includes("Notis Sebutan (Tangguh)")) kunci = 'sebutan_tangguh';
@@ -6375,7 +6379,7 @@ function renderJadualSejarah(index) {
                     btnJana = `
                         <div style="display: flex; gap: 5px; justify-content: center;">
                             <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
-                                onclick="janaTerusDariSejarah('${kunci}', '${tarikhHst}', '${masaHst}', '${pihakSejarah}')">
+                                onclick="janaTerusDariSejarah('${kunci}', '${tHst}', '${mHst}', '${pihakSejarah}')">
                                 📄 Jana
                             </button>
                             <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
@@ -6385,7 +6389,6 @@ function renderJadualSejarah(index) {
                         </div>
                     `;
                 } else {
-                    // Fallback jika notis tidak tersenarai tetapi tetap benarkan Hapus
                     btnJana = `
                         <div style="display: flex; gap: 5px; justify-content: center;">
                             <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
@@ -6403,11 +6406,6 @@ function renderJadualSejarah(index) {
             }
             else if (tdk === "Alamat Terkini Defendan") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
-            }
-            else if (tdk === "Saman (Borang A)") {
-                let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
-                let param = dMatch ? `'${dMatch[1]}'` : 'null';
-                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Saman (Tampal)") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
@@ -6437,6 +6435,56 @@ function renderJadualSejarah(index) {
         });
     } catch (e) {
         console.error("Ralat dipintas:", e);
+    }
+}
+
+// =========================================================================
+// FUNGSI BUKAPREVIEW SAMAN A (DIBAIKI UNTUK REKOD DOKUMEN & HISTORY)
+// =========================================================================
+function cetakSamanA(jenis) {
+    document.getElementById('actionMenu').classList.remove('show');
+    document.body.classList.add('print-only-' + jenis);
+    window.print();
+    document.body.classList.remove('print-only-' + jenis);
+
+    // Dapatkan tarikh & masa dari input borang
+    const tarikhVal = document.getElementById('mk_tarikh_saman')?.value || '';
+    const masaVal = document.getElementById('mk_masa_saman')?.value || '';
+
+    // Formatkan butiran maklumat untuk disimpan ke Sejarah
+    let butiranMasa = "";
+    if (tarikhVal && masaVal) {
+        butiranMasa = `Tarikh sebutan ditetapkan pada ${tarikhVal} jam ${masaVal}. `;
+    }
+
+    let rawData = { tarikh: tarikhVal, masa: masaVal, tempat: document.getElementById('mk_tempat_saman')?.value || '' };
+    let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+
+    if (jenis === 'saman') {
+        window.isSamanAPrinted = true;
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `${butiranMasa}(Dokumen Saman (Borang A) telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
+        const btnS = document.getElementById('menuCetakSamanA');
+        if (btnS) { 
+            btnS.innerHTML = '✅ Cetak Saman (Borang A)'; 
+            btnS.style.color = '#10b981'; 
+        }
+    } else if (jenis === 'notis') {
+        window.isNotisSamanPrinted = true;
+        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", `${butiranMasa}(Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
+        const btnN = document.getElementById('menuCetakNotisSaman');
+        if (btnN) { 
+            btnN.innerHTML = '✅ Cetak Notis Saman (Pengadu)'; 
+            btnN.style.color = '#10b981'; 
+        }
+    }
+
+    if (window.isSamanAPrinted && window.isNotisSamanPrinted) {
+        setTimeout(() => {
+            document.getElementById('modalPreview').style.display = 'none';
+            if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
+            if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
+            tukarView('senarai');
+        }, 500);
     }
 }
 
@@ -7119,9 +7167,22 @@ function cetakSamanA(jenis) {
     window.print();
     document.body.classList.remove('print-only-' + jenis);
 
+    // Dapatkan nilai Tarikh & Masa dari input borang
+    const tarikhVal = document.getElementById('mk_tarikh_saman')?.value || '';
+    const masaVal = document.getElementById('mk_masa_saman')?.value || '';
+
+    // Bina teks maklumat tarikh & masa untuk disimpan
+    let butiranMasa = "";
+    if (tarikhVal && masaVal) {
+        butiranMasa = `Tarikh sebutan ditetapkan pada ${tarikhVal} jam ${masaVal}. `;
+    }
+
+    let rawData = { tarikh: tarikhVal, masa: masaVal, tempat: document.getElementById('mk_tempat_saman')?.value || '' };
+    let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+
     if (jenis === 'saman') {
         window.isSamanAPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", "Dokumen Saman (Borang A) telah dijana dan dicetak.");
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `${butiranMasa}(Dokumen Saman (Borang A) telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
         const btnS = document.getElementById('menuCetakSamanA');
         if (btnS) { 
             btnS.innerHTML = '✅ Cetak Saman (Borang A)'; 
@@ -7129,7 +7190,7 @@ function cetakSamanA(jenis) {
         }
     } else if (jenis === 'notis') {
         window.isNotisSamanPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", "Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak.");
+        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", `${butiranMasa}(Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
         const btnN = document.getElementById('menuCetakNotisSaman');
         if (btnN) { 
             btnN.innerHTML = '✅ Cetak Notis Saman (Pengadu)'; 

@@ -6308,7 +6308,7 @@ function janaTerusDariSejarah(kunci, tarikhHst, masaHst, pihak) {
     }, 100);
 }
        
-// --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
+// --- FUNGSI DIKEMASKINI: Memaparkan rekod ke dalam jadual sejarah ---
 function renderJadualSejarah(index) {
     try {
         const kes = memoriSenaraiKes[index];
@@ -6339,7 +6339,22 @@ function renderJadualSejarah(index) {
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
             
-            if (tdk.includes("Notis")) {
+            // PEMBETULAN: Mengendalikan tindakanNotis termasuk Notis Saman (Pengadu)
+            if (tdk.includes("Notis Saman (Pengadu)")) {
+                btnJana = `
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
+                            onclick="bukaPreviewSamanA()">
+                            📄 Jana
+                        </button>
+                        <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
+                            onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+            }
+            else if (tdk.includes("Notis")) {
                 let tMatch = btr.match(/pada (.*?) jam/);
                 let mMatch = btr.match(/jam (.*?)\./);
                 let tarikhHst = tMatch ? tMatch[1] : '';
@@ -6354,8 +6369,7 @@ function renderJadualSejarah(index) {
                 else if (tdk.includes("Notis Perbicaraan")) kunci = 'bicara';
                 else if (tdk.includes("Notis Keputusan")) kunci = 'keputusan';
                 
-if (kunci !== '') {
-                    // Semak sama ada sejarah ini milik Defendan atau Pengadu
+                if (kunci !== '') {
                     const pihakSejarah = tdk.includes("(Defendan)") ? "defendan" : "pengadu";
 
                     btnJana = `
@@ -6364,6 +6378,16 @@ if (kunci !== '') {
                                 onclick="janaTerusDariSejarah('${kunci}', '${tarikhHst}', '${masaHst}', '${pihakSejarah}')">
                                 📄 Jana
                             </button>
+                            <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
+                                onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
+                                🗑️
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // Fallback jika notis tidak tersenarai tetapi tetap benarkan Hapus
+                    btnJana = `
+                        <div style="display: flex; gap: 5px; justify-content: center;">
                             <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
                                 onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
                                 🗑️
@@ -6394,7 +6418,6 @@ if (kunci !== '') {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Batal Kes") {
-                // WARNA BIRU (#0ea5e9) DAN SERAP DATA DARI SEJARAH
                 let dMatch = btr.match(/\[DATA_BATAL:(.*?)\]/);
                 let param = dMatch ? `'${dMatch[1]}'` : 'null';
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;

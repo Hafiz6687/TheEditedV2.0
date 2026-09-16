@@ -7059,20 +7059,27 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </div>
     `;
 
-document.getElementById('previewContent').innerHTML = htmlSamanA;
+    document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
-    // Sembunyikan menu borang lain
+    // Reset status semakan cetakan untuk Saman A
+    window.isSamanAPrinted = false;
+    window.isNotisSamanPrinted = false;
+
+    // Sembunyikan menu cetakan yang lain
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
     document.getElementById('menuSelesai').style.display = 'none';
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+
     const menuCetakG1 = document.getElementById('menuCetakG1');
     if (menuCetakG1) menuCetakG1.style.display = 'none';
 
     let actionMenu = document.getElementById('actionMenu');
 
-    // 1. BUTANG CETAK SAMAN (BORANG A) - UNTUK DEFENDAN (MUKA 1 SAHAJA)
+    // 1. BUTANG CETAK SAMAN BORANG A (DEFENDAN - MUKA 1)
     let btnCetakSamanA = document.getElementById('menuCetakSamanA');
     if (!btnCetakSamanA) {
         btnCetakSamanA = document.createElement('a');
@@ -7088,7 +7095,7 @@ document.getElementById('previewContent').innerHTML = htmlSamanA;
         cetakSamanA('saman');
     };
 
-    // 2. BUTANG CETAK NOTIS SAMAN - UNTUK PENGADU (MUKA 2 SAHAJA)
+    // 2. BUTANG CETAK NOTIS SAMAN (PENGADU - MUKA 2)
     let btnCetakNotisSaman = document.getElementById('menuCetakNotisSaman');
     if (!btnCetakNotisSaman) {
         btnCetakNotisSaman = document.createElement('a');
@@ -7107,17 +7114,19 @@ document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
 
-    // Reset dan tunjuk suis tandatangan
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
-    tunjukSuisTandatangan(true);
 
+    tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
 
 // =========================================================================
-// FUNGSI MENCETAK KHUSUS KERTAS SAMAN A (MUKA 1 / MUKA 2)
+// FUNGSI MENCETAK KHUSUS KERTAS SAMAN A (MUKA 1 / MUKA 2) DENGAN LOGIK LENGKAP
 // =========================================================================
+window.isSamanAPrinted = false;
+window.isNotisSamanPrinted = false;
+
 function cetakSamanA(jenis) {
     document.getElementById('actionMenu').classList.remove('show');
     document.body.classList.add('print-only-' + jenis);
@@ -7125,17 +7134,32 @@ function cetakSamanA(jenis) {
     document.body.classList.remove('print-only-' + jenis);
 
     if (jenis === 'saman') {
+        window.isSamanAPrinted = true;
         rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", "Dokumen Saman (Borang A) telah dijana dan dicetak.");
-    } else {
+        const btnS = document.getElementById('menuCetakSamanA');
+        if (btnS) { 
+            btnS.innerHTML = '✅ Cetak Saman (Borang A)'; 
+            btnS.style.color = '#10b981'; 
+        }
+    } else if (jenis === 'notis') {
+        window.isNotisSamanPrinted = true;
         rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", "Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak.");
+        const btnN = document.getElementById('menuCetakNotisSaman');
+        if (btnN) { 
+            btnN.innerHTML = '✅ Cetak Notis Saman (Pengadu)'; 
+            btnN.style.color = '#10b981'; 
+        }
     }
 
-    setTimeout(() => {
-        document.getElementById('modalPreview').style.display = 'none';
-        if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
-        if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
-        tukarView('senarai');
-    }, 500);
+    // Hanya tutup modal dan kembali ke senarai selepas KEDUA-DUA helaian telah dicetak
+    if (window.isSamanAPrinted && window.isNotisSamanPrinted) {
+        setTimeout(() => {
+            document.getElementById('modalPreview').style.display = 'none';
+            if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
+            if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
+            tukarView('senarai');
+        }, 500);
+    }
 }
        
 // =========================================================================

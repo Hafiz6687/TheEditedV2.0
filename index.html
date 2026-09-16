@@ -6713,7 +6713,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         try { memoData = JSON.parse(decodeURIComponent(escape(atob(dataSimpanan)))); } catch(e){}
     }
 
-    // Dapatkan maklumat asas
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", namaD = "", alamatD = "", alamatP = "";
     let d_idStr = "(No. Pendaftaran/KP: ....................)";
@@ -6722,29 +6721,41 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         const inputs = kes.dataBorang.inputs;
         const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
         
-        let almtDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join(', ');
-        let almtPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join(', ');
+        // PEMBERSIHAN ALAMAT BERSIH (TANPA KOMA BERSEDERAK)
+        let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
+        let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
+
+        let almtDefClean = arrDef.join(', ').toUpperCase();
+        let almtPengClean = arrPeng.join(', ').toUpperCase();
+        let almtDefHTML = arrDef.join('<br>').toUpperCase();
+        let almtPengHTML = arrPeng.join('<br>').toUpperCase();
 
         if (isMajikan) {
-            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
-            alamatP = almtDef || '[ALAMAT PENGADU]';
-            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
-            alamatD = almtPeng || '[ALAMAT DEFENDAN]';
+            // Jika Majikan = Pengadu
+            namaP = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA SYARIKAT]';
+            alamatP = almtDefHTML || '[ALAMAT PENGADU]';
+            
+            namaD = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PEKERJA]';
+            alamatD = almtPengClean || '[ALAMAT DEFENDAN]';
+            
             let idDef = inputs['noPendPengadu'] || '....................';
             d_idStr = `(No. Kad Pengenalan: ${idDef})`;
         } else {
-            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
-            alamatP = almtPeng || '[ALAMAT PENGADU]';
-            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
-            alamatD = almtDef || '[ALAMAT DEFENDAN]';
+            // Jika Pekerja = Pengadu
+            namaP = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PENGADU]';
+            alamatP = almtPengHTML || '[ALAMAT PENGADU]';
+            
+            namaD = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA DEFENDAN]';
+            alamatD = almtDefClean || '[ALAMAT DEFENDAN]';
+            
             let idDef = inputs['noPendDefendan'] || '....................';
             let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
             let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
             d_idStr = `(${labelDef}: ${idDef})`;
         }
     } else {
-        namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
-        namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
+        namaP = kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
+        namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
         alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
         alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
     }
@@ -6777,25 +6788,29 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </tr>`;
     }
 
-    // Ekstrak Tarikh & Masa Sebutan Asal
-    const tarikhSebutanAsalRaw = document.getElementById('mk_tarikh_sebutan')?.value;
-    const masaSebutanAsalRaw = document.getElementById('mk_masa_sebutan')?.value;
-
+    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
     let tarikhSebutanAsalText = "[Tarikh Sebutan]";
-    if (tarikhSebutanAsalRaw && tarikhSebutanAsalRaw !== "") {
-        let tA = new Date(tarikhSebutanAsalRaw);
-        if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
-    }
-
     let masaSebutanAsalText = "[Masa Sebutan]";
-    if (masaSebutanAsalRaw && masaSebutanAsalRaw !== "") {
-        let [jamA, minitA] = masaSebutanAsalRaw.split(':');
-        let jamNumA = parseInt(jamA);
-        let ampmA = jamNumA >= 12 ? "petang" : "pagi";
-        let jamFormatA = jamNumA % 12 || 12;
-        masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+    
+    const sejarah = kes.sejarahTindakan || [];
+    const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
+    if (rekodSebutanLama && rekodSebutanLama.butiran) {
+        let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
+        let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
+        if (matchTarikh) {
+            let tA = new Date(matchTarikh[0]);
+            if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
+        }
+        if (matchMasa) {
+            let [jamA, minitA] = matchMasa[0].split(':');
+            let jamNumA = parseInt(jamA, 10);
+            let ampmA = jamNumA >= 12 ? "petang" : "pagi";
+            let jamFormatA = jamNumA % 12 || 12;
+            masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+        }
     }
 
+    // TARIK TARIKH & MASA SAMAN BAHARU DARI INPUT ATAS SKRIN JIKA ADA
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_saman')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
@@ -6804,7 +6819,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let tarikhSebutanMMYYYY = "........................";
     if (tarikhRaw && tarikhRaw !== "") {
         let t = new Date(tarikhRaw);
-        if (!isNaN(t)) {
+        if (!isNaN(t.getTime())) {
             tarikhSebutanDD = t.getDate();
             tarikhSebutanMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
         }
@@ -6813,10 +6828,12 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let masaSebutanText = ".......";
     if (masaRaw && masaRaw !== "") {
         let [jam, minit] = masaRaw.split(':');
-        let jamNum = parseInt(jam);
-        let ampm = jamNum >= 12 ? "petang" : "pagi";
-        let jamFormat = jamNum % 12 || 12;
-        masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+        let jamNum = parseInt(jam, 10);
+        if (!isNaN(jamNum)) {
+            let ampm = jamNum >= 12 ? "petang" : "pagi";
+            let jamFormat = jamNum % 12 || 12;
+            masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+        }
     }
 
     const tH = new Date();
@@ -6924,7 +6941,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD.toUpperCase()}</strong>.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD}</strong>.</div>
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>
@@ -7043,7 +7060,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
-
+       
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT SAMAN (TAMPAL)
 // =========================================================================

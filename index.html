@@ -1,3 +1,5 @@
+HTML: Selepas Saman M/S2 OK
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -2180,24 +2182,6 @@ if (menuTindakanUrus) {
     document.getElementById('butangCetakHeader').style.display = 'none'; 
 }
 
-function semakButangSebutan() {
-            const tarikh = document.getElementById('mk_tarikh_sebutan').value;
-            const masa = document.getElementById('mk_masa_sebutan').value;
-            const btn = document.getElementById('btnTindakanSebutan');
-
-            if (tarikh && masa) {
-                // Jika tarikh dan masa diisi, hidupkan butang
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-            } else {
-                // Jika belum diisi, matikan butang
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-            }
-        }
-
 function tindakanSebutan() {
     const elTarikh = document.getElementById('mk_tarikh_sebutan');
     const elMasa = document.getElementById('mk_masa_sebutan');
@@ -2449,60 +2433,6 @@ function tindakanSamanA() {
     }
 }
 
-/**
- * Toggles management card visibility.
- */
-function toggleKadUrus(jenis) {
-    const idsKad = [
-        'kad_sebutan_kes',
-        'kad_sebutan_tangguh',
-        'kad_bicara',
-        'kad_bicara_tangguh',
-        'kad_bicara_sambung',
-        'kad_keputusan',
-        'kad_saman_hadir',
-        'kad_saman_memo'
-    ];
-
-    idsKad.forEach(id => {
-        const kad = document.getElementById(id);
-        if (kad) kad.style.display = 'none';
-    });
-
-    if (jenis === 'alamat') {
-        bukaPreviewAlamatTerkini();
-        return;
-    }
-
-    const mapKad = {
-        'sebutan':          'kad_sebutan_kes',
-        'sebutan_tangguh':  'kad_sebutan_tangguh',
-        'bicara':           'kad_bicara',
-        'bicara_tangguh':   'kad_bicara_tangguh',
-        'bicara_sambung':   'kad_bicara_sambung',
-        'keputusan':        'kad_keputusan',
-        'saman_a':          'kad_saman_hadir',
-        'saman_memo':       'kad_saman_memo'
-    };
-
-    const idKadDipilih = mapKad[jenis];
-    if (!idKadDipilih) return;
-
-    const kadTerpilih = document.getElementById(idKadDipilih);
-    if (!kadTerpilih) return;
-
-    kadTerpilih.style.display = 'flex';
-
-    if (jenis === 'saman_a') {
-        semakButangSaman();
-    } else if (jenis === 'saman_memo') {
-        semakButangSamanMemo();
-    }
-
-    setTimeout(() => {
-        kadTerpilih.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50);
-}
 
 // VALIDASI BUTANG SEBUTAN (ASAL)
 function semakButangSebutan() {
@@ -2523,17 +2453,6 @@ function semakButangNotis(idPrefix) {
     if (!elTarikh || !elMasa || !btn) return; // <-- PERLINDUNGAN CRASH
 
     if (elTarikh.value && elMasa.value) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
-    else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
-}
-
-// --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
-function semakButangSamanMemo() {
-    const elTarikh = document.getElementById('mk_tarikh_saman_memo');
-    const elPejabat = document.getElementById('mk_pejabat_memo');
-    const btn = document.getElementById('btnTindakanSamanMemo');
-    if (!elTarikh || !elPejabat || !btn) return; // <-- PERLINDUNGAN CRASH
-
-    if (elTarikh.value && elPejabat.value.trim() !== '') { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; } 
     else { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
 }
 
@@ -6308,9 +6227,7 @@ function janaTerusDariSejarah(kunci, tarikhHst, masaHst, pihak) {
     }, 100);
 }
        
-// =========================================================================
-// FUNGSI MEMAPARKAN REKOD SEJARAH TINDAKAN KE DALAM JADUAL (DIBAIKI)
-// =========================================================================
+// --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
 function renderJadualSejarah(index) {
     try {
         const kes = memoriSenaraiKes[index];
@@ -6340,29 +6257,13 @@ function renderJadualSejarah(index) {
             let trk = rekod.tarikhMasa || "-";
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
-
-            let matchTarikh = btr.match(/\b\d{4}-\d{2}-\d{2}\b/);
-            let matchMasa = btr.match(/\b\d{1,2}:\d{2}\b/);
-            let tHst = matchTarikh ? matchTarikh[0] : '';
-            let mHst = matchMasa ? matchMasa[0] : '';
             
-            if (tdk.includes("Notis Saman (Pengadu)") || tdk === "Saman (Borang A)") {
-                let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
-                let param = dMatch ? `'${dMatch[1]}'` : 'null';
-                btnJana = `
-                    <div style="display: flex; gap: 5px; justify-content: center;">
-                        <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
-                            onclick="bukaPreviewSamanA(${param})">
-                            📄 Jana
-                        </button>
-                        <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
-                            onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
-                            🗑️
-                        </button>
-                    </div>
-                `;
-            }
-            else if (tdk.includes("Notis")) {
+            if (tdk.includes("Notis")) {
+                let tMatch = btr.match(/pada (.*?) jam/);
+                let mMatch = btr.match(/jam (.*?)\./);
+                let tarikhHst = tMatch ? tMatch[1] : '';
+                let masaHst = mMatch ? mMatch[1] : '';
+                
                 let kunci = '';
                 if (tdk.includes("Notis Sebutan (Pengadu)") || tdk.includes("Notis Sebutan (Defendan)")) kunci = 'sebutan';
                 else if (tdk.includes("Notis Sebutan (Tangguh)")) kunci = 'sebutan_tangguh';
@@ -6372,24 +6273,16 @@ function renderJadualSejarah(index) {
                 else if (tdk.includes("Notis Perbicaraan")) kunci = 'bicara';
                 else if (tdk.includes("Notis Keputusan")) kunci = 'keputusan';
                 
-                if (kunci !== '') {
+if (kunci !== '') {
+                    // Semak sama ada sejarah ini milik Defendan atau Pengadu
                     const pihakSejarah = tdk.includes("(Defendan)") ? "defendan" : "pengadu";
 
                     btnJana = `
                         <div style="display: flex; gap: 5px; justify-content: center;">
                             <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" 
-                                onclick="janaTerusDariSejarah('${kunci}', '${tHst}', '${mHst}', '${pihakSejarah}')">
+                                onclick="janaTerusDariSejarah('${kunci}', '${tarikhHst}', '${masaHst}', '${pihakSejarah}')">
                                 📄 Jana
                             </button>
-                            <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
-                                onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
-                                🗑️
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    btnJana = `
-                        <div style="display: flex; gap: 5px; justify-content: center;">
                             <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" 
                                 onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">
                                 🗑️
@@ -6406,6 +6299,11 @@ function renderJadualSejarah(index) {
             else if (tdk === "Alamat Terkini Defendan") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
+            else if (tdk === "Saman (Borang A)") {
+                let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanA(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
             else if (tdk === "Saman (Tampal)") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanTampal()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
@@ -6415,6 +6313,7 @@ function renderJadualSejarah(index) {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewSamanMemo(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk === "Batal Kes") {
+                // WARNA BIRU (#0ea5e9) DAN SERAP DATA DARI SEJARAH
                 let dMatch = btr.match(/\[DATA_BATAL:(.*?)\]/);
                 let param = dMatch ? `'${dMatch[1]}'` : 'null';
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBatalKes(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
@@ -6436,7 +6335,6 @@ function renderJadualSejarah(index) {
         console.error("Ralat dipintas:", e);
     }
 }
-
 
 // --- FUNGSI BARU: Hapus Sejarah Tindakan ---
 function hapusSejarahTindakan(indexKes, indexSejarah) {
@@ -6743,6 +6641,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         const inputs = kes.dataBorang.inputs;
         isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
         
+        // PEMBERSIHAN ALAMAT
         let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
         let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
 
@@ -6804,29 +6703,32 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     }
 
     // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
-    let tarikhSebutanAsalRaw = document.getElementById('mk_tarikh_sebutan')?.value || '';
-    let masaSebutanAsalRaw = document.getElementById('mk_masa_sebutan')?.value || '';
+    let tarikhSebutanAsalText = "[Tarikh Sebutan]";
+    let masaSebutanAsalText = "[Masa Sebutan]";
     
     const sejarah = kes.sejarahTindakan || [];
     const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
     if (rekodSebutanLama && rekodSebutanLama.butiran) {
         let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
         let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
-        if (matchTarikh) tarikhSebutanAsalRaw = matchTarikh[0];
-        if (matchMasa) masaSebutanAsalRaw = matchMasa[0];
+        if (matchTarikh) {
+            let tA = new Date(matchTarikh[0]);
+            if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
+        }
+        if (matchMasa) {
+            let [jamA, minitA] = matchMasa[0].split(':');
+            let jamNumA = parseInt(jamA, 10);
+            let ampmA = jamNumA >= 12 ? "petang" : "pagi";
+            let jamFormatA = jamNumA % 12 || 12;
+            masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+        }
     }
-
-    // FORMATKAN DENGAN PEMBANTU RASMI
-    let tarikhMasaAsalGabung = formatTarikhMasaLengkap(tarikhSebutanAsalRaw, masaSebutanAsalRaw);
 
     // TARIK TARIKH & MASA SAMAN BAHARU
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_saman')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
     
-    let tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
-
-    // KEKALKAN FORMATTING BAGI TEKS DALAMAN BORANG A
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
     if (tarikhRaw && tarikhRaw !== "") {
@@ -6855,7 +6757,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // LOGIK PERENGGAN WAKIL KUASA DAHALAM NOTIS MAKLUMAN PENGADU
+    // LOGIK DINAMIK MUKA SURAT 2 UNTUK PENGADU (PERENGGAN 4 & 5)
     let perengganWakilKuasaHTML = '';
     if (isMajikan) {
         perengganWakilKuasaHTML = `
@@ -6925,16 +6827,16 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 #printArea { display: block !important; }
                 .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
-    
-                body.print-only-saman #kertasNotisSamanPengadu { display: none !important; }
-                body.print-only-notis #kertasSamanA { display: none !important; }
             }
             
+            /* Tetapan Umum untuk Semua Kertas */
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             
+            /* MUKA 1 (BORANG A - TIADA LETTERHEAD): Padding terus 2.5cm dari tepi */
             #kertasSamanA { padding: 1.5cm 2.5cm !important; }
             #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
             
+            /* MUKA 2 (NOTIS PENGADU - ADA LETTERHEAD): Padding luar 1.27cm, wrapper dalam 1.23cm = 2.5cm */
             #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
             #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
             
@@ -7033,7 +6935,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
 
                 <div class="notis-isi">
-                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaAsalGabung}</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
                 </div>
 
                 <div class="notis-isi">
@@ -7050,9 +6952,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
-    window.isSamanAPrinted = false;
-    window.isNotisSamanPrinted = false;
-
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
@@ -7061,101 +6960,32 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
 
     const menuCetakG1 = document.getElementById('menuCetakG1');
-    if (menuCetakG1) menuCetakG1.style.display = 'none';
-
-    let actionMenu = document.getElementById('actionMenu');
-
-    let btnCetakSamanA = document.getElementById('menuCetakSamanA');
-    if (!btnCetakSamanA) {
-        btnCetakSamanA = document.createElement('a');
-        btnCetakSamanA.id = 'menuCetakSamanA';
-        btnCetakSamanA.href = '#';
-        actionMenu.insertBefore(btnCetakSamanA, document.getElementById('menuBatal'));
-    }
-    btnCetakSamanA.style.display = 'flex';
-    btnCetakSamanA.style.color = 'var(--text-main)';
-    btnCetakSamanA.innerHTML = '🖨️ Cetak Saman (Borang A)';
-    btnCetakSamanA.onclick = function(e) {
-        e.preventDefault();
-        cetakSamanA('saman');
-    };
-
-    let btnCetakNotisSaman = document.getElementById('menuCetakNotisSaman');
-    if (!btnCetakNotisSaman) {
-        btnCetakNotisSaman = document.createElement('a');
-        btnCetakNotisSaman.id = 'menuCetakNotisSaman';
-        btnCetakNotisSaman.href = '#';
-        actionMenu.insertBefore(btnCetakNotisSaman, document.getElementById('menuBatal'));
-    }
-    btnCetakNotisSaman.style.display = 'flex';
-    btnCetakNotisSaman.style.color = 'var(--text-main)';
-    btnCetakNotisSaman.innerHTML = '🖨️ Cetak Notis Saman (Pengadu)';
-    btnCetakNotisSaman.onclick = function(e) {
-        e.preventDefault();
-        cetakSamanA('notis');
-    };
-
+    menuCetakG1.style.display = 'flex';
+    menuCetakG1.innerHTML = '🖨️ Cetak Saman (Borang A)';
+    
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
+
+    menuCetakG1.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        window.print();
+        
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen Saman (Borang A) telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
+        
+        setTimeout(() => {
+            document.getElementById('modalPreview').style.display = 'none';
+            tukarView('senarai');
+        }, 500);
+    };
 
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
 
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
-}
-
-// =========================================================================
-// FUNGSI MENCETAK KHUSUS KERTAS SAMAN A (MUKA 1 / MUKA 2) DENGAN LOGIK LENGKAP
-// =========================================================================
-window.isSamanAPrinted = false;
-window.isNotisSamanPrinted = false;
-
-function cetakSamanA(jenis) {
-    document.getElementById('actionMenu').classList.remove('show');
-    document.body.classList.add('print-only-' + jenis);
-    window.print();
-    document.body.classList.remove('print-only-' + jenis);
-
-    // 1. Dapatkan nilai Tarikh & Masa dari input borang
-    const tarikhVal = document.getElementById('mk_tarikh_saman')?.value || '';
-    const masaVal = document.getElementById('mk_masa_saman')?.value || '';
-
-    // 2. Formatkan teks butiran untuk dimasukkan ke Sejarah Tindakan
-    let butiranMasa = "";
-    if (tarikhVal && masaVal) {
-        butiranMasa = `Tarikh sebutan ditetapkan pada ${tarikhVal} jam ${masaVal}. `;
-    }
-
-    let rawData = { tarikh: tarikhVal, masa: masaVal, tempat: document.getElementById('mk_tempat_saman')?.value || '' };
-    let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-
-    if (jenis === 'saman') {
-        window.isSamanAPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `${butiranMasa}(Dokumen Saman (Borang A) telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
-        const btnS = document.getElementById('menuCetakSamanA');
-        if (btnS) { 
-            btnS.innerHTML = '✅ Cetak Saman (Borang A)'; 
-            btnS.style.color = '#10b981'; 
-        }
-    } else if (jenis === 'notis') {
-        window.isNotisSamanPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", `${butiranMasa}(Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
-        const btnN = document.getElementById('menuCetakNotisSaman');
-        if (btnN) { 
-            btnN.innerHTML = '✅ Cetak Notis Saman (Pengadu)'; 
-            btnN.style.color = '#10b981'; 
-        }
-    }
-
-    if (window.isSamanAPrinted && window.isNotisSamanPrinted) {
-        setTimeout(() => {
-            document.getElementById('modalPreview').style.display = 'none';
-            if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
-            if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
-            tukarView('senarai');
-        }, 500);
-    }
 }
        
 // =========================================================================

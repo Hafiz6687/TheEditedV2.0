@@ -7091,6 +7091,29 @@ document.getElementById('previewContent').innerHTML = htmlSamanA;
 
     document.getElementById('modalPreview').style.display = 'flex';
 }
+
+// =========================================================================
+// FUNGSI MENCETAK KHUSUS KERTAS SAMAN A (MUKA 1 / MUKA 2)
+// =========================================================================
+function cetakSamanA(jenis) {
+    document.getElementById('actionMenu').classList.remove('show');
+    document.body.classList.add('print-only-' + jenis);
+    window.print();
+    document.body.classList.remove('print-only-' + jenis);
+
+    if (jenis === 'saman') {
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", "Dokumen Saman (Borang A) telah dijana dan dicetak.");
+    } else {
+        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", "Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak.");
+    }
+
+    setTimeout(() => {
+        document.getElementById('modalPreview').style.display = 'none';
+        if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
+        if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
+        tukarView('senarai');
+    }, 500);
+}
        
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT SAMAN (TAMPAL)

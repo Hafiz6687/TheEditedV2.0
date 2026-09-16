@@ -2638,9 +2638,9 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
 
-    // PENGENDALIAN ALAMAT BERSIH (PEMBERSIHAN TAG <br> UNTUK BORANG A)
-    let alamatPengaduBersih = "";
+    // PENGENDALIAN ALAMAT BERSIH UNTUK BORANG A
     let alamatDefendanBersih = "";
+    let alamatPengaduBersih = "";
 
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
@@ -2668,7 +2668,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         alamatDefendanBersih = alamatD;
     }
 
-    // PENGENDALIAN TARIKH & MASA (SAMA ADA DARI HISTORI ATAU INPUT BORANG)
+    // PEMBETULAN ISU 2: TARIKH & MASA SEBUTAN DITARIK DARIPADA INPUT BORANG JIKA TIADA HISTORI
     let tarikhRaw = tarikhHst;
     let masaRaw = masaHst;
 
@@ -2842,7 +2842,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         const tarikhSamanDD = tH.getDate();
         const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
 
-        // PEMBETULAN UNTUK ALAMAT BERSIH & FORMAT TARIKH MASA BORANG A
+        // PEMBETULAN ISU 1: ALAMAT DEFENDAN BERSIH TANPA TAG <br>
         tajukDefendan = '';
         isiDefendan = `
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0;">
@@ -2934,7 +2934,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         `;
     }
 
-    // OVERRIDE PADDING UNTUK MUKA SURAT 2 SEBUTAN SEMULA (2.5cm)
     let cssSebutanSemulaKhas = "";
     if (kunci === 'sebutan_semula') {
         cssSebutanSemulaKhas = `

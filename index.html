@@ -597,6 +597,32 @@
         </label>
     </div>
 </div>
+
+<!-- MODAL POP-UP KHAS UNTUK SEBUTAN SEMULA -->
+<div class="modal-overlay" id="modalSebutanSemula">
+    <div class="modal-box">
+        <div class="modal-title">Maklumat Sebutan Semula</div>
+        
+        <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+            <label style="text-align: left;">Alasan Penetapan Semula <span>*</span></label>
+            <select id="ss_alasan" onchange="kawalSebabSebutanSemula()" style="width: 100%; box-sizing: border-box;">
+                <option value="">-Sila Pilih-</option>
+                <option value="defendan gagal hadir.">Defendan gagal hadir.</option>
+                <option value="Lain-lain">Lain-lain</option>
+            </select>
+        </div>
+        
+        <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_ss_alasan_lain">
+            <label style="text-align: left;">Nyatakan Alasan Lain <span>*</span></label>
+            <textarea id="ss_alasan_lain" rows="3" class="auto-expand" style="resize: vertical; width: 100%; box-sizing: border-box;">notis kepada defendan tidak dapat diserah berikutan alamat defendan tidak lengkap.</textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="document.getElementById('modalSebutanSemula').style.display='none'">Batal</button>
+            <button class="btn-save" onclick="janaSebutanSemulaLanjut()">✔ Teruskan</button>
+        </div>
+    </div>
+</div>
         
     </div> <!-- END OF MODAL PREVIEW -->
 
@@ -2662,7 +2688,19 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             ${p2Defendan}
         `;
 
-    } else if (kunci === 'sebutan_semula') {
+        } else if (kunci === 'sebutan_semula') {
+        // TANGKAP POP-UP JIKA ALASAN BELUM DIISI (Hanya untuk cetakan baharu, bukan dari sejarah)
+        if (!window.dataNotisSemasa.dariSejarah && !window.tempAlasanSebutanSemula) {
+            document.getElementById('ss_alasan').value = '';
+            document.getElementById('ruangan_ss_alasan_lain').style.display = 'none';
+            document.getElementById('ss_alasan_lain').value = 'notis kepada defendan tidak dapat diserah berikutan alamat defendan tidak lengkap.';
+            document.getElementById('modalSebutanSemula').style.display = 'flex';
+            return; // Hentikan sehingga user tekan 'Teruskan'
+        }
+
+        // Ambil alasan yang telah dipilih atau dari data asal
+        let alasanDixtract = window.tempAlasanSebutanSemula || "defendan gagal hadir.";
+
         let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
         const sejarah = kes.sejarahTindakan || [];
         
@@ -2687,11 +2725,15 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
 
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
+        // ALASAN DI-EXTRACT SELEPAS PERKATAAN 'namun'
         isiPengadu = `
             <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun defendan gagal hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun <strong>${alasanDixtract}</strong> Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
             <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
         `;
+
+        // Clear memori sementara selepas dimasukkan ke dalam surat
+        window.tempAlasanSebutanSemula = null;
 
         let d_idStr = "(No. Pendaftaran/KP: ....................)";
         let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
@@ -7701,6 +7743,39 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
     } else {
         bekasSuis.style.display = 'none';
     }
+}
+
+// --- FUNGSI KAWALAN MODAL SEBUTAN SEMULA ---
+function kawalSebabSebutanSemula() {
+    const alasan = document.getElementById('ss_alasan').value;
+    const ruanganLain = document.getElementById('ruangan_ss_alasan_lain');
+    if (alasan === 'Lain-lain') {
+        ruanganLain.style.display = 'block';
+    } else {
+        ruanganLain.style.display = 'none';
+    }
+}
+
+function janaSebutanSemulaLanjut() {
+    const alasan = document.getElementById('ss_alasan').value;
+    const alasanLain = document.getElementById('ss_alasan_lain').value.trim();
+
+    if (alasan === '') {
+        alert('Sila pilih Alasan Penetapan Semula.');
+        return;
+    }
+    if (alasan === 'Lain-lain' && alasanLain === '') {
+        alert('Sila nyatakan alasan lain.');
+        return;
+    }
+
+    document.getElementById('modalSebutanSemula').style.display = 'none';
+    
+    // Simpan alasan dalam memori sementara
+    window.tempAlasanSebutanSemula = (alasan === 'Lain-lain') ? alasanLain : alasan;
+
+    // Panggil semula penjanaan notis sebutan_semula
+    bukaPreviewNotisGenerik('sebutan_semula');
 }
 </script>
 </body>

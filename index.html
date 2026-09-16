@@ -6745,7 +6745,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         const inputs = kes.dataBorang.inputs;
         isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
         
-        // PEMBERSIHAN ALAMAT
         let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
         let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
 
@@ -6807,32 +6806,29 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     }
 
     // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
-    let tarikhSebutanAsalText = "[Tarikh Sebutan]";
-    let masaSebutanAsalText = "[Masa Sebutan]";
+    let tarikhSebutanAsalRaw = document.getElementById('mk_tarikh_sebutan')?.value || '';
+    let masaSebutanAsalRaw = document.getElementById('mk_masa_sebutan')?.value || '';
     
     const sejarah = kes.sejarahTindakan || [];
     const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
     if (rekodSebutanLama && rekodSebutanLama.butiran) {
         let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
         let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
-        if (matchTarikh) {
-            let tA = new Date(matchTarikh[0]);
-            if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
-        }
-        if (matchMasa) {
-            let [jamA, minitA] = matchMasa[0].split(':');
-            let jamNumA = parseInt(jamA, 10);
-            let ampmA = jamNumA >= 12 ? "petang" : "pagi";
-            let jamFormatA = jamNumA % 12 || 12;
-            masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
-        }
+        if (matchTarikh) tarikhSebutanAsalRaw = matchTarikh[0];
+        if (matchMasa) masaSebutanAsalRaw = matchMasa[0];
     }
+
+    // FORMATKAN DENGAN PEMBANTU RASMI
+    let tarikhMasaAsalGabung = formatTarikhMasaLengkap(tarikhSebutanAsalRaw, masaSebutanAsalRaw);
 
     // TARIK TARIKH & MASA SAMAN BAHARU
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_saman')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
     
+    let tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
+
+    // KEKALKAN FORMATTING BAGI TEKS DALAMAN BORANG A
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
     if (tarikhRaw && tarikhRaw !== "") {
@@ -6861,7 +6857,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // LOGIK DINAMIK MUKA SURAT 2 UNTUK PENGADU (PERENGGAN 4 & 5)
+    // LOGIK PERENGGAN WAKIL KUASA DAHALAM NOTIS MAKLUMAN PENGADU
     let perengganWakilKuasaHTML = '';
     if (isMajikan) {
         perengganWakilKuasaHTML = `
@@ -6932,21 +6928,15 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
     
-                /* Sembunyikan Muka 2 jika pilih Cetak Saman Borang A */
                 body.print-only-saman #kertasNotisSamanPengadu { display: none !important; }
-    
-                /* Sembunyikan Muka 1 jika pilih Cetak Notis Saman */
                 body.print-only-notis #kertasSamanA { display: none !important; }
             }
             
-            /* Tetapan Umum untuk Semua Kertas */
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             
-            /* MUKA 1 (BORANG A - TIADA LETTERHEAD): Padding terus 2.5cm dari tepi */
             #kertasSamanA { padding: 1.5cm 2.5cm !important; }
             #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
             
-            /* MUKA 2 (NOTIS PENGADU - ADA LETTERHEAD): Padding luar 1.27cm, wrapper dalam 1.23cm = 2.5cm */
             #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
             #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
             
@@ -7045,7 +7035,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
 
                 <div class="notis-isi">
-                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaAsalGabung}</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
                 </div>
 
                 <div class="notis-isi">
@@ -7062,11 +7052,9 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
-    // Reset status semakan cetakan untuk Saman A
     window.isSamanAPrinted = false;
     window.isNotisSamanPrinted = false;
 
-    // Sembunyikan menu cetakan yang lain
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
@@ -7079,7 +7067,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
 
     let actionMenu = document.getElementById('actionMenu');
 
-    // 1. BUTANG CETAK SAMAN BORANG A (DEFENDAN - MUKA 1)
     let btnCetakSamanA = document.getElementById('menuCetakSamanA');
     if (!btnCetakSamanA) {
         btnCetakSamanA = document.createElement('a');
@@ -7095,7 +7082,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         cetakSamanA('saman');
     };
 
-    // 2. BUTANG CETAK NOTIS SAMAN (PENGADU - MUKA 2)
     let btnCetakNotisSaman = document.getElementById('menuCetakNotisSaman');
     if (!btnCetakNotisSaman) {
         btnCetakNotisSaman = document.createElement('a');

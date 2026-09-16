@@ -6437,55 +6437,6 @@ function renderJadualSejarah(index) {
     }
 }
 
-// =========================================================================
-// FUNGSI BUKAPREVIEW SAMAN A (DIBAIKI UNTUK REKOD DOKUMEN & HISTORY)
-// =========================================================================
-function cetakSamanA(jenis) {
-    document.getElementById('actionMenu').classList.remove('show');
-    document.body.classList.add('print-only-' + jenis);
-    window.print();
-    document.body.classList.remove('print-only-' + jenis);
-
-    // Dapatkan tarikh & masa dari input borang
-    const tarikhVal = document.getElementById('mk_tarikh_saman')?.value || '';
-    const masaVal = document.getElementById('mk_masa_saman')?.value || '';
-
-    // Formatkan butiran maklumat untuk disimpan ke Sejarah
-    let butiranMasa = "";
-    if (tarikhVal && masaVal) {
-        butiranMasa = `Tarikh sebutan ditetapkan pada ${tarikhVal} jam ${masaVal}. `;
-    }
-
-    let rawData = { tarikh: tarikhVal, masa: masaVal, tempat: document.getElementById('mk_tempat_saman')?.value || '' };
-    let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-
-    if (jenis === 'saman') {
-        window.isSamanAPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `${butiranMasa}(Dokumen Saman (Borang A) telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
-        const btnS = document.getElementById('menuCetakSamanA');
-        if (btnS) { 
-            btnS.innerHTML = '✅ Cetak Saman (Borang A)'; 
-            btnS.style.color = '#10b981'; 
-        }
-    } else if (jenis === 'notis') {
-        window.isNotisSamanPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, "Notis Saman (Pengadu)", `${butiranMasa}(Surat Notis Sebutan Kes (Saman) Pengadu telah dijana dan dicetak). [DATA_SAMANA:${d64}]`);
-        const btnN = document.getElementById('menuCetakNotisSaman');
-        if (btnN) { 
-            btnN.innerHTML = '✅ Cetak Notis Saman (Pengadu)'; 
-            btnN.style.color = '#10b981'; 
-        }
-    }
-
-    if (window.isSamanAPrinted && window.isNotisSamanPrinted) {
-        setTimeout(() => {
-            document.getElementById('modalPreview').style.display = 'none';
-            if(document.getElementById('menuCetakSamanA')) document.getElementById('menuCetakSamanA').style.display = 'none';
-            if(document.getElementById('menuCetakNotisSaman')) document.getElementById('menuCetakNotisSaman').style.display = 'none';
-            tukarView('senarai');
-        }, 500);
-    }
-}
 
 // --- FUNGSI BARU: Hapus Sejarah Tindakan ---
 function hapusSejarahTindakan(indexKes, indexSejarah) {

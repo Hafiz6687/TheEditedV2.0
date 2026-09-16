@@ -582,7 +582,7 @@
             
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_ss_sebab_lain">
                 <label style="text-align: left;">Nyatakan Sebab Lain <span>*</span></label>
-                <textarea id="ss_sebab_lain" rows="3" class="auto-expand" placeholder="Sila nyatakan sebab lain..." style="resize: vertical; width: 100%; box-sizing: border-box;" oninput="autoResize(this); hurufBesarSelepasTitik(this)"></textarea>
+                <textarea id="ss_sebab_lain" rows="3" class="auto-expand" placeholder="Sila nyatakan sebab lain..." style="resize: vertical; width: 100%; box-sizing: border-box;" oninput="autoResize(this)"></textarea>
             </div>
 
             <div class="modal-actions">
@@ -7508,19 +7508,23 @@ function bukaModalSebutanSemula() {
 
 // 3. Validasi & teruskan penjanaan dokumen selepas menekan "Teruskan" di modal
 function janaSebutanSemulaDariModal() {
-    const sebab = document.getElementById('ss_sebab').value;
-    const sebabLain = document.getElementById('ss_sebab_lain').value.trim();
+const sebab = document.getElementById('ss_sebab').value;
+let sebabLain = document.getElementById('ss_sebab_lain').value.trim();
 
-    if (sebab === '') {
-        alert('Sila pilih Sebab Penetapan Semula.');
-        return;
-    }
-    if (sebab === 'Lain-lain' && sebabLain === '') {
-        alert('Sila nyatakan sebab lain secara ringkas.');
-        return;
-    }
+// Padam semua tanda titik di hujung perkataan/ayat akhir (jika ada)
+sebabLain = sebabLain.replace(/\.+$/, '');
 
-    const sebabAkhir = sebab === 'Lain-lain' ? sebabLain : sebab;
+if (sebab === '') {
+  alert('Sila pilih Sebab Penetapan Semula.');
+  return;
+}
+
+if (sebab === 'Lain-lain' && sebabLain === '') {
+  alert('Sila nyatakan sebab lain secara ringkas.');
+  return;
+}
+
+const sebabAkhir = sebab === 'Lain-lain' ? sebabLain : sebab;
     
     // Simpan sebab pilihan dalam memori sementara
     window.tempSebabSebutanSemula = sebabAkhir;

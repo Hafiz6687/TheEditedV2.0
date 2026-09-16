@@ -6865,11 +6865,14 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
             }
-            /* 1. Kertas Notis Utama (Header & Footer mengikut jarak 1.27 cm ini) */
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             
-            /* 2. Isi Kandungan / Teks Surat (Menambah 1.23 cm supaya Jumlah Jarak Teks = EXACT 2.5 cm) */
+            /* Tetapan Umum untuk Muka Surat 2 (Ada Letterhead: 1.27cm + 1.23cm = 2.5cm) */
             .notis-body-wrapper { padding: 0 1.23cm !important; box-sizing: border-box; } 
+
+            /* Tetapan Khusus Muka Surat 1 Borang A sahaja (Tiada Letterhead) */
+            #kertasSamanA { padding: 1.5cm 2.5cm !important; }
+            #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
             
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
@@ -6888,7 +6891,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
             
-            /* 3. Garisan Bawah (Footer Line) diselaraskan ke 2.5 cm */
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         

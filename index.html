@@ -2560,6 +2560,39 @@ function formatTarikhMasaLengkap(tarikhRaw, masaRaw) {
     return `${tarikhStr}, ${masaStr}`;
 }
        
+// --- FUNGSI KAWALAN MODAL SEBUTAN SEMULA ---
+function kawalSebabSebutanSemula() {
+    const alasan = document.getElementById('ss_alasan').value;
+    const ruanganLain = document.getElementById('ruangan_ss_alasan_lain');
+    if (alasan === 'Lain-lain') {
+        ruanganLain.style.display = 'block';
+    } else {
+        ruanganLain.style.display = 'none';
+    }
+}
+
+function janaSebutanSemulaLanjut() {
+    const alasan = document.getElementById('ss_alasan').value;
+    const alasanLain = document.getElementById('ss_alasan_lain').value.trim();
+
+    if (alasan === '') {
+        alert('Sila pilih Alasan Penetapan Semula.');
+        return;
+    }
+    if (alasan === 'Lain-lain' && alasanLain === '') {
+        alert('Sila nyatakan alasan lain.');
+        return;
+    }
+
+    document.getElementById('modalSebutanSemula').style.display = 'none';
+    
+    // Simpan alasan dalam memori sementara
+    window.tempAlasanSebutanSemula = (alasan === 'Lain-lain') ? alasanLain : alasan;
+
+    // Panggil semula penjanaan notis sebutan_semula
+    bukaPreviewNotisGenerik('sebutan_semula');
+}
+
 function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
@@ -2568,15 +2601,24 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         'sebutan': { idPrefix: 'sebutan', tajukSurat: 'SEBUTAN KES', tindakan: 'Notis Sebutan', label: 'sebutan' },
         'sebutan_tangguh': { idPrefix: 'sebutan_tangguh', tajukSurat: 'SEBUTAN KES (TANGGUH)', tindakan: 'Notis Sebutan (Tangguh)', label: 'sebutan' },
         'sebutan_semula': { idPrefix: 'sebutan_semula', tajukSurat: 'SEBUTAN KES (PENETAPAN SEMULA)', tindakan: 'Notis Sebutan (Penetapan Semula)', label: 'sebutan' },
-        'bicara': { idPrefix: 'bicara', tajukSurat: 'PERBICARAAN KES', tindakan: 'Notis Perbicaraan', label: 'perbicaraan' },
-        'bicara_tangguh': { idPrefix: 'bicara_tangguh', tajukSurat: 'PERBICARAAN KES (TANGGUH)', tindakan: 'Notis Perbicaraan (Tangguh)', label: 'perbicaraan' },
-        'bicara_sambung': { idPrefix: 'bicara_sambung', tajukSurat: 'PERBICARAAN KES (SAMBUNG)', tindakan: 'Notis Perbicaraan (Sambung)', label: 'perbicaraan' },
-        'keputusan': { idPrefix: 'keputusan', tajukSurat: 'KEPUTUSAN KES', tindakan: 'Notis Keputusan', label: 'keputusan' }
+        'bicara': { idPrefix: 'bicara', tindakan: 'Notis Perbicaraan', label: 'perbicaraan' },
+        'bicara_tangguh': { idPrefix: 'bicara_tangguh', tindakan: 'Notis Perbicaraan (Tangguh)', label: 'perbicaraan' },
+        'bicara_sambung': { idPrefix: 'bicara_sambung', tindakan: 'Notis Perbicaraan (Sambung)', label: 'perbicaraan' },
+        'keputusan': { idPrefix: 'keputusan', tindakan: 'Notis Keputusan', label: 'keputusan' }
     };
     const c = conf[kunci];
 
     window.isNotisPengaduPrinted = false;
     window.isNotisDefendanPrinted = false;
+
+    // PEMBETULAN 1: Buka pop-up alasan Sebutan Semula awal-awal jika belum diisi
+    if (kunci === 'sebutan_semula' && !tarikhHst && !window.tempAlasanSebutanSemula) {
+        document.getElementById('ss_alasan').value = '';
+        document.getElementById('ruangan_ss_alasan_lain').style.display = 'none';
+        document.getElementById('ss_alasan_lain').value = 'notis kepada defendan tidak dapat diserah berikutan alamat defendan tidak lengkap.';
+        document.getElementById('modalSebutanSemula').style.display = 'flex';
+        return; 
+    }
 
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
@@ -2611,7 +2653,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         alamatDefendanBersih = alamatD;
     }
 
-    // PEMBETULAN ISU 2: TARIKH & MASA SEBUTAN DITARIK DARIPADA INPUT BORANG JIKA TIADA HISTORI
     let tarikhRaw = tarikhHst;
     let masaRaw = masaHst;
 
@@ -2624,6 +2665,16 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         if (elM && elM.value) masaRaw = elM.value;
     }
 
+    // PEMBETULAN 2: Takrifkan dataNotisSemasa dengan selamat sebelum digunakan
+    window.dataNotisSemasa = { 
+        tarikhStr: tarikhRaw, 
+        masaStr: masaRaw, 
+        tindakan: c.tindakan, 
+        label: c.label, 
+        kunci: kunci,
+        dariSejarah: !!tarikhHst
+    };
+
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     
     let tarikhText = "[Tarikh]";
@@ -2631,8 +2682,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     
     let masaText = "[Masa]";
     if (masaRaw && masaRaw !== '-') { let [jam, minit] = masaRaw.split(':'); let jamNum = parseInt(jam); let ampm = jamNum >= 12 ? "petang" : "pagi"; let jamFormat = jamNum % 12 || 12; masaText = `${jamFormat}:${minit} ${ampm}`; }
-
-    window.dataNotisSemasa = { tarikhStr: tarikhRaw, masaStr: masaRaw, tindakan: c.tindakan, label: c.label, kunci: kunci };
 
     let jumlahKeseluruhan = 0;
     let senaraiTuntutanSemasa = (kes.dataBorang && kes.dataBorang.tuntutanBiasa) ? kes.dataBorang.tuntutanBiasa : [];
@@ -2688,17 +2737,8 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             ${p2Defendan}
         `;
 
-        } else if (kunci === 'sebutan_semula') {
-        // TANGKAP POP-UP JIKA ALASAN BELUM DIISI (Hanya untuk cetakan baharu, bukan dari sejarah)
-        if (!window.dataNotisSemasa.dariSejarah && !window.tempAlasanSebutanSemula) {
-            document.getElementById('ss_alasan').value = '';
-            document.getElementById('ruangan_ss_alasan_lain').style.display = 'none';
-            document.getElementById('ss_alasan_lain').value = 'notis kepada defendan tidak dapat diserah berikutan alamat defendan tidak lengkap.';
-            document.getElementById('modalSebutanSemula').style.display = 'flex';
-            return; // Hentikan sehingga user tekan 'Teruskan'
-        }
-
-        // Ambil alasan yang telah dipilih atau dari data asal
+    } else if (kunci === 'sebutan_semula') {
+        // Ambil alasan yang telah dipilih
         let alasanDixtract = window.tempAlasanSebutanSemula || "defendan gagal hadir.";
 
         let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
@@ -2725,15 +2765,11 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
 
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
-        // ALASAN DI-EXTRACT SELEPAS PERKATAAN 'namun'
         isiPengadu = `
             <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
             <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun <strong>${alasanDixtract}</strong> Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
             <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
         `;
-
-        // Clear memori sementara selepas dimasukkan ke dalam surat
-        window.tempAlasanSebutanSemula = null;
 
         let d_idStr = "(No. Pendaftaran/KP: ....................)";
         let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
@@ -2801,7 +2837,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         const tarikhSamanDD = tH.getDate();
         const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
 
-        // PEMBETULAN ISU 1: ALAMAT DEFENDAN BERSIH TANPA TAG <br>
         tajukDefendan = '';
         isiDefendan = `
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0;">
@@ -2968,6 +3003,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
+       
         function toggleWakilMajikan() {
             const kandungan = document.getElementById('kandunganWakilMajikan');
             const labelTogol = document.getElementById('labelTogolWakil');
@@ -7745,38 +7781,6 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
     }
 }
 
-// --- FUNGSI KAWALAN MODAL SEBUTAN SEMULA ---
-function kawalSebabSebutanSemula() {
-    const alasan = document.getElementById('ss_alasan').value;
-    const ruanganLain = document.getElementById('ruangan_ss_alasan_lain');
-    if (alasan === 'Lain-lain') {
-        ruanganLain.style.display = 'block';
-    } else {
-        ruanganLain.style.display = 'none';
-    }
-}
-
-function janaSebutanSemulaLanjut() {
-    const alasan = document.getElementById('ss_alasan').value;
-    const alasanLain = document.getElementById('ss_alasan_lain').value.trim();
-
-    if (alasan === '') {
-        alert('Sila pilih Alasan Penetapan Semula.');
-        return;
-    }
-    if (alasan === 'Lain-lain' && alasanLain === '') {
-        alert('Sila nyatakan alasan lain.');
-        return;
-    }
-
-    document.getElementById('modalSebutanSemula').style.display = 'none';
-    
-    // Simpan alasan dalam memori sementara
-    window.tempAlasanSebutanSemula = (alasan === 'Lain-lain') ? alasanLain : alasan;
-
-    // Panggil semula penjanaan notis sebutan_semula
-    bukaPreviewNotisGenerik('sebutan_semula');
-}
 </script>
 </body>
 </html>

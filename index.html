@@ -7030,42 +7030,59 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </div>
     `;
 
-    document.getElementById('previewContent').innerHTML = htmlSamanA;
+document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
+    // Sembunyikan menu borang lain
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
     document.getElementById('menuSelesai').style.display = 'none';
-    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
-
     const menuCetakG1 = document.getElementById('menuCetakG1');
-    menuCetakG1.style.display = 'flex';
-    menuCetakG1.innerHTML = '🖨️ Cetak Saman (Borang A)';
-    
+    if (menuCetakG1) menuCetakG1.style.display = 'none';
+
+    let actionMenu = document.getElementById('actionMenu');
+
+    // 1. BUTANG CETAK SAMAN (BORANG A) - UNTUK DEFENDAN (MUKA 1 SAHAJA)
+    let btnCetakSamanA = document.getElementById('menuCetakSamanA');
+    if (!btnCetakSamanA) {
+        btnCetakSamanA = document.createElement('a');
+        btnCetakSamanA.id = 'menuCetakSamanA';
+        btnCetakSamanA.href = '#';
+        actionMenu.insertBefore(btnCetakSamanA, document.getElementById('menuBatal'));
+    }
+    btnCetakSamanA.style.display = 'flex';
+    btnCetakSamanA.style.color = 'var(--text-main)';
+    btnCetakSamanA.innerHTML = '🖨️ Cetak Saman (Borang A)';
+    btnCetakSamanA.onclick = function(e) {
+        e.preventDefault();
+        cetakSamanA('saman');
+    };
+
+    // 2. BUTANG CETAK NOTIS SAMAN - UNTUK PENGADU (MUKA 2 SAHAJA)
+    let btnCetakNotisSaman = document.getElementById('menuCetakNotisSaman');
+    if (!btnCetakNotisSaman) {
+        btnCetakNotisSaman = document.createElement('a');
+        btnCetakNotisSaman.id = 'menuCetakNotisSaman';
+        btnCetakNotisSaman.href = '#';
+        actionMenu.insertBefore(btnCetakNotisSaman, document.getElementById('menuBatal'));
+    }
+    btnCetakNotisSaman.style.display = 'flex';
+    btnCetakNotisSaman.style.color = 'var(--text-main)';
+    btnCetakNotisSaman.innerHTML = '🖨️ Cetak Notis Saman (Pengadu)';
+    btnCetakNotisSaman.onclick = function(e) {
+        e.preventDefault();
+        cetakSamanA('notis');
+    };
+
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
 
-    menuCetakG1.onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('actionMenu').classList.remove('show');
-        window.print();
-        
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
-        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen Saman (Borang A) telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
-        
-        setTimeout(() => {
-            document.getElementById('modalPreview').style.display = 'none';
-            tukarView('senarai');
-        }, 500);
-    };
-
+    // Reset dan tunjuk suis tandatangan
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
-
     tunjukSuisTandatangan(true);
+
     document.getElementById('modalPreview').style.display = 'flex';
 }
        

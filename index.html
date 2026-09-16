@@ -6908,6 +6908,12 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 #printArea { display: block !important; }
                 .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
+    
+                /* Sembunyikan Muka 2 jika pilih Cetak Saman Borang A */
+                body.print-only-saman #kertasNotisSamanPengadu { display: none !important; }
+    
+                /* Sembunyikan Muka 1 jika pilih Cetak Notis Saman */
+                body.print-only-notis #kertasSamanA { display: none !important; }
             }
             
             /* Tetapan Umum untuk Semua Kertas */

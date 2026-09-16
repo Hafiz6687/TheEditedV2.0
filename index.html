@@ -6716,12 +6716,13 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", namaD = "", alamatD = "", alamatP = "";
     let d_idStr = "(No. Pendaftaran/KP: ....................)";
+    let isMajikan = false;
 
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
-        const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
+        isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
         
-        // PEMBERSIHAN ALAMAT BERSIH (TANPA KOMA BERSEDERAK)
+        // PEMBERSIHAN ALAMAT
         let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
         let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
 
@@ -6731,23 +6732,17 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         let almtPengHTML = arrPeng.join('<br>').toUpperCase();
 
         if (isMajikan) {
-            // Jika Majikan = Pengadu
             namaP = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA SYARIKAT]';
             alamatP = almtDefHTML || '[ALAMAT PENGADU]';
-            
             namaD = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PEKERJA]';
             alamatD = almtPengClean || '[ALAMAT DEFENDAN]';
-            
             let idDef = inputs['noPendPengadu'] || '....................';
             d_idStr = `(No. Kad Pengenalan: ${idDef})`;
         } else {
-            // Jika Pekerja = Pengadu
             namaP = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PENGADU]';
             alamatP = almtPengHTML || '[ALAMAT PENGADU]';
-            
             namaD = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA DEFENDAN]';
             alamatD = almtDefClean || '[ALAMAT DEFENDAN]';
-            
             let idDef = inputs['noPendDefendan'] || '....................';
             let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
             let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
@@ -6810,7 +6805,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         }
     }
 
-    // TARIK TARIKH & MASA SAMAN BAHARU DARI INPUT ATAS SKRIN JIKA ADA
+    // TARIK TARIKH & MASA SAMAN BAHARU
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_saman')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
@@ -6842,6 +6837,25 @@ function bukaPreviewSamanA(dataSimpanan = null) {
 
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
+
+    // LOGIK DINAMIK MUKA SURAT 2 UNTUK PENGADU (PERENGGAN 4 & 5)
+    let perengganWakilKuasaHTML = '';
+    if (isMajikan) {
+        perengganWakilKuasaHTML = `
+            <div class="notis-isi">
+                4.<span class="jarak-tab"></span>Sila ambil perhatian, surat wakil kuasa yang ditandatangani oleh Pengarah Syarikat/ Pengerusi, salinan maklumat syarikat (SSM) dan sesalinan KWSP/PERKESO (menunjukkan nama wakil yang hadir) hendaklah dikemukakan dalam hal berkaitan perwakilan tersebut untuk semakan pegawai pendengar.
+            </div>
+            <div class="notis-isi">
+                5.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
+            </div>
+        `;
+    } else {
+        perengganWakilKuasaHTML = `
+            <div class="notis-isi">
+                4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
+            </div>
+        `;
+    }
 
     const templateHeaderHTML = `
         <div class="notis-header">
@@ -7009,13 +7023,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                     3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.
                 </div>
 
-                <div class="notis-isi">
-                    4.<span class="jarak-tab"></span>Sila ambil perhatian, surat wakil kuasa yang ditandatangani oleh Pengarah Syarikat/ Pengerusi, salinan maklumat syarikat (SSM) dan sesalinan KWSP/PERKESO (menunjukkan nama wakil yang hadir) hendaklah dikemukakan dalam hal berkaitan perwakilan tersebut untuk semakan pegawai pendengar.
-                </div>
-
-                <div class="notis-isi">
-                    5.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
-                </div>
+                ${perengganWakilKuasaHTML}
 
                 ${templateFooterHTML}
             </div>

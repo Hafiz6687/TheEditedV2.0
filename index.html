@@ -2929,6 +2929,16 @@ const conf = {
         `;
     }
 
+// Tambah penanda khas jika dokumen adalah Sebutan Semula
+    let cssSebutanSemulaKhas = "";
+    if (kunci === 'sebutan_semula') {
+        cssSebutanSemulaKhas = `
+            /* Khusus untuk Muka 2 Sebutan Semula (Borang A Saman - Tiada Letterhead) */
+            #kertasNotisDefendan { padding: 1.5cm 2.5cm !important; }
+            #kertasNotisDefendan .notis-body-wrapper { padding: 0 !important; }
+        `;
+    }
+
     const htmlNotisGenerik = `
     <style>
         @media print { 
@@ -2940,12 +2950,17 @@ const conf = {
             body.print-only-defendan #kertasNotisPengadu { display: none !important; } 
             .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
             .kertas-notis:last-child { page-break-after: auto; } 
+
+            /* Override khas untuk Muka 2 Sebutan Semula semasa Print */
+            #kertasNotisDefendan { padding: 1.5cm 2.5cm !important; }
         }
         .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
         .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+        
+        ${cssSebutanSemulaKhas}
     </style>
 
-    <!-- MUKA SURAT 1: PENGADU -->
+    <!-- MUKA SURAT 1: PENGADU (ADA LETTERHEAD) -->
     <div class="kertas-notis" id="kertasNotisPengadu">
         ${templateHeaderHTML}
         <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -2959,7 +2974,7 @@ const conf = {
         </div>
     </div>
 
-    <!-- MUKA SURAT 2: DEFENDAN -->
+    <!-- MUKA SURAT 2: DEFENDAN (SAMAN BORANG A - TIADA LETTERHEAD) -->
     ${mukaSuratDefendanHTML}
     `;
 

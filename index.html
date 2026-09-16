@@ -6341,7 +6341,6 @@ function renderJadualSejarah(index) {
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
 
-            // PEMBETULAN: Ekstrak Tarikh & Masa dari Butiran Sejarah (kalis pelbagai format)
             let matchTarikh = btr.match(/\b\d{4}-\d{2}-\d{2}\b/);
             let matchMasa = btr.match(/\b\d{1,2}:\d{2}\b/);
             let tHst = matchTarikh ? matchTarikh[0] : '';
@@ -7167,11 +7166,11 @@ function cetakSamanA(jenis) {
     window.print();
     document.body.classList.remove('print-only-' + jenis);
 
-    // Dapatkan nilai Tarikh & Masa dari input borang
+    // 1. Dapatkan nilai Tarikh & Masa dari input borang
     const tarikhVal = document.getElementById('mk_tarikh_saman')?.value || '';
     const masaVal = document.getElementById('mk_masa_saman')?.value || '';
 
-    // Bina teks maklumat tarikh & masa untuk disimpan
+    // 2. Formatkan teks butiran untuk dimasukkan ke Sejarah Tindakan
     let butiranMasa = "";
     if (tarikhVal && masaVal) {
         butiranMasa = `Tarikh sebutan ditetapkan pada ${tarikhVal} jam ${masaVal}. `;
@@ -7198,7 +7197,6 @@ function cetakSamanA(jenis) {
         }
     }
 
-    // Hanya tutup modal dan kembali ke senarai selepas KEDUA-DUA helaian telah dicetak
     if (window.isSamanAPrinted && window.isNotisSamanPrinted) {
         setTimeout(() => {
             document.getElementById('modalPreview').style.display = 'none';

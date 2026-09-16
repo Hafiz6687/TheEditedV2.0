@@ -560,6 +560,39 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL POP-UP KHAS UNTUK BATAL KES (Line ~240) -->
+    <div class="modal-overlay" id="modalBatalKes">
+        ...
+    </div>
+
+    <!-- ⬇️ LETAKKAN MODAL SEBUTAN SEMULA DI SINI ⬇️ -->
+    <div class="modal-overlay" id="modalSebutanSemula">
+        <div class="modal-box">
+            <div class="modal-title">Sebab Penetapan Semula Sebutan Kes</div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Sebab Penetapan Semula <span>*</span></label>
+                <select id="ss_sebab" onchange="kawalSebabSebutanSemula()" style="width: 100%; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="defendan gagal hadir.">Defendan gagal hadir.</option>
+                    <option value="Lain-lain">Lain-lain</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_ss_sebab_lain">
+                <label style="text-align: left;">Nyatakan Sebab Lain <span>*</span></label>
+                <textarea id="ss_sebab_lain" rows="3" class="auto-expand" placeholder="Sila nyatakan sebab lain..." style="resize: vertical; width: 100%; box-sizing: border-box;" oninput="autoResize(this); hurufBesarSelepasTitik(this)"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('modalSebutanSemula').style.display='none'">Batal</button>
+                <button class="btn-save" onclick="janaSebutanSemulaDariModal()">✔ Teruskan</button>
+            </div>
+        </div>
+    </div>
+    <!-- ⬆️ TAMAT MODAL SEBUTAN SEMULA ⬆️ -->
+
 <!-- PREVIEW MODAL & ACTION ICON BUTTON -->
     <div class="modal-overlay" id="modalPreview" style="z-index: 2000; flex-direction: column; padding: 0; background: rgba(0,0,0,0.8); position: fixed;">      
         <!-- Bahagian Paparan Kertas (A4) -->
@@ -1005,8 +1038,8 @@ Portal rasmi : jtksm.mohr.gov.my
             <div><input type="date" id="mk_tarikh_sebutan_semula" onchange="semakButangNotis('sebutan_semula')" style="margin:0; height: 42px; box-sizing: border-box;"></div>
             <div><input type="time" id="mk_masa_sebutan_semula" onchange="semakButangNotis('sebutan_semula')" style="margin:0; height: 42px; box-sizing: border-box;"></div>
             <div><input type="text" id="mk_tempat_sebutan_semula" value="Pejabat Tenaga Kerja Kluang" style="margin:0; height: 42px; box-sizing: border-box;"></div>
-            <div><button id="btnTindakan_sebutan_semula" class="btn-save" style="width: 100%; height: 42px; font-size: 0.9em; opacity: 0.5; cursor: not-allowed;" onclick="bukaPreviewNotisGenerik('sebutan_semula')" disabled>📄 Jana Notis</button></div>
-        </div>
+            <div><button id="btnTindakan_sebutan_semula" class="btn-save" style="width: 100%; height: 42px; font-size: 0.9em; opacity: 0.5; cursor: not-allowed;" onclick="bukaModalSebutanSemula()" disabled>📄 Jana Notis</button></div>
+           </div>
     </div>
 </div>
 <!-- BAHAGIAN 4.7: Penetapan Tarikh Saman (Memo Luar Kawasan) -->
@@ -1713,6 +1746,7 @@ Portal rasmi : jtksm.mohr.gov.my
     </main>
 
    <script>
+       
         // Data Global
         const senaraiTuntutanPekerja = [
             "Baki Gaji", "Baki Gaji Minimum", "Bayaran Balik Potongan Gaji", "Elaun", 
@@ -2662,36 +2696,39 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             ${p2Defendan}
         `;
 
-    } else if (kunci === 'sebutan_semula') {
-        let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
-        const sejarah = kes.sejarahTindakan || [];
-        
-        const rekodSebutanLama = [...sejarah].reverse().find(s => 
-            s.tindakan && (
-                s.tindakan.includes("Notis Sebutan") || 
-                s.tindakan.includes("Saman")
-            )
-        );
+} else if (kunci === 'sebutan_semula') {
+    // Tarik sebab yang dipilih dari modal (Gunakan 'defendan gagal hadir.' jika tiada)
+    let sebabTeks = window.tempSebabSebutanSemula || "defendan gagal hadir.";
 
-        if (rekodSebutanLama && rekodSebutanLama.butiran) {
-            let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
-            let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
+    let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
+    const sejarah = kes.sejarahTindakan || [];
+    
+    const rekodSebutanLama = [...sejarah].reverse().find(s => 
+        s.tindakan && (
+            s.tindakan.includes("Notis Sebutan") || 
+            s.tindakan.includes("Saman")
+        )
+    );
 
-            let tLama = matchTarikh ? matchTarikh[0] : null;
-            let mLama = matchMasa ? matchMasa[0] : null;
+    if (rekodSebutanLama && rekodSebutanLama.butiran) {
+        let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
+        let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
 
-            if (tLama && mLama) {
-                tarikhMasaLamaGabung = formatTarikhMasaLengkap(tLama, mLama);
-            }
+        let tLama = matchTarikh ? matchTarikh[0] : null;
+        let mLama = matchMasa ? matchMasa[0] : null;
+
+        if (tLama && mLama) {
+            tarikhMasaLamaGabung = formatTarikhMasaLengkap(tLama, mLama);
         }
+    }
 
-        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
+    tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
-        isiPengadu = `
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun defendan gagal hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
-            <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
-        `;
+    isiPengadu = `
+        <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+        <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun <strong>${sebabTeks}</strong>. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
+        <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
+    `;
 
         let d_idStr = "(No. Pendaftaran/KP: ....................)";
         let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
@@ -7449,7 +7486,49 @@ function janaBatalKes() {
     // Terus buka surat
     bukaPreviewBatalKes();
 }
+// 1. Kawal paparan medan "Lain-lain" pada modal
+function kawalSebabSebutanSemula() {
+    const sebab = document.getElementById('ss_sebab').value;
+    const ruanganLain = document.getElementById('ruangan_ss_sebab_lain');
+    if (sebab === 'Lain-lain') {
+        ruanganLain.style.display = 'block';
+    } else {
+        ruanganLain.style.display = 'none';
+        document.getElementById('ss_sebab_lain').value = '';
+    }
+}
 
+// 2. Fungsi apabila butang "Jana Notis" pada Kad Sebutan Kes (Penetapan Semula) ditekan
+function bukaModalSebutanSemula() {
+    document.getElementById('ss_sebab').value = '';
+    document.getElementById('ss_sebab_lain').value = '';
+    document.getElementById('ruangan_ss_sebab_lain').style.display = 'none';
+    document.getElementById('modalSebutanSemula').style.display = 'flex';
+}
+
+// 3. Validasi & teruskan penjanaan dokumen selepas menekan "Teruskan" di modal
+function janaSebutanSemulaDariModal() {
+    const sebab = document.getElementById('ss_sebab').value;
+    const sebabLain = document.getElementById('ss_sebab_lain').value.trim();
+
+    if (sebab === '') {
+        alert('Sila pilih Sebab Penetapan Semula.');
+        return;
+    }
+    if (sebab === 'Lain-lain' && sebabLain === '') {
+        alert('Sila nyatakan sebab lain secara ringkas.');
+        return;
+    }
+
+    const sebabAkhir = sebab === 'Lain-lain' ? sebabLain : sebab;
+    
+    // Simpan sebab pilihan dalam memori sementara
+    window.tempSebabSebutanSemula = sebabAkhir;
+    document.getElementById('modalSebutanSemula').style.display = 'none';
+
+    // Buka preview dokumen
+    bukaPreviewNotisGenerik('sebutan_semula');
+}
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN SURAT NOTIS PEMBATALAN KES
 // =========================================================================

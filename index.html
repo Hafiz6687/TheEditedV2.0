@@ -565,7 +565,60 @@
     <div class="modal-overlay" id="modalBatalKes">
         ...
     </div>
+<!-- MODAL POP-UP KHAS UNTUK TAMBAH PERWAKILAN / SAKSI -->
+    <div class="modal-overlay" id="modalPerwakilan">
+        <div class="modal-box">
+            <div class="modal-title">Tambah Maklumat Wakil / Saksi</div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Kategori Kehadiran <span>*</span></label>
+                <select id="pw_kategori" onchange="kawalKategoriPerwakilan()" style="width: 100%; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="Peguam">Peguam</option>
+                    <option value="Saksi">Saksi</option>
+                    <option value="Wakil Kesatuan">Wakil Kesatuan Sekerja</option>
+                </select>
+            </div>
 
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Nama Penuh Peguam / Saksi <span>*</span></label>
+                <input type="text" id="pw_nama" placeholder="Nama penuh individu" oninput="hurufBesarSetiapPerkataan(this)">
+            </div>
+
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">No. Kad Pengenalan <span>*</span></label>
+                <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
+            </div>
+
+            <!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
+            <div id="ruangan_pw_firma" style="display: none;">
+                <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                    <label style="text-align: left;">Nama Firma Guaman / Kesatuan</label>
+                    <input type="text" id="pw_firma" placeholder="Nama Firma / Organisasi" oninput="hurufBesarSetiapPerkataan(this)">
+                </div>
+                <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                    <label style="text-align: left;">Alamat Firma / Kesatuan</label>
+                    <textarea id="pw_alamat" rows="2" placeholder="Alamat penuh (Jika ada)" class="auto-expand" style="resize: vertical; width: 100%; box-sizing: border-box;"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                <div>
+                    <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon <span>*</span></label>
+                    <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this)" style="width: 100%; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="text-align: left; display: block; margin-bottom: 5px;">E-mel</label>
+                    <input type="email" id="pw_emel" placeholder="emel@domain.com" style="width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('modalPerwakilan').style.display='none'">Batal</button>
+                <button class="btn-save" onclick="simpanPerwakilan()">✔ Simpan Maklumat</button>
+            </div>
+        </div>
+    </div>
     <!-- ⬇️ LETAKKAN MODAL SEBUTAN SEMULA DI SINI ⬇️ -->
     <div class="modal-overlay" id="modalSebutanSemula">
         <div class="modal-box">
@@ -804,7 +857,30 @@ Portal rasmi : jtksm.mohr.gov.my
                     </div>
                 </div>
             </div>
-
+<!-- BAHAGIAN BARU: Maklumat Kehadiran / Perwakilan -->
+            <div class="card full-width" id="kad_kehadiran_perwakilan">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    Maklumat Kehadiran / Perwakilan
+                    <button class="btn-add btn-terapung" style="padding: 6px 12px; font-size: 0.85em;" onclick="bukaModalPerwakilan()">+ Tambah Wakil / Saksi</button>
+                </div>
+                <div class="card-body">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
+                        <thead style="background-color: var(--card-header-bg);">
+                            <tr>
+                                <th style="width: 5%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Bil.</th>
+                                <th style="width: 15%; padding: 12px; border-bottom: 1px solid var(--border-color);">Kategori</th>
+                                <th style="width: 25%; padding: 12px; border-bottom: 1px solid var(--border-color);">Nama & No. KP</th>
+                                <th style="width: 30%; padding: 12px; border-bottom: 1px solid var(--border-color);">Firma Guaman & Alamat</th>
+                                <th style="width: 15%; padding: 12px; border-bottom: 1px solid var(--border-color);">No. Telefon / E-mel</th>
+                                <th style="width: 10%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mk_body_perwakilan">
+                            <tr><td colspan="6" class="empty-row" style="padding: 15px;">Tiada maklumat kehadiran / perwakilan direkodkan.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <!-- BAHAGIAN 3: Maklumat Defendan -->
             <div class="card full-width" id="kad_maklumat_defendan">
                 <div class="card-header" id="mk_header_defendan">Maklumat Defendan</div>
@@ -2304,6 +2380,8 @@ if (menuTindakanUrus) {
 
     document.getElementById('tajukHalamanAtas').innerHTML = 'Maklumat Kes Terperinci';
     document.getElementById('butangCetakHeader').style.display = 'none'; 
+    // Render senarai perwakilan/kehadiran jika ada
+    if (typeof renderJadualPerwakilan === 'function') renderJadualPerwakilan();
 }
 
 
@@ -7924,6 +8002,112 @@ function kawalJenisPerwakilan() {
         document.getElementById('namaPerwakilan').value = '';
         document.getElementById('telPerwakilan').value = '';
         document.getElementById('alamatPerwakilan').value = '';
+    }
+}
+       // =========================================================================
+// FUNGSI KAWALAN KEHADIRAN / PERWAKILAN PENGADU (DALAM MAKLUMAT KES)
+// =========================================================================
+
+// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih
+function kawalKategoriPerwakilan() {
+    const kat = document.getElementById('pw_kategori').value;
+    const ruanganFirma = document.getElementById('ruangan_pw_firma');
+    
+    if (kat === 'Peguam' || kat === 'Wakil Kesatuan') {
+        ruanganFirma.style.display = 'block';
+    } else {
+        ruanganFirma.style.display = 'none';
+        document.getElementById('pw_firma').value = '';
+        document.getElementById('pw_alamat').value = '';
+    }
+}
+
+// 2. Buka modal dan kosongkan input
+function bukaModalPerwakilan() {
+    document.getElementById('pw_kategori').value = '';
+    document.getElementById('pw_nama').value = '';
+    document.getElementById('pw_kp').value = '';
+    document.getElementById('pw_firma').value = '';
+    document.getElementById('pw_alamat').value = '';
+    document.getElementById('pw_tel').value = '';
+    document.getElementById('pw_emel').value = '';
+    kawalKategoriPerwakilan();
+    document.getElementById('modalPerwakilan').style.display = 'flex';
+}
+
+// 3. Simpan data ke dalam memori kes
+function simpanPerwakilan() {
+    const kat = document.getElementById('pw_kategori').value;
+    const nama = document.getElementById('pw_nama').value.trim();
+    const kp = document.getElementById('pw_kp').value.trim();
+    const firma = document.getElementById('pw_firma').value.trim();
+    const alamat = document.getElementById('pw_alamat').value.trim();
+    const tel = document.getElementById('pw_tel').value.trim();
+    const emel = document.getElementById('pw_emel').value.trim();
+
+    if (!kat || !nama || !kp || !tel) {
+        alert("Sila lengkapkan Kategori, Nama, No. Kad Pengenalan dan No. Telefon.");
+        return;
+    }
+
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    if (!kes.senaraiPerwakilan) kes.senaraiPerwakilan = [];
+
+    kes.senaraiPerwakilan.push({
+        kategori: kat,
+        nama: nama,
+        kp: kp,
+        firma: firma,
+        alamat: alamat,
+        tel: tel,
+        emel: emel
+    });
+
+    simpanSenaraiKeLokal();
+    renderJadualPerwakilan();
+    document.getElementById('modalPerwakilan').style.display = 'none';
+}
+
+// 4. Render jadual ke dalam Maklumat Kes Terperinci
+function renderJadualPerwakilan() {
+    const tbody = document.getElementById('mk_body_perwakilan');
+    if (!tbody) return;
+
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    const senarai = kes.senaraiPerwakilan || [];
+
+    tbody.innerHTML = '';
+
+    if (senarai.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-row" style="padding: 15px;">Tiada maklumat kehadiran / perwakilan direkodkan.</td></tr>`;
+        return;
+    }
+
+    senarai.forEach((item, index) => {
+        let firmaHtml = item.kategori === 'Saksi' ? '<i style="color: #94a3b8;">Tidak Berkaitan</i>' : `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
+        let labelKat = item.kategori === 'Peguam' ? `<span style="background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Peguam</span>` : 
+                      (item.kategori === 'Saksi' ? `<span style="background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Saksi</span>` : `<span style="background: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Kesatuan</span>`);
+
+        tbody.innerHTML += `
+            <tr>
+                <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${index + 1}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${labelKat}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${item.nama}</strong><br><span style="font-size:0.9em; color:#475569;">KP: ${item.kp}</span></td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${firmaHtml}</td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">📞 ${item.tel}<br>✉️ ${item.emel || '-'}</td>
+                <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">
+                    <button class="btn-delete-tbl" onclick="hapusPerwakilan(${index})" title="Hapus Rekod">🗑️ Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function hapusPerwakilan(index) {
+    if (confirm("Adakah anda pasti mahu memadam rekod perwakilan ini?")) {
+        memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);
+        simpanSenaraiKeLokal();
+        renderJadualPerwakilan();
     }
 }
 </script>

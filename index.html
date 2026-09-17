@@ -1271,47 +1271,7 @@ Portal rasmi : jtksm.mohr.gov.my
                                 <div id="ruanganWarganegaraLain" style="display: none; margin-top: 10px;"><input type="text" id="warganegaraLain" placeholder="Masukkan warganegara" style="width: 100%;"></div>
                             </div>
                         </div>
-                        <!-- BLOK MAKLUMAT KEHADIRAN / PERWAKILAN -->
-<hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 30px 0;">
-<div style="margin-bottom: 20px;">
-    <div class="togol-header" onclick="togglePerwakilan()">
-        <h4 style="color: var(--primary-blue); margin: 0; font-size: 1.1em;">Maklumat Kehadiran / Perwakilan</h4>
-        <span id="labelTogolPerwakilan" style="color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border-color);">▼ Buka</span>
-    </div>
-</div>
-
-<div id="kandunganPerwakilan" style="display: none; margin-bottom: 30px;">
-    
-    <!-- Bahagian Peguam -->
-    <div class="form-group" style="align-items: center; margin-bottom: 10px;">
-        <label style="margin-top: 0;">Lantikan Peguam?</label>
-        <div class="input-wrapper radio-group" style="margin: 0;">
-            <label style="display: flex; align-items: center;"><input type="radio" name="adaPeguam" value="Ya" onchange="kawalPerwakilan()"> Ya</label>
-            <label style="display: flex; align-items: center;"><input type="radio" name="adaPeguam" value="Tidak" onchange="kawalPerwakilan()" checked> Tidak</label>
-        </div>
-    </div>
-    
-    <div id="ruanganPeguam" style="display: none; background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
-        <div class="form-group"><label>Nama Peguam / Firma</label><div class="input-wrapper"><input type="text" id="namaFirma" placeholder="Contoh: Ali & Co. Advocates" oninput="hurufBesarSetiapPerkataan(this)"></div></div>
-        <div class="form-group"><label>No. Tel Firma</label><div class="input-wrapper"><input type="text" id="telFirma" placeholder="Contoh: 03-12345678" oninput="formatTelRumah(this)" maxlength="11"></div></div>
-        <div class="form-group" style="margin-bottom: 0;"><label>Alamat Firma</label><div class="input-wrapper"><textarea id="alamatFirma" class="auto-expand" rows="2" placeholder="Alamat penuh firma guaman" oninput="autoResize(this); hurufBesarSetiapPerkataan(this)"></textarea></div></div>
-    </div>
-
-    <!-- Bahagian Saksi -->
-    <div class="form-group" style="align-items: center; margin-bottom: 10px;">
-        <label style="margin-top: 0;">Kehadiran Saksi?</label>
-        <div class="input-wrapper radio-group" style="margin: 0;">
-            <label style="display: flex; align-items: center;"><input type="radio" name="adaSaksi" value="Ya" onchange="kawalPerwakilan()"> Ya</label>
-            <label style="display: flex; align-items: center;"><input type="radio" name="adaSaksi" value="Tidak" onchange="kawalPerwakilan()" checked> Tidak</label>
-        </div>
-    </div>
-
-    <div id="ruanganSaksi" style="display: none; background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
-        <div class="form-group"><label>Nama Saksi</label><div class="input-wrapper"><input type="text" id="namaSaksi" placeholder="Nama penuh saksi" oninput="hurufBesarSetiapPerkataan(this)"></div></div>
-        <div class="form-group" style="margin-bottom: 0;"><label>No. Tel Saksi</label><div class="input-wrapper"><input type="text" id="telSaksi" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this)" maxlength="12"></div></div>
-    </div>
-
-</div>
+                        
                         <div id="blokMaklumatPerkhidmatan">
                             <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 30px 0;">
                             
@@ -2085,45 +2045,7 @@ function bukaMaklumatKes(index) {
         `;
     }
     document.getElementById('mk_grid_pengadu').innerHTML = htmlPengadu;
-// --- KOD TAMBAHAN UNTUK PAPARAN KEHADIRAN / PERWAKILAN ---
-    let htmlPerwakilan = '';
-    const adaPeguam = dataSistem['adaPeguam'] === 'Ya';
-    const adaSaksi = dataSistem['adaSaksi'] === 'Ya';
 
-    if (adaPeguam || adaSaksi) {
-        htmlPerwakilan += `<div style="grid-column: 1 / -1; margin-top: 15px;">`;
-        htmlPerwakilan += `<hr style="border: 0; border-top: 1px dashed var(--border-color); margin-bottom: 20px;">`;
-        htmlPerwakilan += `<h5 style="color: var(--primary-blue); margin: 0 0 15px 0; font-size: 1em;">Kehadiran / Perwakilan</h5>`;
-        htmlPerwakilan += `<div class="grid-2">`;
-        
-        if (adaPeguam) {
-            htmlPerwakilan += `
-                <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <div class="info-label">Peguam / Firma Guaman</div>
-                    <div class="info-value" style="margin-bottom: 10px;"><strong>${dataSistem['namaFirma'] || '-'}</strong></div>
-                    <div class="info-label">No. Tel</div>
-                    <div class="info-value" style="margin-bottom: 10px;">${dataSistem['telFirma'] || '-'}</div>
-                    <div class="info-label">Alamat Firma</div>
-                    <div class="info-value" style="margin-bottom: 0; white-space: pre-wrap;">${dataSistem['alamatFirma'] || '-'}</div>
-                </div>
-            `;
-        }
-        if (adaSaksi) {
-            htmlPerwakilan += `
-                <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <div class="info-label">Saksi Pengadu</div>
-                    <div class="info-value" style="margin-bottom: 10px;"><strong>${dataSistem['namaSaksi'] || '-'}</strong></div>
-                    <div class="info-label">No. Tel Saksi</div>
-                    <div class="info-value" style="margin-bottom: 0;">${dataSistem['telSaksi'] || '-'}</div>
-                </div>
-            `;
-        }
-        
-        htmlPerwakilan += `</div></div>`;
-        
-        // Cantumkan bersama htmlPengadu sedia ada
-        document.getElementById('mk_grid_pengadu').innerHTML += htmlPerwakilan;
-    }
     let htmlDefendan = '';
     if (isMajikan) {
         document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Pekerja)';
@@ -4740,30 +4662,12 @@ function resetBorangPendaftaran() {
         const noKontrak = document.querySelector('input[name="adaKontrak"][value="Tidak"]');
         if(noKontrak) noKontrak.checked = true;
 
-const noPenyata = document.querySelector('input[name="adaPenyata"][value="Tidak"]');
+        const noPenyata = document.querySelector('input[name="adaPenyata"][value="Tidak"]');
         if(noPenyata) noPenyata.checked = true;
 
         const noElaun = document.querySelector('input[name="adaElaun"][value="Tidak"]');
         if(noElaun) noElaun.checked = true;
-        
-        // --- TAMBAH KOD RESET PEGUAM & SAKSI DI SINI ---
-        const noPeguam = document.querySelector('input[name="adaPeguam"][value="Tidak"]');
-        if(noPeguam) noPeguam.checked = true;
-
-        const noSaksi = document.querySelector('input[name="adaSaksi"][value="Tidak"]');
-        if(noSaksi) noSaksi.checked = true;
     }
-
-// --- KOD TAMBAHAN UNTUK TUTUP SEMULA KOTAK-KOTAK YANG TERBUKA ---
-        // Tutup kotak perwakilan jika ia terbuka
-        if(document.getElementById('ruanganPeguam')) document.getElementById('ruanganPeguam').style.display = 'none';
-        if(document.getElementById('ruanganSaksi')) document.getElementById('ruanganSaksi').style.display = 'none';
-        if(document.getElementById('kandunganPerwakilan')) document.getElementById('kandunganPerwakilan').style.display = 'none';
-        if(document.getElementById('labelTogolPerwakilan')) {
-            document.getElementById('labelTogolPerwakilan').innerHTML = '▼ Buka';
-            document.getElementById('labelTogolPerwakilan').style.backgroundColor = '#f1f5f9';
-            document.getElementById('labelTogolPerwakilan').style.color = 'var(--text-muted)';
-        }
 
 // --- KOD TAMBAHAN UNTUK TUTUP SEMULA KOTAK-KOTAK YANG TERBUKA ---
         document.getElementById('kandunganMaklumatPerkhidmatan').style.display = 'none';
@@ -5221,7 +5125,7 @@ for (const key in formData) {
             });
         }
 
-// LANGKAH 3: Panggil fungsi kemaskini paparan Togol
+        // LANGKAH 3: Panggil fungsi kemaskini paparan Togol
         toggleAduan();
         semakWakilLengkap();
         kawalWarganegara();
@@ -5231,7 +5135,6 @@ for (const key in formData) {
         toggleWaktuKerja();
         toggleHariKerja();
         toggleAlamatKerja();
-        kawalPerwakilan(); // <--- TAMBAH BARIS INI
         janaKenyataanAwal();
         
         // LANGKAH 4: Load semula Jadual Tuntutan Kewangan
@@ -7887,40 +7790,6 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
         }
     } else {
         bekasSuis.style.display = 'none';
-    }
-}
-       function togglePerwakilan() {
-    const kandungan = document.getElementById('kandunganPerwakilan');
-    const labelTogol = document.getElementById('labelTogolPerwakilan');
-    if (kandungan.style.display === 'none') {
-        kandungan.style.display = 'block';
-        labelTogol.innerHTML = '▲ Sembunyi';
-        labelTogol.style.backgroundColor = '#eff6ff';
-        labelTogol.style.color = 'var(--primary-blue)';
-    } else {
-        kandungan.style.display = 'none';
-        labelTogol.innerHTML = '▼ Buka';
-        labelTogol.style.backgroundColor = '#f1f5f9';
-        labelTogol.style.color = 'var(--text-muted)';
-    }
-}
-
-function kawalPerwakilan() {
-    const peguam = document.querySelector('input[name="adaPeguam"]:checked')?.value;
-    const saksi = document.querySelector('input[name="adaSaksi"]:checked')?.value;
-    
-    document.getElementById('ruanganPeguam').style.display = (peguam === 'Ya') ? 'block' : 'none';
-    document.getElementById('ruanganSaksi').style.display = (saksi === 'Ya') ? 'block' : 'none';
-    
-    // Auto kosongkan jika "Tidak" dipilih
-    if (peguam === 'Tidak') {
-        document.getElementById('namaFirma').value = '';
-        document.getElementById('telFirma').value = '';
-        document.getElementById('alamatFirma').value = '';
-    }
-    if (saksi === 'Tidak') {
-        document.getElementById('namaSaksi').value = '';
-        document.getElementById('telSaksi').value = '';
     }
 }
 </script>

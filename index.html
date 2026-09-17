@@ -756,6 +756,17 @@ Portal rasmi : jtksm.mohr.gov.my
                         <!-- Ruangan ini akan dijana oleh JS bergantung kpd status Pengadu -->
                     </div>
 
+                    <!-- TAMBAHAN BARU: PAPARAN PERWAKILAN -->
+                    <div id="mk_bekas_perwakilan" style="display: none; margin-top: 25px; padding: 15px; background-color: #f8fafc; border: 1px dashed var(--primary-blue); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                            <span style="font-size: 1.2em;">⚖️</span>
+                            <h5 style="margin: 0; color: var(--primary-blue); font-size: 1.05em;">Maklumat Kehadiran / Perwakilan Pengadu</h5>
+                        </div>
+                        <div class="grid-3" id="mk_grid_perwakilan">
+                            <!-- Akan dijana oleh JS -->
+                        </div>
+                    </div>
+
                     <!-- Tuntutan Digabungkan dalam Container yang sama -->
                     <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 30px 0;">
                     <h4 style="margin-top:0; margin-bottom: 15px; color:var(--primary-blue);">Maklumat Tuntutan</h4>
@@ -1374,7 +1385,8 @@ Portal rasmi : jtksm.mohr.gov.my
                 <option>Isnin</option><option>Selasa</option><option>Rabu</option><option>Khamis</option><option>Jumaat</option><option>Sabtu</option><option>Ahad</option>
             </select>
         </div>
-        <div id="ruanganHariTidakTetap" style="display: none;">
+
+<div id="ruanganHariTidakTetap" style="display: none;">
             <textarea id="teksHariTidakTetap" class="auto-expand" placeholder="Nyatakan hari kerja (Cth: 5 hari bekerja bergantung kepada jadual)" rows="1" oninput="autoResize(this); hurufBesarSelepasTitik(this)" onkeydown="if(event.key === 'Tab' && !event.shiftKey) { event.preventDefault(); document.getElementById('jenisDaftarDefendan').focus(); }"></textarea>
         </div>
     </div>
@@ -1382,6 +1394,26 @@ Portal rasmi : jtksm.mohr.gov.my
 
                             </div>
                         </div>
+
+                        <!-- PASTE KOD DI SINI -->
+                        <div id="blokMaklumatPerwakilan">
+                            <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 30px 0;">
+                            <div style="margin-bottom: 20px;">
+                                <div class="togol-header" onclick="toggleMaklumatPerwakilan()">
+                                    <h4 style="color: var(--primary-blue); margin: 0; font-size: 1.1em;">Kehadiran / Perwakilan Pengadu</h4>
+                                    <span id="labelTogolPerwakilan" style="color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border-color);">▼ Buka</span>
+                                </div>
+                            </div>
+
+                            <div id="kandunganMaklumatPerwakilan" style="display: none;">
+                                <!-- ... (dan seterusnya) ... -->
+                            </div>
+                        </div>
+                        <!-- TAMAT PASTE KOD -->
+
+                    </div>
+                </div>
+
 
                     </div>
                 </div>
@@ -2045,7 +2077,44 @@ function bukaMaklumatKes(index) {
         `;
     }
     document.getElementById('mk_grid_pengadu').innerHTML = htmlPengadu;
+// LOGIK PAPARAN MAKLUMAT PERWAKILAN
+    const jenisWakil = dataSistem['jenisPerwakilan'] || "";
+    const namaWakil = dataSistem['namaPerwakilan'] || "-";
+    const telWakil = dataSistem['telPerwakilan'] || "-";
+    const alamatWakil = dataSistem['alamatPerwakilan'] || "-";
 
+    const bekasPerwakilan = document.getElementById('mk_bekas_perwakilan');
+    const gridPerwakilan = document.getElementById('mk_grid_perwakilan');
+
+    if (jenisWakil && jenisWakil !== "") {
+        bekasPerwakilan.style.display = 'block';
+        let htmlWakil = `
+            <div>
+                <div class="info-label">Jenis Perwakilan</div>
+                <div class="info-value" style="margin-bottom:0; font-weight: bold; color: var(--primary-blue);">${jenisWakil}</div>
+            </div>
+            <div>
+                <div class="info-label">Nama / Firma</div>
+                <div class="info-value" style="margin-bottom:0;">${namaWakil}</div>
+            </div>
+            <div>
+                <div class="info-label">No. Telefon</div>
+                <div class="info-value" style="margin-bottom:0;"><a href="tel:${telWakil.replace(/-/g,'')}" class="info-link" style="text-decoration:none;">📞 ${telWakil}</a></div>
+            </div>
+        `;
+        
+        if (jenisWakil === 'Peguam' || jenisWakil === 'Kesatuan') {
+            htmlWakil += `
+            <div style="grid-column: 1 / -1; margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                <div class="info-label">Alamat Firma / Organisasi</div>
+                <div class="info-value" style="margin-bottom:0;">${alamatWakil.replace(/\n/g, '<br>')}</div>
+            </div>
+            `;
+        }
+        gridPerwakilan.innerHTML = htmlWakil;
+    } else {
+        bekasPerwakilan.style.display = 'none';
+    }
     let htmlDefendan = '';
     if (isMajikan) {
         document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Pekerja)';
@@ -7790,6 +7859,48 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
         }
     } else {
         bekasSuis.style.display = 'none';
+    }
+}
+       function toggleMaklumatPerwakilan() {
+    const kandungan = document.getElementById('kandunganMaklumatPerwakilan');
+    const label = document.getElementById('labelTogolPerwakilan');
+    if (kandungan.style.display === 'none') {
+        kandungan.style.display = 'block';
+        label.innerHTML = '▲ Sembunyi';
+        label.style.backgroundColor = '#eff6ff';
+        label.style.color = 'var(--primary-blue)';
+    } else {
+        kandungan.style.display = 'none';
+        label.innerHTML = '▼ Buka';
+        label.style.backgroundColor = '#f1f5f9';
+        label.style.color = 'var(--text-muted)';
+    }
+}
+
+function kawalJenisPerwakilan() {
+    const jenis = document.getElementById('jenisPerwakilan').value;
+    const ruanganButiran = document.getElementById('ruanganButiranPerwakilan');
+    const ruanganAlamat = document.getElementById('ruanganAlamatFirma');
+    const labelNama = document.getElementById('labelNamaWakil');
+
+    if (jenis !== "") {
+        ruanganButiran.style.display = 'block';
+        if (jenis === 'Peguam') {
+            labelNama.innerText = 'Nama Firma Guaman';
+            ruanganAlamat.style.display = 'grid'; 
+        } else if (jenis === 'Saksi') {
+            labelNama.innerText = 'Nama Saksi Pengadu';
+            ruanganAlamat.style.display = 'none'; // Alamat disorok untuk saksi
+            document.getElementById('alamatPerwakilan').value = ''; 
+        } else if (jenis === 'Kesatuan') {
+            labelNama.innerText = 'Nama Wakil Kesatuan';
+            ruanganAlamat.style.display = 'grid';
+        }
+    } else {
+        ruanganButiran.style.display = 'none';
+        document.getElementById('namaPerwakilan').value = '';
+        document.getElementById('telPerwakilan').value = '';
+        document.getElementById('alamatPerwakilan').value = '';
     }
 }
 </script>

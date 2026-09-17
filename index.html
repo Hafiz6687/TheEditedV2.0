@@ -7501,30 +7501,37 @@ function kawalSebabSebutanSemula() {
 // 2. Fungsi apabila butang "Jana Notis" pada Kad Sebutan Kes (Penetapan Semula) ditekan
 function bukaModalSebutanSemula() {
     document.getElementById('ss_sebab').value = '';
-    document.getElementById('ss_sebab_lain').value = '';
+    
+    // Wujudkan perkataan "namun " sebagai idea permulaan kepada pengguna
+    document.getElementById('ss_sebab_lain').value = 'namun '; 
+    
     document.getElementById('ruangan_ss_sebab_lain').style.display = 'none';
     document.getElementById('modalSebutanSemula').style.display = 'flex';
 }
 
 // 3. Validasi & teruskan penjanaan dokumen selepas menekan "Teruskan" di modal
 function janaSebutanSemulaDariModal() {
-const sebab = document.getElementById('ss_sebab').value;
-let sebabLain = document.getElementById('ss_sebab_lain').value.trim();
+    const sebab = document.getElementById('ss_sebab').value;
+    let sebabLain = document.getElementById('ss_sebab_lain').value.trim();
 
-// Padam semua tanda titik di hujung perkataan/ayat akhir (jika ada)
-sebabLain = sebabLain.replace(/\.+$/, '');
+    // KOD BARU: Buang perkataan "namun" atau "Namun" di permulaan ayat supaya tak bertindih dalam notis
+    sebabLain = sebabLain.replace(/^namun\s*/i, '').trim();
 
-if (sebab === '') {
-  alert('Sila pilih Sebab Penetapan Semula.');
-  return;
-}
+    // Padam semua tanda titik di hujung perkataan/ayat akhir (jika ada)
+    sebabLain = sebabLain.replace(/\.+$/, '');
 
-if (sebab === 'Lain-lain' && sebabLain === '') {
-  alert('Sila nyatakan sebab lain secara ringkas.');
-  return;
-}
+    if (sebab === '') {
+        alert('Sila pilih Sebab Penetapan Semula.');
+        return;
+    }
 
-const sebabAkhir = sebab === 'Lain-lain' ? sebabLain : sebab;
+    // Jika pengguna hanya biarkan perkataan "namun" tanpa menambah apa-apa, ia akan dianggap kosong
+    if (sebab === 'Lain-lain' && sebabLain === '') {
+        alert('Sila nyatakan sebab lain secara ringkas.');
+        return;
+    }
+
+    const sebabAkhir = sebab === 'Lain-lain' ? sebabLain : sebab;
     
     // Simpan sebab pilihan dalam memori sementara
     window.tempSebabSebutanSemula = sebabAkhir;

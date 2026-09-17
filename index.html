@@ -4740,12 +4740,30 @@ function resetBorangPendaftaran() {
         const noKontrak = document.querySelector('input[name="adaKontrak"][value="Tidak"]');
         if(noKontrak) noKontrak.checked = true;
 
-        const noPenyata = document.querySelector('input[name="adaPenyata"][value="Tidak"]');
+const noPenyata = document.querySelector('input[name="adaPenyata"][value="Tidak"]');
         if(noPenyata) noPenyata.checked = true;
 
         const noElaun = document.querySelector('input[name="adaElaun"][value="Tidak"]');
         if(noElaun) noElaun.checked = true;
+        
+        // --- TAMBAH KOD RESET PEGUAM & SAKSI DI SINI ---
+        const noPeguam = document.querySelector('input[name="adaPeguam"][value="Tidak"]');
+        if(noPeguam) noPeguam.checked = true;
+
+        const noSaksi = document.querySelector('input[name="adaSaksi"][value="Tidak"]');
+        if(noSaksi) noSaksi.checked = true;
     }
+
+// --- KOD TAMBAHAN UNTUK TUTUP SEMULA KOTAK-KOTAK YANG TERBUKA ---
+        // Tutup kotak perwakilan jika ia terbuka
+        if(document.getElementById('ruanganPeguam')) document.getElementById('ruanganPeguam').style.display = 'none';
+        if(document.getElementById('ruanganSaksi')) document.getElementById('ruanganSaksi').style.display = 'none';
+        if(document.getElementById('kandunganPerwakilan')) document.getElementById('kandunganPerwakilan').style.display = 'none';
+        if(document.getElementById('labelTogolPerwakilan')) {
+            document.getElementById('labelTogolPerwakilan').innerHTML = '▼ Buka';
+            document.getElementById('labelTogolPerwakilan').style.backgroundColor = '#f1f5f9';
+            document.getElementById('labelTogolPerwakilan').style.color = 'var(--text-muted)';
+        }
 
 // --- KOD TAMBAHAN UNTUK TUTUP SEMULA KOTAK-KOTAK YANG TERBUKA ---
         document.getElementById('kandunganMaklumatPerkhidmatan').style.display = 'none';
@@ -5203,7 +5221,7 @@ for (const key in formData) {
             });
         }
 
-        // LANGKAH 3: Panggil fungsi kemaskini paparan Togol
+// LANGKAH 3: Panggil fungsi kemaskini paparan Togol
         toggleAduan();
         semakWakilLengkap();
         kawalWarganegara();
@@ -5213,6 +5231,7 @@ for (const key in formData) {
         toggleWaktuKerja();
         toggleHariKerja();
         toggleAlamatKerja();
+        kawalPerwakilan(); // <--- TAMBAH BARIS INI
         janaKenyataanAwal();
         
         // LANGKAH 4: Load semula Jadual Tuntutan Kewangan

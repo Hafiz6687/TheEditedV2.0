@@ -7940,7 +7940,10 @@ function simpanPerwakilan() {
 // 4. Render jadual ke dalam Maklumat Kes Terperinci
 function renderJadualPerwakilan() {
     const tbody = document.getElementById('mk_body_perwakilan');
-    if (!tbody) return;
+    // Tangkap bahagian 'body' kad sahaja untuk disembunyikan
+    const cardBody = document.querySelector('#kad_kehadiran_perwakilan .card-body');
+    
+    if (!tbody || !cardBody) return;
 
     const kes = memoriSenaraiKes[indexKesSemasa];
     const senarai = kes.senaraiPerwakilan || [];
@@ -7948,9 +7951,14 @@ function renderJadualPerwakilan() {
     tbody.innerHTML = '';
 
     if (senarai.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-row" style="padding: 15px;">Tiada maklumat kehadiran / perwakilan direkodkan.</td></tr>`;
+        // HANYA SEMBUNYIKAN BODY JIKA TIADA REKOD
+        // (Header dan butang +Tambah akan kekal kelihatan)
+        cardBody.style.display = 'none';
         return;
     }
+
+    // TAMPILKAN SEMULA BODY JIKA ADA REKOD
+    cardBody.style.display = 'block';
 
     senarai.forEach((item, index) => {
         let firmaHtml = item.kategori === 'Saksi' ? '<i style="color: #94a3b8;">Tidak Berkaitan</i>' : `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
@@ -7971,7 +7979,6 @@ function renderJadualPerwakilan() {
         `;
     });
 }
-
 function hapusPerwakilan(index) {
     if (confirm("Adakah anda pasti mahu memadam rekod perwakilan ini?")) {
         memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);

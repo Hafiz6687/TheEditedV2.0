@@ -2158,16 +2158,47 @@ function bukaMaklumatKes(index) {
             <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a></div>
             <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a></div>
         `;
-    } else {
+} else {
         document.getElementById('mk_header_defendan').innerText = 'Maklumat Defendan (Majikan)';
         let lbl_id = d_isMyKad ? 'No. MyKad' : 'No. Pendaftaran';
         htmlDefendan = `
-            <div><div class="info-label">Nama Defendan</div><div class="info-value" style="margin-bottom:0;">${d_nama}</div></div>
-            <div><div class="info-label">Alamat Defendan</div><div class="info-value" style="margin-bottom:0;">${d_alamat}</div></div>
-            <div><div class="info-label">${lbl_id}</div><div class="info-value" style="margin-bottom:0;">${d_id}</div></div>
-            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel. (H/P):</span><a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a></div>
-            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">No. Tel.:</span><a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a></div>
-            <div style="display:flex; gap:8px; align-items:center;"><span class="info-label" style="margin:0;">Emel:</span><a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a></div>
+            <!-- CARD 1 (Kolum Kiri) -->
+            <div style="display: flex; flex-direction: column;">
+                <!-- Row 1 & 2 -->
+                <div style="flex-grow: 1; padding-bottom: 15px;">
+                    <div class="info-label">Nama Defendan</div>
+                    <div class="info-value" style="margin-bottom:0;">${d_nama}</div>
+                </div>
+                <!-- Row 3 -->
+                <div style="display:flex; gap:8px; align-items:center; padding-bottom: 8px;">
+                    <span class="info-label" style="margin:0;">No. Tel.:</span>
+                    <a href="tel:${d_tel.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">📞 ${d_tel}</a>
+                </div>
+                <!-- Row 4 -->
+                <div style="display:flex; gap:8px; align-items:center; padding-bottom: 8px;">
+                    <span class="info-label" style="margin:0;">No. Tel. (H/P):</span>
+                    <a href="https://wa.me/6${d_hp.replace(/-/g,'')}" class="info-link" style="font-weight:500; font-size:0.95em;">💬 ${d_hp}</a>
+                </div>
+                <!-- Row 5 -->
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <span class="info-label" style="margin:0;">Emel:</span>
+                    <a href="mailto:${d_emel}" class="info-link" style="font-weight:500; font-size:0.95em;">✉️ ${d_emel}</a>
+                </div>
+            </div>
+
+            <!-- CARD 2 (Kolum Kanan) -->
+            <div style="display: flex; flex-direction: column;">
+                <!-- Row 1, 2 & 3 -->
+                <div style="flex-grow: 1; padding-bottom: 15px;">
+                    <div class="info-label">Alamat Defendan</div>
+                    <div class="info-value" style="margin-bottom:0;">${d_alamat}</div>
+                </div>
+                <!-- Row 4 & 5 -->
+                <div>
+                    <div class="info-label">${lbl_id}</div>
+                    <div class="info-value" style="margin-bottom:0;">${d_id}</div>
+                </div>
+            </div>
         `;
     }
     document.getElementById('mk_grid_defendan').innerHTML = htmlDefendan;

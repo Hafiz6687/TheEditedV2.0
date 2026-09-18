@@ -851,7 +851,7 @@ Portal rasmi : jtksm.mohr.gov.my
             <div class="card full-width" id="kad_kehadiran_perwakilan">
                 <div class="card-header">
                     Maklumat Kehadiran / Perwakilan (Pengadu)
-                    <button class="btn-add btn-terapung" style="margin-left: auto; padding: 6px 12px; font-size: 0.85em;" onclick="bukaModalPerwakilan()">+ Tambah Wakil / Saksi</button>
+                    <button class="btn-add btn-terapung" style="margin-left: auto; padding: 6px 12px; font-size: 0.85em;" onclick="bukaModalPerwakilan('pengadu')">+ Tambah Wakil / Saksi</button>
                 </div>
                 <div class="card-body">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
@@ -880,7 +880,30 @@ Portal rasmi : jtksm.mohr.gov.my
                     </div>
                 </div>
             </div>
-
+<!-- BAHAGIAN BARU: Maklumat Kehadiran / Perwakilan (Defendan) -->
+            <div class="card full-width" id="kad_kehadiran_perwakilan_defendan">
+                <div class="card-header">
+                    Maklumat Kehadiran / Perwakilan (Defendan)
+                    <button class="btn-add btn-terapung" style="margin-left: auto; padding: 6px 12px; font-size: 0.85em;" onclick="bukaModalPerwakilan('defendan')">+ Tambah Wakil / Saksi</button>
+                </div>
+                <div class="card-body">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; border: 1px solid var(--border-color);">
+                        <thead style="background-color: var(--card-header-bg);">
+                            <tr>
+                                <th style="width: 5%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Bil.</th>
+                                <th style="width: 15%; padding: 12px; border-bottom: 1px solid var(--border-color);">Kategori</th>
+                                <th style="width: 25%; padding: 12px; border-bottom: 1px solid var(--border-color);">Nama & No. KP</th>
+                                <th style="width: 30%; padding: 12px; border-bottom: 1px solid var(--border-color);">Firma Guaman & Alamat</th>
+                                <th style="width: 15%; padding: 12px; border-bottom: 1px solid var(--border-color);">No. Telefon / E-mel</th>
+                                <th style="width: 10%; text-align:center; padding: 12px; border-bottom: 1px solid var(--border-color);">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mk_body_perwakilan_defendan">
+                            <tr><td colspan="6" class="empty-row" style="padding: 15px;">Tiada maklumat kehadiran / perwakilan direkodkan.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <!-- BAHAGIAN 3.5: Sejarah Tindakan -->
             <div class="card full-width" id="kad_sejarah_tindakan" style="display: none;">
                 <div class="card-header">Sejarah Tindakan</div>
@@ -2290,8 +2313,8 @@ if (menuTindakanUrus) {
 
     document.getElementById('tajukHalamanAtas').innerHTML = 'Maklumat Kes Terperinci';
     document.getElementById('butangCetakHeader').style.display = 'none'; 
-    // Render senarai perwakilan/kehadiran jika ada
-    if (typeof renderJadualPerwakilan === 'function') renderJadualPerwakilan();
+// Render senarai perwakilan/kehadiran jika ada
+    if (typeof renderSemuaJadualPerwakilan === 'function') renderSemuaJadualPerwakilan();
 }
 
 
@@ -7873,9 +7896,10 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
     }
 }
 
-       // =========================================================================
-// FUNGSI KAWALAN KEHADIRAN / PERWAKILAN PENGADU (DALAM MAKLUMAT KES)
 // =========================================================================
+// FUNGSI KAWALAN KEHADIRAN / PERWAKILAN (PENGADU & DEFENDAN)
+// =========================================================================
+let pihakPerwakilanSemasa = 'pengadu'; // Pembolehubah global penentu pihak
 
 // 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih
 function kawalKategoriPerwakilan() {
@@ -7891,8 +7915,12 @@ function kawalKategoriPerwakilan() {
     }
 }
 
-// 2. Buka modal dan kosongkan input
-function bukaModalPerwakilan() {
+// 2. Buka modal dan set tajuk mengikut pihak
+function bukaModalPerwakilan(pihak) {
+    pihakPerwakilanSemasa = pihak;
+    const modalTitle = pihak === 'pengadu' ? 'Tambah Maklumat Wakil / Saksi (Pengadu)' : 'Tambah Maklumat Wakil / Saksi (Defendan)';
+    document.querySelector('#modalPerwakilan .modal-title').innerText = modalTitle;
+    
     document.getElementById('pw_kategori').value = '';
     document.getElementById('pw_nama').value = '';
     document.getElementById('pw_kp').value = '';
@@ -7904,7 +7932,7 @@ function bukaModalPerwakilan() {
     document.getElementById('modalPerwakilan').style.display = 'flex';
 }
 
-// 3. Simpan data ke dalam memori kes
+// 3. Simpan data ke memori mengikut pihak
 function simpanPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
     const nama = document.getElementById('pw_nama').value.trim();
@@ -7920,45 +7948,44 @@ function simpanPerwakilan() {
     }
 
     const kes = memoriSenaraiKes[indexKesSemasa];
-    if (!kes.senaraiPerwakilan) kes.senaraiPerwakilan = [];
-
-    kes.senaraiPerwakilan.push({
-        kategori: kat,
-        nama: nama,
-        kp: kp,
-        firma: firma,
-        alamat: alamat,
-        tel: tel,
-        emel: emel
-    });
+    
+    if (pihakPerwakilanSemasa === 'pengadu') {
+        if (!kes.senaraiPerwakilan) kes.senaraiPerwakilan = [];
+        kes.senaraiPerwakilan.push({ kategori: kat, nama: nama, kp: kp, firma: firma, alamat: alamat, tel: tel, emel: emel });
+    } else {
+        if (!kes.senaraiPerwakilanDefendan) kes.senaraiPerwakilanDefendan = [];
+        kes.senaraiPerwakilanDefendan.push({ kategori: kat, nama: nama, kp: kp, firma: firma, alamat: alamat, tel: tel, emel: emel });
+    }
 
     simpanSenaraiKeLokal();
-    renderJadualPerwakilan();
+    renderSemuaJadualPerwakilan();
     document.getElementById('modalPerwakilan').style.display = 'none';
 }
 
-// 4. Render jadual ke dalam Maklumat Kes Terperinci
-function renderJadualPerwakilan() {
-    const tbody = document.getElementById('mk_body_perwakilan');
-    // Tangkap bahagian 'body' kad sahaja untuk disembunyikan
-    const cardBody = document.querySelector('#kad_kehadiran_perwakilan .card-body');
+// 4. Render kedua-dua jadual
+function renderSemuaJadualPerwakilan() {
+    renderJadualPerwakilanPihak('pengadu', 'mk_body_perwakilan', 'kad_kehadiran_perwakilan');
+    renderJadualPerwakilanPihak('defendan', 'mk_body_perwakilan_defendan', 'kad_kehadiran_perwakilan_defendan');
+}
+
+// 5. Fungsi Universal Render Jadual
+function renderJadualPerwakilanPihak(pihak, tbodyId, kadId) {
+    const tbody = document.getElementById(tbodyId);
+    const cardBody = document.querySelector(`#${kadId} .card-body`);
     
     if (!tbody || !cardBody) return;
 
     const kes = memoriSenaraiKes[indexKesSemasa];
-    const senarai = kes.senaraiPerwakilan || [];
+    const senarai = pihak === 'pengadu' ? (kes.senaraiPerwakilan || []) : (kes.senaraiPerwakilanDefendan || []);
 
     tbody.innerHTML = '';
 
     if (senarai.length === 0) {
-        // HANYA SEMBUNYIKAN BODY JIKA TIADA REKOD
-        // (Header dan butang +Tambah akan kekal kelihatan)
-        cardBody.style.display = 'none';
+        cardBody.style.display = 'none'; // Sembunyi body jika tiada rekod
         return;
     }
 
-    // TAMPILKAN SEMULA BODY JIKA ADA REKOD
-    cardBody.style.display = 'block';
+    cardBody.style.display = 'block'; // Papar semula jika ada
 
     senarai.forEach((item, index) => {
         let firmaHtml = item.kategori === 'Saksi' ? '<i style="color: #94a3b8;">Tidak Berkaitan</i>' : `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
@@ -7973,17 +8000,23 @@ function renderJadualPerwakilan() {
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${firmaHtml}</td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">📞 ${item.tel}<br>✉️ ${item.emel || '-'}</td>
                 <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">
-                    <button class="btn-delete-tbl" onclick="hapusPerwakilan(${index})" title="Hapus Rekod">🗑️ Hapus</button>
+                    <button class="btn-delete-tbl" onclick="hapusPerwakilan(${index}, '${pihak}')" title="Hapus Rekod">🗑️ Hapus</button>
                 </td>
             </tr>
         `;
     });
 }
-function hapusPerwakilan(index) {
+
+// 6. Hapus Rekod Perwakilan
+function hapusPerwakilan(index, pihak) {
     if (confirm("Adakah anda pasti mahu memadam rekod perwakilan ini?")) {
-        memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);
+        if (pihak === 'pengadu') {
+            memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);
+        } else {
+            memoriSenaraiKes[indexKesSemasa].senaraiPerwakilanDefendan.splice(index, 1);
+        }
         simpanSenaraiKeLokal();
-        renderJadualPerwakilan();
+        renderSemuaJadualPerwakilan();
     }
 }
 </script>

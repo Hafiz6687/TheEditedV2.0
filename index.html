@@ -3123,7 +3123,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             </div>
         `;
     
-  } else if (kunci === 'bicara') {
+} else if (kunci === 'bicara') {
         const isMajikanCheck = (kes.dataBorang && kes.dataBorang.inputs && (kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true"));
         
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES</div>`;
@@ -3145,21 +3145,22 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
                 }
             }
         }
+        
+        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
         const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
+        const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         
         let p4_majikan_teks = `4.<span class="jarak-tab"></span>Sila ambil perhatian bahawa sekiranya Pengarah Syarikat/ Pengerusi mewakilkan seorang yang lain, suatu surat wakil kuasa yang ditandatangani oleh Pengarah Syarikat/ Pengerusi, salinan KWSP/PERKESO terkini dan sesalinan maklumat syarikat (SSM)/organisasi/pertubuhan hendaklah dikemukakan dalam hal berkaitan perwakilan tersebut untuk semakan pegawai pendengar.`;
 
         isiPengadu = `
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas telah ditetapkan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamah}</strong>.</div>
+            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas telah ditetapkan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
             <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut dan adalah diingatkan bahawa kes akan dibatalkan sekiranya tuan tidak hadir pada tarikh dan masa yang ditetapkan.</div>
             <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Tuan dinasihatkan membawa bersama-sama dokumen/bukti (3 salinan) dan saksi-saksi berkenaan jika ada.</div>
             ${isMajikanCheck ? `<div class="notis-isi" style="text-align: justify;">${p4_majikan_teks}</div>` : ''}
         `;
 
         isiDefendan = `
-            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas telah ditetapkan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamah}</strong>.</div>
+            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas telah ditetapkan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
             <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut dan adalah diingatkan bahawa kes ini akan dibicarakan dengan ketidakhadiran tuan jika tuan tidak hadir pada tarikh dan masa yang ditetapkan.</div>
             <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Tuan dinasihatkan membawa bersama-sama dokumen/bukti (3 salinan) dan saksi-saksi berkenaan jika ada.</div>
             ${!isMajikanCheck ? `<div class="notis-isi" style="text-align: justify;">${p4_majikan_teks}</div>` : ''}

@@ -7423,6 +7423,8 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
+    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+
     // Buka bungkusan data memori sejarah (jika ada)
     let memoData = {};
     if (dataSimpanan && dataSimpanan !== 'null') {
@@ -7430,35 +7432,44 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     }
 
     let noKes = kes.noKes.split('<br>')[0].trim();
-    let namaP = "", namaD = "", alamatD = "";
+    let namaP = "", namaD = "", alamatD = "", alamatP = "";
     let d_idStr = "(No. Pendaftaran/KP: ....................)";
+    let isMajikan = false;
 
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
-        const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
+        isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
 
-        let almtDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join(', ');
-        let almtPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join(', ');
+        let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
+        let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
+
+        let almtDefClean = arrDef.join(', ').toUpperCase();
+        let almtPengClean = arrPeng.join(', ').toUpperCase();
+        let almtDefHTML = arrDef.join('<br>').toUpperCase();
+        let almtPengHTML = arrPeng.join('<br>').toUpperCase();
 
         if (isMajikan) {
-            namaP = inputs['namaDefendan'] || '[NAMA SYARIKAT]';
-            namaD = inputs['namaPengadu'] || '[NAMA PEKERJA]';
-            alamatD = almtPeng || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA SYARIKAT]';
+            alamatP = almtDefHTML || '[ALAMAT PENGADU]';
+            namaD = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PEKERJA]';
+            alamatD = almtPengClean || '[ALAMAT DEFENDAN]';
             let idDef = inputs['noPendPengadu'] || '....................';
             d_idStr = `(No. Kad Pengenalan: ${idDef})`;
         } else {
-            namaP = inputs['namaPengadu'] || '[NAMA PENGADU]';
-            namaD = inputs['namaDefendan'] || '[NAMA DEFENDAN]';
-            alamatD = almtDef || '[ALAMAT DEFENDAN]';
+            namaP = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PENGADU]';
+            alamatP = almtPengHTML || '[ALAMAT PENGADU]';
+            namaD = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA DEFENDAN]';
+            alamatD = almtDefClean || '[ALAMAT DEFENDAN]';
             let idDef = inputs['noPendDefendan'] || '....................';
             let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
             let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
             d_idStr = `(${labelDef}: ${idDef})`;
         }
     } else {
-        namaP = kes.namaPengadu.replace(/<br>.*$/g, '');
-        namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
+        namaP = kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
+        namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
         alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
+        alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
     }
 
     // Ekstrak Data Dari Kotak Memo Luar Kawasan (Atau dari History)
@@ -7476,7 +7487,6 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     if (negeri) alamatMemoArr.push(negeri);
     const alamatMemoLengkap = alamatMemoArr.length > 0 ? alamatMemoArr.join('<br>') : '[ALAMAT PEJABAT]';
 
-    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
     const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
     const tarikhSamanDD = tH.getDate();
@@ -7522,7 +7532,6 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     }
 
     // Tarikh & Masa Saman Hadir
-    // Borang A akan mengambil tarikh dari input Penatapan Tarikh Saman Hadir
     const tarikhSamanRaw = document.getElementById('mk_tarikh_saman')?.value;
     const masaSamanRaw = document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
@@ -7546,6 +7555,46 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
             let jamFormat = jamNum % 12 || 12;
             masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
         }
+    }
+
+    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
+    let tarikhSebutanAsalText = "[Tarikh Sebutan]";
+    let masaSebutanAsalText = "[Masa Sebutan]";
+    const sejarah = kes.sejarahTindakan || [];
+    const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
+    if (rekodSebutanLama && rekodSebutanLama.butiran) {
+        let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
+        let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
+        if (matchTarikh) {
+            let tA = new Date(matchTarikh[0]);
+            if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
+        }
+        if (matchMasa) {
+            let [jamA, minitA] = matchMasa[0].split(':');
+            let jamNumA = parseInt(jamA, 10);
+            let ampmA = jamNumA >= 12 ? "petang" : "pagi";
+            let jamFormatA = jamNumA % 12 || 12;
+            masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+        }
+    }
+
+    // LOGIK DINAMIK MUKA SURAT 3 UNTUK PENGADU (PERENGGAN 4 & 5)
+    let perengganWakilKuasaHTML = '';
+    if (isMajikan) {
+        perengganWakilKuasaHTML = `
+            <div class="notis-isi">
+                4.<span class="jarak-tab"></span>Sila ambil perhatian, surat wakil kuasa yang ditandatangani oleh Pengarah Syarikat/ Pengerusi, salinan maklumat syarikat (SSM) dan sesalinan KWSP/PERKESO (menunjukkan nama wakil yang hadir) hendaklah dikemukakan dalam hal berkaitan perwakilan tersebut untuk semakan pegawai pendengar.
+            </div>
+            <div class="notis-isi">
+                5.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
+            </div>
+        `;
+    } else {
+        perengganWakilKuasaHTML = `
+            <div class="notis-isi">
+                4.<span class="jarak-tab"></span>Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir sebagaimana ketetapan tersebut di atas.
+            </div>
+        `;
     }
     // ==========================================================
 
@@ -7584,7 +7633,6 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         </div>
         <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
         
-        <!-- TRICK TANDATANGAN -->
         <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
             <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
         </div>
@@ -7592,13 +7640,19 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
             ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
-        ${typeof skHTML !== 'undefined' ? skHTML : ''}
         <div class="notis-footer-line"></div>
     `;
 
     const htmlSamanMemo = `
         <style>
-            @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } .kertas-notis:last-child { page-break-after: auto; } }
+            @media print { 
+                @page { margin: 0; } 
+                body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+                body > *:not(#printArea) { display: none !important; } 
+                #printArea { display: block !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
+                .kertas-notis:last-child { page-break-after: auto; } 
+            }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
@@ -7666,6 +7720,47 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
                 </div>
             </div>
         </div>
+
+        <!-- MUKA SURAT 3: NOTIS MAKLUMAN PENGADU -->
+        <div class="kertas-notis" id="kertasNotisSamanPengadu_BagiMemo">
+            ${templateHeaderHTML}
+
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                <div class="notis-rujukan">
+                    Rujukan Kami : ${noKes}<br>
+                    Tarikh : ${tarikhSamanDD} ${tarikhSamanMMYYYY}
+                </div>
+
+                <div class="notis-alamat">
+                    <strong>${namaP}</strong><br>
+                    ${alamatP || '[ALAMAT PENGADU]'}
+                </div>
+
+                <div style="margin-bottom: 15px;">Tuan,</div>
+
+                <div class="notis-tajuk">
+                    KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>
+                    ANTARA PENGADU : ${namaP}<br>
+                    TERHADAP DEFENDAN : ${namaD}<br>
+                    PERKARA: NOTIS SEBUTAN KES (SAMAN)
+                </div>
+                <hr class="notis-garis-tajuk">
+
+                <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+
+                <div class="notis-isi" style="text-align: justify;">
+                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong> dengan saman ke atas defendan akan diserahkan melalui serahan luar kawasan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                </div>
+
+                <div class="notis-isi" style="text-align: justify;">
+                    3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.
+                </div>
+
+                ${perengganWakilKuasaHTML}
+
+                ${templateFooterHTML}
+            </div>
+        </div>
     `;
 
     document.getElementById('previewContent').innerHTML = htmlSamanMemo;
@@ -7705,7 +7800,7 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         }, 500);
     };
 
-// Tunjukkan suis tandatangan
+    // Tunjukkan suis tandatangan
     tunjukSuisTandatangan(true);
 
     document.getElementById('modalPreview').style.display = 'flex';

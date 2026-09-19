@@ -1271,17 +1271,45 @@ Portal rasmi : jtksm.mohr.gov.my
 
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0 15px 0;">
 
-        <h5 style="margin-top:0; color:var(--primary-blue); font-size: 0.95em;">3. Maklumat Serahan (Defendan) Terkini</h5>
+<h5 style="margin-top:0; color:var(--primary-blue); font-size: 0.95em;">3. Maklumat Serahan (Defendan) Terkini</h5>
         <p style="font-size: 0.8em; color: var(--text-muted); margin-top: -5px; margin-bottom: 15px;">*Sistem telah mengekstrak alamat berdaftar. Sila kemaskini jika alamat serahan terkini berbeza.</p>
-        <div class="grid-memo" style="grid-template-columns: 1fr 2fr;">
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Nama Defendan</label>
-                <input type="text" id="mk_nama_defendan_memo" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
+        
+        <div style="margin-bottom: 15px;">
+            <label class="info-label" style="display: block; margin-bottom: 4px;">Nama Defendan</label>
+            <input type="text" id="mk_nama_defendan_memo" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+        </div>
+
+        <div class="grid-memo">
+            <!-- ROW 3.1 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
+                <input type="text" id="mk_alamat1_def_memo" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Penuh Defendan</label>
-                <textarea id="mk_alamat_defendan_memo" class="auto-expand" rows="1" oninput="autoResize(this); this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; box-sizing: border-box; padding: 10px 14px; min-height: 42px;"></textarea>
+            <div class="grid-memo-span2">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
+                <input type="text" id="mk_bandar_def_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
+
+            <!-- ROW 3.2 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
+                <input type="text" id="mk_alamat2_def_memo" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span2">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
+                <input type="text" id="mk_negeri_def_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
+            </div>
+
+            <!-- ROW 3.3 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
+                <input type="text" id="mk_alamat3_def_memo" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                <input type="text" id="mk_poskod_def_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_def_memo', 'mk_negeri_def_memo', 'mk_bandar_def_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div></div> <!-- Spacer -->
         </div>
 
         <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
@@ -7467,27 +7495,40 @@ function toggleKadUrus(jenis) {
 
     if (jenis === 'saman_a') {
         semakButangSaman();
-    } else if (jenis === 'saman_memo') {
+} else if (jenis === 'saman_memo') {
         // --- LOGIK AUTO-ISI NAMA & ALAMAT ASAL DEFENDAN ---
         const kes = memoriSenaraiKes[indexKesSemasa];
         if (kes) {
-            let namaD = "", alamatD = "";
+            let namaD = "", a1="", a2="", a3="", pos="", bdr="", ngr="";
             if (kes.dataBorang && kes.dataBorang.inputs) {
                 const inputs = kes.dataBorang.inputs;
                 const isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
                 if (isMajikan) {
                     namaD = inputs['namaPengadu'] || '';
-                    alamatD = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "").join('\n');
+                    a1 = inputs['alamatPengadu1'] || ''; a2 = inputs['alamatPengadu2'] || ''; a3 = inputs['alamatPengadu3'] || '';
+                    pos = inputs['poskodPengadu'] || ''; bdr = inputs['bandarPengadu'] || ''; ngr = inputs['negeriPengadu'] || '';
                 } else {
                     namaD = inputs['namaDefendan'] || '';
-                    alamatD = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "").join('\n');
+                    a1 = inputs['alamatDefendan1'] || ''; a2 = inputs['alamatDefendan2'] || ''; a3 = inputs['alamatDefendan3'] || '';
+                    pos = inputs['poskodDefendan'] || ''; bdr = inputs['bandarDefendan'] || ''; ngr = inputs['negeriDefendan'] || '';
                 }
             } else {
                 namaD = kes.namaDefendan.replace(/<br>.*$/g, '');
             }
+            // Agihkan nilai ke dalam grid alamat defendan terkini
             document.getElementById('mk_nama_defendan_memo').value = namaD.toUpperCase();
-            document.getElementById('mk_alamat_defendan_memo').value = alamatD.toUpperCase();
-            setTimeout(() => { autoResize(document.getElementById('mk_alamat_defendan_memo')); }, 50);
+            document.getElementById('mk_alamat1_def_memo').value = a1.toUpperCase();
+            document.getElementById('mk_alamat2_def_memo').value = a2.toUpperCase();
+            document.getElementById('mk_alamat3_def_memo').value = a3.toUpperCase();
+            document.getElementById('mk_poskod_def_memo').value = pos;
+            
+            const bdrField = document.getElementById('mk_bandar_def_memo');
+            bdrField.value = bdr.toUpperCase();
+            if(bdr) bdrField.removeAttribute('readonly');
+
+            const ngrField = document.getElementById('mk_negeri_def_memo');
+            ngrField.value = ngr.toUpperCase();
+            if(ngr) ngrField.removeAttribute('readonly');
         }
         semakButangSamanMemo();
     }
@@ -7605,8 +7646,28 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
 
     // Ekstrak Nama & Alamat Terkini Defendan (Untuk Muka Surat 2 & 3)
     const namaD_Terkini = memoData.namaDef !== undefined ? memoData.namaDef : (document.getElementById('mk_nama_defendan_memo')?.value || '[NAMA DEFENDAN]');
-    const alamatD_Terkini = memoData.alamatDef !== undefined ? memoData.alamatDef : (document.getElementById('mk_alamat_defendan_memo')?.value.replace(/\n/g, '<br>') || '[ALAMAT DEFENDAN]');
-// Ekstrak Tarikh, Masa & Tempat Hadir Sebutan
+    
+    let alamatD_Terkini = '[ALAMAT DEFENDAN]';
+    if (memoData.alamatDef !== undefined) {
+        alamatD_Terkini = memoData.alamatDef; // Guna format sejarah jika diakses dari jadual sejarah
+    } else {
+        const da1 = document.getElementById('mk_alamat1_def_memo')?.value || '';
+        const da2 = document.getElementById('mk_alamat2_def_memo')?.value || '';
+        const da3 = document.getElementById('mk_alamat3_def_memo')?.value || '';
+        const dpos = document.getElementById('mk_poskod_def_memo')?.value || '';
+        const dbdr = document.getElementById('mk_bandar_def_memo')?.value || '';
+        const dngr = document.getElementById('mk_negeri_def_memo')?.value || '';
+        
+        let dArr = [da1, da2, da3].filter(Boolean);
+        let dpb = [dpos, dbdr].filter(Boolean).join(' ');
+        if (dpb) dArr.push(dpb);
+        if (dngr) dArr.push(dngr);
+        
+        if (dArr.length > 0) {
+            alamatD_Terkini = dArr.join('<br>').toUpperCase();
+        }
+    }   
+    // Ekstrak Tarikh, Masa & Tempat Hadir Sebutan
     const tarikhHadirRaw = memoData.tarikhHadir !== undefined ? memoData.tarikhHadir : document.getElementById('mk_tarikh_hadir_memo')?.value;
     const masaHadirRaw = memoData.masaHadir !== undefined ? memoData.masaHadir : document.getElementById('mk_masa_hadir_memo')?.value;
     

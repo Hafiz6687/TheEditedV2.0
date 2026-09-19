@@ -7664,7 +7664,11 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         if (dArr.length > 0) {
             alamatD_Terkini = dArr.join('<br>').toUpperCase();
         }
-    }   
+    }
+
+    // --- LOGIK BARU: Tukar Alamat (<br>) kepada Sebaris (, ) untuk perenggan surat ---
+    const alamatD_Terkini_Inline = alamatD_Terkini.replace(/<br>/gi, ', ');
+
     // Ekstrak Tarikh, Masa & Tempat Hadir Sebutan
     const tarikhHadirRaw = memoData.tarikhHadir !== undefined ? memoData.tarikhHadir : document.getElementById('mk_tarikh_hadir_memo')?.value;
     const masaHadirRaw = memoData.masaHadir !== undefined ? memoData.masaHadir : document.getElementById('mk_masa_hadir_memo')?.value;
@@ -7673,7 +7677,7 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     let tempatHadirRaw = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim'; // Lalai
     
     if (memoData.tempatHadir !== undefined) {
-        tempatHadirRaw = memoData.tempatHadir; // Guna sejarah jika ada
+        tempatHadirRaw = memoData.tempatHadir; 
     } else {
         const isTempatBerbeza = document.getElementById('tempatHadirBerbeza_memo')?.checked;
         if (isTempatBerbeza) {
@@ -7717,7 +7721,8 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
             let ampm = jamNum >= 12 ? "petang" : "pagi";
             let jamFormat = jamNum % 12 || 12;
             masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
-            tarikhMasaLengkap += ` (${jamFormat}:${minit} ${ampm})`; // Untuk Notis Pengadu
+            // --- LOGIK BARU: Format seragam "jam 10:00 pagi" tanpa kurungan ---
+            tarikhMasaLengkap += ` jam ${jamFormat}:${minit} ${ampm}`; 
         }
     }
 
@@ -7732,6 +7737,18 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         let tK = new Date(tarikhKembaliRaw);
         if (!isNaN(tK)) {
             tarikhKembaliText = `${tK.getDate()} ${bulanMY[tK.getMonth()]} ${tK.getFullYear()}`;
+        }
+    }
+
+    // --- LOGIK BARU: Tarik E-mel dari Sidebar ---
+    let emelPejabat = 'jtkdkluang@mohr.gov.my'; // Fallback lalai
+    const statsContainer = document.querySelector('.stats div[contenteditable="true"]');
+    if (statsContainer) {
+        const textStats = statsContainer.innerText;
+        // Guna regex untuk cari e-mel selepas perkataan "E-mel :"
+        const matchEmel = textStats.match(/E-mel\s*:\s*([^\s]+)/i);
+        if (matchEmel && matchEmel[1]) {
+            emelPejabat = matchEmel[1].trim();
         }
     }
 
@@ -7837,8 +7854,8 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
                 <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD_Terkini}</div>
                 <hr class="notis-garis-tajuk">
                 <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-                <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan BORANG A, SAMAN terhadap <strong>${namaD_Terkini}</strong> <strong>${d_idStr}</strong> yang beralamat di <strong>${alamatD_Terkini.replace(/<br>/g, ', ')}</strong>. Sukacita sekiranya pihak tuan dapat menyerahkan saman tersebut dan kembalikan sesalinan saman tersebut ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> bersama-sama afidavit penyampaian.</div>
-                <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Sekiranya saman tersebut beserta bersama-sama afidavit penyampaian tidak dapat dikembalikan ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> selepas serahan dilakukan, diharap pihak tuan dapat mengemukakan maklum balas berkaitan serahan saman tersebut melalui emel hafizabubakar@mohr.gov.my bagi memastikan kelancaran pengendalian kes ini.</div>
+                <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan BORANG A, SAMAN terhadap <strong>${namaD_Terkini}</strong> <strong>${d_idStr}</strong> yang beralamat di <strong>${alamatD_Terkini_Inline}</strong>. Sukacita sekiranya pihak tuan dapat menyerahkan saman tersebut dan kembalikan sesalinan saman tersebut ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> bersama-sama afidavit penyampaian.</div>
+                <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Sekiranya saman tersebut beserta bersama-sama afidavit penyampaian tidak dapat dikembalikan ke pejabat ini pada atau sebelum <strong>${tarikhKembaliText}</strong> selepas serahan dilakukan, diharap pihak tuan dapat mengemukakan maklum balas berkaitan serahan saman tersebut melalui emel <strong>${emelPejabat}</strong> bagi memastikan kelancaran pengendalian kes ini.</div>
                 <div class="notis-isi" style="text-align: justify;">4.<span class="jarak-tab"></span>Perhatian dan kerjasama tuan/puan dalam perkara ini amatlah kami hargai.</div>
                 ${templateFooterHTML}
             </div>
@@ -7856,9 +7873,9 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
                 <div style="text-align: center; margin-bottom: 10px;">Antara</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD_Terkini}</div><div>... Defendan</div></div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD_Terkini.toUpperCase()}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD_Terkini}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD_Terkini}</strong>.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD_Terkini.toUpperCase()}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD_Terkini_Inline}</strong>.</div>
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatHadirRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>

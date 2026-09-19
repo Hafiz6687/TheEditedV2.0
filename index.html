@@ -1205,18 +1205,67 @@ Portal rasmi : jtksm.mohr.gov.my
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0 15px 0;">
 
         <h5 style="margin-top:0; color:var(--primary-blue); font-size: 0.95em;">2. Maklumat Sebutan (Borang A & Notis Pengadu)</h5>
-        <div class="grid-memo" style="grid-template-columns: 1fr 1fr 2fr;">
-            <div>
+        
+        <div class="grid-memo">
+            <!-- ROW 1 (Tarikh & Masa) -->
+            <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Hadir / Sebutan</label>
                 <input type="date" id="mk_tarikh_hadir_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div>
+            <div class="grid-memo-span2">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Masa Hadir</label>
                 <input type="time" id="mk_masa_hadir_memo" onchange="semakButangSamanMemo()" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Tempat Hadir</label>
-                <input type="text" id="mk_tempat_hadir_memo" value="Pejabat Tenaga Kerja Kluang" style="margin:0; height: 42px; box-sizing: border-box;">
+            
+            <!-- ROW 2 (Checkbox Toggle Alamat Berbeza) -->
+            <div style="grid-column: 1 / -1; margin-top: 10px; margin-bottom: -5px;">
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <input type="checkbox" id="tempatHadirBerbeza_memo" onchange="toggleTempatHadirMemo()" style="margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0;"> 
+                    <label for="tempatHadirBerbeza_memo" style="font-weight:600; font-size: 0.9em; color: var(--text-main); margin:0;">Tempat hadir berbeza dengan pejabat semasa?</label>
+                </div>
+                <p style="font-size: 0.8em; color: var(--text-muted); margin: 2px 0 0 26px; font-style: italic;">*(tanda kotak di atas jika tempat perbicaraan/sebutan bukan di pejabat semasa)</p>
+            </div>
+        </div>
+
+        <!-- WRAPPER ALAMAT TEMPAT HADIR BERBEZA (Disembunyikan secara lalai) -->
+        <div id="ruanganTempatHadir_memo" style="display: none; margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <div class="grid-memo">
+                <!-- Nama Pejabat / Lokasi -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Nama Pejabat / Lokasi</label>
+                    <input type="text" id="mk_tempat_hadir_nama" placeholder="Cth: MAHKAMAH MAJISTRET KLUANG" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
+                </div>
+                
+                <!-- ROW 3 -->
+                <div class="grid-memo-span3">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
+                    <input type="text" id="mk_tempat_hadir_a1" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
+                </div>
+                <div class="grid-memo-span2">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
+                    <input type="text" id="mk_tempat_hadir_bdr" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
+                </div>
+
+                <!-- ROW 4 -->
+                <div class="grid-memo-span3">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
+                    <input type="text" id="mk_tempat_hadir_a2" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
+                </div>
+                <div class="grid-memo-span2">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
+                    <input type="text" id="mk_tempat_hadir_ngr" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
+                </div>
+
+                <!-- ROW 5 -->
+                <div class="grid-memo-span3">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
+                    <input type="text" id="mk_tempat_hadir_a3" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
+                </div>
+                <div class="grid-memo-span1">
+                    <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                    <input type="text" id="mk_tempat_hadir_pos" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_tempat_hadir_pos', 'mk_tempat_hadir_ngr', 'mk_tempat_hadir_bdr'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+                </div>
+                <div></div> <!-- Spacer -->
             </div>
         </div>
 
@@ -2344,7 +2393,10 @@ let htmlDefendan = '';
     }
     if (typeof semakButangSamanMemo === 'function') semakButangSamanMemo();
     if (document.getElementById('kad_saman_memo')) document.getElementById('kad_saman_memo').style.display = 'none';
-
+    if (document.getElementById('tempatHadirBerbeza_memo')) {
+        document.getElementById('tempatHadirBerbeza_memo').checked = false;
+        if (typeof toggleTempatHadirMemo === 'function') toggleTempatHadirMemo();
+    }
     const isDraf = kes.noKes.includes('DRAF');
 
     // =========================================================================
@@ -7445,6 +7497,26 @@ function toggleKadUrus(jenis) {
     }, 50);
 }
        
+// --- TOGOL ALAMAT TEMPAT HADIR BERBEZA ---
+function toggleTempatHadirMemo() {
+    const isBerbeza = document.getElementById('tempatHadirBerbeza_memo').checked;
+    const ruangan = document.getElementById('ruanganTempatHadir_memo');
+    if (isBerbeza) {
+        ruangan.style.display = 'block';
+    } else {
+        ruangan.style.display = 'none';
+        // Kosongkan kotak jika uncheck
+        document.getElementById('mk_tempat_hadir_nama').value = '';
+        document.getElementById('mk_tempat_hadir_a1').value = '';
+        document.getElementById('mk_tempat_hadir_a2').value = '';
+        document.getElementById('mk_tempat_hadir_a3').value = '';
+        document.getElementById('mk_tempat_hadir_pos').value = '';
+        document.getElementById('mk_tempat_hadir_bdr').value = '';
+        document.getElementById('mk_tempat_hadir_ngr').value = '';
+    }
+    semakButangSamanMemo();
+}
+
 // --- VALIDASI BUTANG SAMAN (MEMO LUAR KAWASAN) ---
 function semakButangSamanMemo() {
     const tarikhKembali = document.getElementById('mk_tarikh_saman_memo').value;
@@ -7454,18 +7526,19 @@ function semakButangSamanMemo() {
     
     const btn = document.getElementById('btnTindakanSamanMemo');
 
-    // Butang hanya hidup jika Tarikh Kembali, Pejabat, Tarikh Hadir & Nama Defendan diisi
-    if (tarikhKembali && pejabat.trim() !== '' && tarikhHadir && namaDef.trim() !== '') {
+    // Wajib isi Nama Lokasi jika checkbox ditekan
+    let isSamanValid = true;
+    const isTempatBerbeza = document.getElementById('tempatHadirBerbeza_memo').checked;
+    if (isTempatBerbeza) {
+        const namaT = document.getElementById('mk_tempat_hadir_nama').value;
+        if (namaT.trim() === '') isSamanValid = false;
+    }
+
+    // Butang hanya hidup jika Tarikh Kembali, Pejabat, Tarikh Hadir, Nama Defendan & (Lokasi jika berbeza) diisi
+    if (tarikhKembali && pejabat.trim() !== '' && tarikhHadir && namaDef.trim() !== '' && isSamanValid) {
         btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     } else {
         btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
-    }
-}
-
-function tindakanSamanMemo() {
-    const tarikh = document.getElementById('mk_tarikh_saman_memo').value;
-    if (tarikh) { 
-        bukaPreviewSamanMemo(); 
     }
 }
 
@@ -7533,11 +7606,36 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     // Ekstrak Nama & Alamat Terkini Defendan (Untuk Muka Surat 2 & 3)
     const namaD_Terkini = memoData.namaDef !== undefined ? memoData.namaDef : (document.getElementById('mk_nama_defendan_memo')?.value || '[NAMA DEFENDAN]');
     const alamatD_Terkini = memoData.alamatDef !== undefined ? memoData.alamatDef : (document.getElementById('mk_alamat_defendan_memo')?.value.replace(/\n/g, '<br>') || '[ALAMAT DEFENDAN]');
-
-    // Ekstrak Tarikh & Masa Hadir Sebutan
+// Ekstrak Tarikh, Masa & Tempat Hadir Sebutan
     const tarikhHadirRaw = memoData.tarikhHadir !== undefined ? memoData.tarikhHadir : document.getElementById('mk_tarikh_hadir_memo')?.value;
     const masaHadirRaw = memoData.masaHadir !== undefined ? memoData.masaHadir : document.getElementById('mk_masa_hadir_memo')?.value;
-    const tempatHadirRaw = memoData.tempatHadir !== undefined ? memoData.tempatHadir : (document.getElementById('mk_tempat_hadir_memo')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
+    
+    // Logik Pengekstrakan Tempat Hadir
+    let tempatHadirRaw = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim'; // Lalai
+    
+    if (memoData.tempatHadir !== undefined) {
+        tempatHadirRaw = memoData.tempatHadir; // Guna sejarah jika ada
+    } else {
+        const isTempatBerbeza = document.getElementById('tempatHadirBerbeza_memo')?.checked;
+        if (isTempatBerbeza) {
+            const n = document.getElementById('mk_tempat_hadir_nama')?.value || '';
+            const a1 = document.getElementById('mk_tempat_hadir_a1')?.value || '';
+            const a2 = document.getElementById('mk_tempat_hadir_a2')?.value || '';
+            const a3 = document.getElementById('mk_tempat_hadir_a3')?.value || '';
+            const pos = document.getElementById('mk_tempat_hadir_pos')?.value || '';
+            const bdr = document.getElementById('mk_tempat_hadir_bdr')?.value || '';
+            const ngr = document.getElementById('mk_tempat_hadir_ngr')?.value || '';
+            
+            let tArr = [n, a1, a2, a3].filter(Boolean);
+            let pb = [pos, bdr].filter(Boolean).join(' ');
+            if (pb) tArr.push(pb);
+            if (ngr) tArr.push(ngr);
+            
+            if (tArr.length > 0) {
+                tempatHadirRaw = tArr.join(', ').toUpperCase();
+            }
+        }
+    }
 
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";

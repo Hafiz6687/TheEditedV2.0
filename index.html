@@ -1175,10 +1175,11 @@ Portal rasmi : jtksm.mohr.gov.my
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
                 <input type="text" id="mk_alamat1_memo" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span2">
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
-                <input type="text" id="mk_bandar_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                <input type="text" id="mk_poskod_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_memo', 'mk_negeri_memo', 'mk_bandar_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
+            <div></div> <!-- Spacer -->
 
             <!-- ROW 3 -->
             <div class="grid-memo-span3">
@@ -1186,8 +1187,8 @@ Portal rasmi : jtksm.mohr.gov.my
                 <input type="text" id="mk_alamat2_memo" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
             <div class="grid-memo-span2">
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
-                <input type="text" id="mk_negeri_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Bandar</label>
+                <input type="text" id="mk_bandar_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
 
             <!-- ROW 4 -->
@@ -1195,11 +1196,10 @@ Portal rasmi : jtksm.mohr.gov.my
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
                 <input type="text" id="mk_alamat3_memo" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span1">
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
-                <input type="text" id="mk_poskod_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_memo', 'mk_negeri_memo', 'mk_bandar_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            <div class="grid-memo-span2">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Negeri</label>
+                <input type="text" id="mk_negeri_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
-            <div></div> <!-- Spacer -->
         </div>
 
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0 15px 0;">
@@ -1271,16 +1271,22 @@ Portal rasmi : jtksm.mohr.gov.my
 
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0 15px 0;">
 
-<h5 style="margin-top:0; color:var(--primary-blue); font-size: 0.95em;">3. Maklumat Serahan (Defendan) Terkini</h5>
+        <h5 style="margin-top:0; color:var(--primary-blue); font-size: 0.95em;">3. Maklumat Serahan (Defendan) Terkini</h5>
         <p style="font-size: 0.8em; color: var(--text-muted); margin-top: -5px; margin-bottom: 15px;">*Sistem telah mengekstrak alamat berdaftar. Sila kemaskini jika alamat serahan terkini berbeza.</p>
         
-        <div style="margin-bottom: 15px;">
-            <label class="info-label" style="display: block; margin-bottom: 4px;">Nama Defendan</label>
-            <input type="text" id="mk_nama_defendan_memo" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-        </div>
-
         <div class="grid-memo">
-            <!-- ROW 3.1 -->
+            <!-- ROW 1 -->
+            <div class="grid-memo-span3">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Nama Defendan</label>
+                <input type="text" id="mk_nama_defendan_memo" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div class="grid-memo-span1">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
+                <input type="text" id="mk_poskod_def_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_def_memo', 'mk_negeri_def_memo', 'mk_bandar_def_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div></div> <!-- Spacer -->
+
+            <!-- ROW 2 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 1</label>
                 <input type="text" id="mk_alamat1_def_memo" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;">
@@ -1290,7 +1296,7 @@ Portal rasmi : jtksm.mohr.gov.my
                 <input type="text" id="mk_bandar_def_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
 
-            <!-- ROW 3.2 -->
+            <!-- ROW 3 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 2</label>
                 <input type="text" id="mk_alamat2_def_memo" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
@@ -1300,22 +1306,17 @@ Portal rasmi : jtksm.mohr.gov.my
                 <input type="text" id="mk_negeri_def_memo" placeholder="Lengkapkan Poskod" oninput="this.value = this.value.toUpperCase(); semakButangSamanMemo();" style="margin:0; height: 42px; box-sizing: border-box;" readonly>
             </div>
 
-            <!-- ROW 3.3 -->
+            <!-- ROW 4 -->
             <div class="grid-memo-span3">
                 <label class="info-label" style="display: block; margin-bottom: 4px;">Alamat Baris 3</label>
                 <input type="text" id="mk_alamat3_def_memo" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase();" style="margin:0; height: 42px; box-sizing: border-box;">
             </div>
-            <div class="grid-memo-span1">
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Poskod</label>
-                <input type="text" id="mk_poskod_def_memo" placeholder="50000" maxlength="5" onkeyup="cariPoskodAutomatik('mk_poskod_def_memo', 'mk_negeri_def_memo', 'mk_bandar_def_memo'); semakButangSamanMemo();" onblur="semakPoskod(this)" style="margin:0; height: 42px; box-sizing: border-box;">
+            <div class="grid-memo-span2">
+                <!-- BUTANG JANA DOKUMEN BERADA SEBARIS DENGAN ALAMAT BARIS 3 -->
+                <button id="btnTindakanSamanMemo" class="btn-save" style="width: 100%; height: 42px; padding: 0 5px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanMemo()" disabled>
+                    📄 Jana Dokumen (Memo + Borang A + Notis)
+                </button>
             </div>
-            <div></div> <!-- Spacer -->
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
-            <button id="btnTindakanSamanMemo" class="btn-save" style="height: 42px; padding: 0 25px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.5; cursor: not-allowed;" onclick="tindakanSamanMemo()" disabled>
-                📄 Jana Dokumen (Memo + Borang A + Notis)
-            </button>
         </div>
 
     </div>

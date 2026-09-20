@@ -614,6 +614,8 @@
                     <option value="Peguam">Peguam</option>
                     <option value="Saksi">Saksi</option>
                     <option value="Wakil Kesatuan">Wakil Kesatuan Sekerja</option>
+                    <option value="Wakil Pengadu">Wakil Pengadu</option>
+                    <option value="Wakil Defendan">Wakil Defendan</option>
                 </select>
             </div>
 
@@ -625,9 +627,24 @@
                     <input type="text" id="pw_nama" placeholder="Nama penuh individu" oninput="hurufBesarSetiapPerkataan(this)">
                 </div>
 
+                <!-- RUANGAN BARU: JENIS PENDAFTARAN (HANYA UNTUK WAKIL PIHAK) -->
+                <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_pw_jenis_pend">
+                    <label style="text-align: left;">Jenis Pendaftaran</label>
+                    <select id="pw_jenis_pend" onchange="kawalJenisPendPW()" style="width: 100%; box-sizing: border-box;">
+                        <option value="MyKad">MyKad</option>
+                        <option value="Pasport">Pasport</option>
+                    </select>
+                </div>
+
                 <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                     <label style="text-align: left;">No. Kad Pengenalan</label>
                     <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
+                </div>
+
+                <!-- RUANGAN BARU: JAWATAN (HANYA UNTUK WAKIL PIHAK) -->
+                <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_pw_jawatan">
+                    <label style="text-align: left;">Jawatan</label>
+                    <input type="text" id="pw_jawatan" placeholder="Contoh: Pengurus Sumber Manusia" oninput="hurufBesarSetiapPerkataan(this)">
                 </div>
 
                 <!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
@@ -8644,26 +8661,33 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
 // =========================================================================
 let pihakPerwakilanSemasa = 'pengadu'; // Pembolehubah global penentu pihak
 
-// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih
+// 1. Paparkan medan berdasarkan pilihan kategori
 function kawalKategoriPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
+    const ruanganUtama = document.getElementById('ruangan_pw_utama');
     const ruanganFirma = document.getElementById('ruangan_pw_firma');
-    const ruanganUtama = document.getElementById('ruangan_pw_utama'); // KOD BARU
+    const ruanganJenisPend = document.getElementById('ruangan_pw_jenis_pend');
+    const ruanganJawatan = document.getElementById('ruangan_pw_jawatan');
     
-    // Kenal pasti label-label yang perlu ditukar teksnya
     const labelNama = document.getElementById('pw_nama').previousElementSibling;
     const labelFirma = document.getElementById('pw_firma').previousElementSibling;
     const labelAlamat = document.getElementById('pw_alamat1').closest('.form-group').querySelector('label');
+    const labelKp = document.getElementById('pw_kp').previousElementSibling;
     
-    // KAWALAN PAPARAN KESELURUHAN (Sembunyi jika tiada kategori dipilih)
     if (kat === '') {
         ruanganUtama.style.display = 'none';
-        return; // Berhenti di sini supaya tidak baca kod di bawah
+        return; 
     } else {
         ruanganUtama.style.display = 'block';
     }
 
-    // Tukar teks label berdasarkan pilihan kategori
+    // Reset tetapan paparan & teks lalai
+    ruanganFirma.style.display = 'none';
+    ruanganJenisPend.style.display = 'none';
+    ruanganJawatan.style.display = 'none';
+    labelKp.innerText = 'No. Kad Pengenalan';
+    document.getElementById('pw_kp').placeholder = 'Contoh: 880101-01-1234';
+
     if (kat === 'Peguam') {
         labelNama.innerText = 'Nama Peguam';
         labelFirma.innerText = 'Nama Firma Guaman';
@@ -8676,10 +8700,14 @@ function kawalKategoriPerwakilan() {
         ruanganFirma.style.display = 'block';
     } else if (kat === 'Saksi') {
         labelNama.innerText = 'Nama Saksi';
-        ruanganFirma.style.display = 'none';
+    } else if (kat === 'Wakil Pengadu' || kat === 'Wakil Defendan') {
+        labelNama.innerText = 'Nama Wakil';
+        ruanganJenisPend.style.display = 'block';
+        ruanganJawatan.style.display = 'block';
+        kawalJenisPendPW(); // Tukar label MyKad/Pasport
     }
 
-    // Kosongkan semula kotak input alamat jika ia disembunyikan
+    // Pembersihan Kotak Jika Tidak Kelihatan
     if (kat !== 'Peguam' && kat !== 'Wakil Kesatuan') {
         document.getElementById('pw_firma').value = '';
         document.getElementById('pw_alamat1').value = '';
@@ -8691,18 +8719,69 @@ function kawalKategoriPerwakilan() {
         document.getElementById('pw_bandar').setAttribute('readonly', true);
         document.getElementById('pw_negeri').setAttribute('readonly', true);
     }
+    if (kat !== 'Wakil Pengadu' && kat !== 'Wakil Defendan') {
+        document.getElementById('pw_jenis_pend').value = 'MyKad';
+        document.getElementById('pw_jawatan').value = '';
+    }
+}
+
+// 1.5 Tukar Label No. KP/Pasport untuk Wakil
+function kawalJenisPendPW() {
+    const jenis = document.getElementById('pw_jenis_pend').value;
+    const labelKp = document.getElementById('pw_kp').previousElementSibling;
+    const inputKp = document.getElementById('pw_kp');
+    
+    if (jenis === 'Pasport') {
+        labelKp.innerText = 'No. Pasport';
+        inputKp.placeholder = 'Masukkan No. Pasport';
+        inputKp.maxLength = 20;
+    } else {
+        labelKp.innerText = 'No. MyKad';
+        inputKp.placeholder = 'Contoh: 880101-01-1234';
+        inputKp.maxLength = 14;
+    }
+}
+
+// FORMAT MYKAD (Overwritten supaya menyokong input Pasport)
+function formatMyKadWakil(inputElement) {
+    const katEl = document.getElementById('pw_kategori');
+    const jenisEl = document.getElementById('pw_jenis_pend');
+    
+    // Jika ia adalah Wakil dan guna Pasport, jangan format sengkang (-)
+    if (katEl && (katEl.value === 'Wakil Pengadu' || katEl.value === 'Wakil Defendan') && jenisEl && jenisEl.value === 'Pasport') {
+        inputElement.value = inputElement.value.toUpperCase();
+    } else {
+        // Format MyKad standard
+        let val = inputElement.value.replace(/[^0-9]/g, ''); 
+        let formatted = val;
+        if (val.length > 6) { formatted = val.substring(0, 6) + '-' + val.substring(6); }
+        if (val.length > 8) { formatted = formatted.substring(0, 9) + '-' + formatted.substring(9, 13); }
+        inputElement.value = formatted;
+        
+        // (Sistem Jantina auto-detect dikekalkan jika ada)
+        if (val.length === 12) {
+            let lastDigit = parseInt(val.substring(11, 12));
+            const elL = document.getElementById('jantinaLelakiWakil');
+            const elP = document.getElementById('jantinaPerempuanWakil');
+            if (elL && elP) {
+                if (lastDigit % 2 !== 0) elL.checked = true; else elP.checked = true;
+            }
+        }
+    }
 }
 
 // 2. Buka modal dan set tajuk mengikut pihak
 function bukaModalPerwakilan(pihak) {
     pihakPerwakilanSemasa = pihak;
-    document.getElementById('pw_index').value = "-1"; // Reset untuk tambah baru
+    document.getElementById('pw_index').value = "-1"; 
     const modalTitle = pihak === 'pengadu' ? 'Tambah Maklumat Wakil / Saksi (Pengadu)' : 'Tambah Maklumat Wakil / Saksi (Defendan)';
     document.querySelector('#modalPerwakilan .modal-title').innerText = modalTitle;
     
     document.getElementById('pw_kategori').value = '';
     document.getElementById('pw_nama').value = '';
+    document.getElementById('pw_jenis_pend').value = 'MyKad';
     document.getElementById('pw_kp').value = '';
+    document.getElementById('pw_jawatan').value = '';
     document.getElementById('pw_firma').value = '';
     document.getElementById('pw_alamat1').value = '';
     document.getElementById('pw_alamat2').value = '';
@@ -8718,11 +8797,13 @@ function bukaModalPerwakilan(pihak) {
     document.getElementById('modalPerwakilan').style.display = 'flex';
 }
 
-// 3. Simpan data ke memori mengikut pihak (Tambah atau Kemaskini)
+// 3. Simpan data ke memori
 function simpanPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
     const nama = document.getElementById('pw_nama').value.trim();
+    const jenisPend = document.getElementById('pw_jenis_pend').value;
     const kp = document.getElementById('pw_kp').value.trim();
+    const jawatan = document.getElementById('pw_jawatan').value.trim();
     const firma = document.getElementById('pw_firma').value.trim();
     
     const a1 = document.getElementById('pw_alamat1').value.trim();
@@ -8736,13 +8817,11 @@ function simpanPerwakilan() {
     const emel = document.getElementById('pw_emel').value.trim();
     const idxEdit = parseInt(document.getElementById('pw_index').value);
 
-    // KAWALAN WAJIB ISI (Hanya semak nama dan telefon jika kategori wujud)
     if (kat !== '' && (!nama || !tel)) {
         alert("Sila lengkapkan Nama dan No. Telefon.");
         return;
     }
 
-    // Gabungkan alamat menjadi 1 baris
     let alamatArr = [a1, a2, a3].filter(Boolean);
     let posBdr = [pos, bdr].filter(Boolean).join(' ');
     if (posBdr) alamatArr.push(posBdr);
@@ -8751,19 +8830,19 @@ function simpanPerwakilan() {
 
     const kes = memoriSenaraiKes[indexKesSemasa];
     const dataBaru = { 
-        kategori: kat, nama: nama, kp: kp, firma: firma, 
-        alamat: alamat, a1: a1, a2: a2, a3: a3, poskod: pos, bandar: bdr, negeri: ngr, 
+        kategori: kat, nama: nama, jenisPend: jenisPend, kp: kp, jawatan: jawatan, 
+        firma: firma, alamat: alamat, a1: a1, a2: a2, a3: a3, poskod: pos, bandar: bdr, negeri: ngr, 
         tel: tel, emel: emel 
     };
     
     if (pihakPerwakilanSemasa === 'pengadu') {
         if (!kes.senaraiPerwakilan) kes.senaraiPerwakilan = [];
-        if (idxEdit > -1) kes.senaraiPerwakilan[idxEdit] = dataBaru; // Kemaskini
-        else kes.senaraiPerwakilan.push(dataBaru); // Tambah Baru
+        if (idxEdit > -1) kes.senaraiPerwakilan[idxEdit] = dataBaru;
+        else kes.senaraiPerwakilan.push(dataBaru);
     } else {
         if (!kes.senaraiPerwakilanDefendan) kes.senaraiPerwakilanDefendan = [];
-        if (idxEdit > -1) kes.senaraiPerwakilanDefendan[idxEdit] = dataBaru; // Kemaskini
-        else kes.senaraiPerwakilanDefendan.push(dataBaru); // Tambah Baru
+        if (idxEdit > -1) kes.senaraiPerwakilanDefendan[idxEdit] = dataBaru;
+        else kes.senaraiPerwakilanDefendan.push(dataBaru);
     }
 
     simpanSenaraiKeLokal();
@@ -8771,7 +8850,7 @@ function simpanPerwakilan() {
     document.getElementById('modalPerwakilan').style.display = 'none';
 }
 
-// 4. Buka Modal untuk Kemaskini (Edit) Maklumat Sedia Ada
+// 4. Buka Modal untuk Kemaskini (Edit)
 function editPerwakilan(index, pihak) {
     pihakPerwakilanSemasa = pihak;
     document.getElementById('pw_index').value = index;
@@ -8782,10 +8861,11 @@ function editPerwakilan(index, pihak) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     const item = pihak === 'pengadu' ? kes.senaraiPerwakilan[index] : kes.senaraiPerwakilanDefendan[index];
 
-    // Masukkan data ke dalam borang
     document.getElementById('pw_kategori').value = item.kategori || '';
     document.getElementById('pw_nama').value = item.nama || '';
+    document.getElementById('pw_jenis_pend').value = item.jenisPend || 'MyKad';
     document.getElementById('pw_kp').value = item.kp || '';
+    document.getElementById('pw_jawatan').value = item.jawatan || '';
     document.getElementById('pw_firma').value = item.firma || '';
     
     document.getElementById('pw_alamat1').value = item.a1 || '';
@@ -8804,9 +8884,7 @@ function editPerwakilan(index, pihak) {
     document.getElementById('pw_tel').value = item.tel || '';
     document.getElementById('pw_emel').value = item.emel || '';
 
-    // Selaraskan kotak dan label berdasarkan kategori
     kawalKategoriPerwakilan(); 
-    
     document.getElementById('modalPerwakilan').style.display = 'flex';
 }
 
@@ -8816,7 +8894,7 @@ function renderSemuaJadualPerwakilan() {
     renderJadualPerwakilanPihak('defendan', 'mk_body_perwakilan_defendan', 'kad_kehadiran_perwakilan_defendan');
 }
 
-// 6. Fungsi Universal Render Jadual
+// 6. Fungsi Universal Render Jadual (Dikemaskini untuk Jawatan)
 function renderJadualPerwakilanPihak(pihak, tbodyId, kadId) {
     const tbody = document.getElementById(tbodyId);
     const cardBody = document.querySelector(`#${kadId} .card-body`);
@@ -8830,19 +8908,28 @@ function renderJadualPerwakilanPihak(pihak, tbodyId, kadId) {
         cardBody.style.display = 'none';
         return;
     }
-
     cardBody.style.display = 'block';
 
     senarai.forEach((item, index) => {
-        let firmaHtml = item.kategori === 'Saksi' ? '<i style="color: #94a3b8;">Tidak Berkaitan</i>' : `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
+        let firmaHtml = '';
+        if (item.kategori === 'Saksi') {
+            firmaHtml = '<i style="color: #94a3b8;">Tidak Berkaitan</i>';
+        } else if (item.kategori === 'Wakil Pengadu' || item.kategori === 'Wakil Defendan') {
+            firmaHtml = `<span style="color:#475569;">Jawatan:</span><br><strong>${item.jawatan || '-'}</strong>`;
+        } else {
+            firmaHtml = `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
+        }
+
         let labelKat = item.kategori === 'Peguam' ? `<span style="background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Peguam</span>` : 
-                      (item.kategori === 'Saksi' ? `<span style="background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Saksi</span>` : `<span style="background: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Kesatuan</span>`);
+                      (item.kategori === 'Saksi' ? `<span style="background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Saksi</span>` : 
+                      (item.kategori === 'Wakil Pengadu' || item.kategori === 'Wakil Defendan') ? `<span style="background: #fce7f3; color: #be185d; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Wakil Pihak</span>` :
+                      `<span style="background: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Kesatuan</span>`);
 
         tbody.innerHTML += `
             <tr>
                 <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${index + 1}</td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${labelKat}</td>
-                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${item.nama}</strong><br><span style="font-size:0.9em; color:#475569;">KP: ${item.kp || '-'}</span></td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${item.nama}</strong><br><span style="font-size:0.9em; color:#475569;">ID: ${item.kp || '-'}</span></td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${firmaHtml}</td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">📞 ${item.tel}<br>✉️ ${item.emel || '-'}</td>
                 <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">

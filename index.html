@@ -9419,21 +9419,28 @@ let htmlJadualTuntutanMOU = "";
         tuntutanDipilih.forEach((item, index) => {
             let keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
             
-            // Gantikan jumlah asal kepada jumlah penyelesaian / MOU
-            let nilaiPapar = isPukal ? `<em style="color: #475569;">(Pukal)</em>` : `${jumRM}`;
-
             htmlJadualTuntutanMOU += `
             <tr>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${nilaiPapar}</td>
-            </tr>`;
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>`;
+            
+            // Jika lebih dari 1 tuntutan, gabungkan baris (rowspan) pada lajur ke-3
+            if (isPukal) {
+                if (index === 0) {
+                    htmlJadualTuntutanMOU += `<td rowspan="${tuntutanDipilih.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`;
+                }
+            } else {
+                // Jika hanya 1 tuntutan, papar macam biasa
+                htmlJadualTuntutanMOU += `<td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${jumRM}</td>`;
+            }
+
+            htmlJadualTuntutanMOU += `</tr>`;
         });
         
         // Baris Jumlah Keseluruhan
         htmlJadualTuntutanMOU += `
         <tr>
-            <td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH PERINTAH / PENYELESAIAN</td>
+            <td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH PERINTAH KESELURUHAN</td>
             <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; background-color: #e2e8f0;">${jumRM}</td>
         </tr>`;
     }

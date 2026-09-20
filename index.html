@@ -571,7 +571,7 @@
             <div class="modal-title">Tambah Maklumat Wakil / Saksi</div>
             
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Kategori Kehadiran <span>*</span></label>
+                <label style="text-align: left;">Kategori Kehadiran</label>
                 <select id="pw_kategori" onchange="kawalKategoriPerwakilan()" style="width: 100%; box-sizing: border-box;">
                     <option value="">-Sila Pilih-</option>
                     <option value="Peguam">Peguam</option>
@@ -581,12 +581,12 @@
             </div>
 
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Nama Penuh Peguam / Saksi <span>*</span></label>
+                <label style="text-align: left;">Nama Penuh Peguam / Saksi</label>
                 <input type="text" id="pw_nama" placeholder="Nama penuh individu" oninput="hurufBesarSetiapPerkataan(this)">
             </div>
 
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">No. Kad Pengenalan <span>*</span></label>
+                <label style="text-align: left;">No. Kad Pengenalan</label>
                 <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
             </div>
 
@@ -604,7 +604,7 @@
 
             <div class="form-group" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
                 <div>
-                    <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon <span>*</span></label>
+                    <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon</label>
                     <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this)" style="width: 100%; box-sizing: border-box;">
                 </div>
                 <div>
@@ -8616,11 +8616,6 @@ function simpanPerwakilan() {
     const alamat = document.getElementById('pw_alamat').value.trim();
     const tel = document.getElementById('pw_tel').value.trim();
     const emel = document.getElementById('pw_emel').value.trim();
-
-    if (!kat || !nama || !kp || !tel) {
-        alert("Sila lengkapkan Kategori, Nama, No. Kad Pengenalan dan No. Telefon.");
-        return;
-    }
 
     const kes = memoriSenaraiKes[indexKesSemasa];
     

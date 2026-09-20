@@ -582,46 +582,51 @@
                 </select>
             </div>
 
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Nama Penuh Peguam / Saksi</label>
-                <input type="text" id="pw_nama" placeholder="Nama penuh individu" oninput="hurufBesarSetiapPerkataan(this)">
-            </div>
-
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">No. Kad Pengenalan</label>
-                <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
-            </div>
-
-<!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
-            <div id="ruangan_pw_firma" style="display: none;">
+            <!-- BUNGKUSAN UTAMA YANG DIHILANGKAN SECARA LALAI -->
+            <div id="ruangan_pw_utama" style="display: none;">
+                
                 <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                    <label style="text-align: left;">Nama Firma Guaman / Kesatuan</label>
-                    <input type="text" id="pw_firma" placeholder="Nama Firma / Organisasi" oninput="hurufBesarSetiapPerkataan(this)">
+                    <label style="text-align: left;">Nama Penuh Peguam / Saksi</label>
+                    <input type="text" id="pw_nama" placeholder="Nama penuh individu" oninput="hurufBesarSetiapPerkataan(this)">
                 </div>
+
                 <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                    <label style="text-align: left;">Alamat Firma / Kesatuan</label>
-                    <input type="text" id="pw_alamat1" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase()">
-                    <input type="text" id="pw_alamat2" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase()">
-                    <input type="text" id="pw_alamat3" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase()">
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                        <input type="text" id="pw_poskod" placeholder="Poskod" maxlength="5" onkeyup="cariPoskodAutomatik('pw_poskod', 'pw_negeri', 'pw_bandar')" onblur="semakPoskod(this)" style="width: 100%; box-sizing: border-box;">
-                        <input type="text" id="pw_bandar" placeholder="Bandar" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                    <label style="text-align: left;">No. Kad Pengenalan</label>
+                    <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
+                </div>
+
+                <!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
+                <div id="ruangan_pw_firma" style="display: none;">
+                    <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                        <label style="text-align: left;">Nama Firma Guaman / Kesatuan</label>
+                        <input type="text" id="pw_firma" placeholder="Nama Firma / Organisasi" oninput="hurufBesarSetiapPerkataan(this)">
                     </div>
-                    <input type="text" id="pw_negeri" placeholder="Negeri" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                    <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                        <label style="text-align: left;">Alamat Firma / Kesatuan</label>
+                        <input type="text" id="pw_alamat1" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" id="pw_alamat2" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" id="pw_alamat3" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase()">
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="pw_poskod" placeholder="Poskod" maxlength="5" onkeyup="cariPoskodAutomatik('pw_poskod', 'pw_negeri', 'pw_bandar')" onblur="semakPoskod(this)" style="width: 100%; box-sizing: border-box;">
+                            <input type="text" id="pw_bandar" placeholder="Bandar" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <input type="text" id="pw_negeri" placeholder="Negeri" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
-                <div>
-                    <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon</label>
-                    <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789 / 07-1234567" oninput="this.value = this.value.replace(/[^0-9-]/g, '')" style="width: 100%; box-sizing: border-box;" maxlength="15">
+                <div class="form-group" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                    <div>
+                        <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon</label>
+                        <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789 / 07-1234567" oninput="this.value = this.value.replace(/[^0-9-]/g, '')" style="width: 100%; box-sizing: border-box;" maxlength="15">
+                    </div>
+                    <div>
+                        <label style="text-align: left; display: block; margin-bottom: 5px;">E-mel</label>
+                        <input type="email" id="pw_emel" placeholder="emel@domain.com" style="width: 100%; box-sizing: border-box;">
+                    </div>
                 </div>
-                <div>
-                    <label style="text-align: left; display: block; margin-bottom: 5px;">E-mel</label>
-                    <input type="email" id="pw_emel" placeholder="emel@domain.com" style="width: 100%; box-sizing: border-box;">
-                </div>
-            </div>
+
+            </div> <!-- PENUTUP BUNGKUSAN UTAMA -->
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="document.getElementById('modalPerwakilan').style.display='none'">Batal</button>
@@ -8586,16 +8591,25 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
 // =========================================================================
 let pihakPerwakilanSemasa = 'pengadu'; // Pembolehubah global penentu pihak
 
-// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih beserta Label Dinamik
+// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih
 function kawalKategoriPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
     const ruanganFirma = document.getElementById('ruangan_pw_firma');
+    const ruanganUtama = document.getElementById('ruangan_pw_utama'); // KOD BARU
     
     // Kenal pasti label-label yang perlu ditukar teksnya
     const labelNama = document.getElementById('pw_nama').previousElementSibling;
     const labelFirma = document.getElementById('pw_firma').previousElementSibling;
     const labelAlamat = document.getElementById('pw_alamat1').closest('.form-group').querySelector('label');
     
+    // KAWALAN PAPARAN KESELURUHAN (Sembunyi jika tiada kategori dipilih)
+    if (kat === '') {
+        ruanganUtama.style.display = 'none';
+        return; // Berhenti di sini supaya tidak baca kod di bawah
+    } else {
+        ruanganUtama.style.display = 'block';
+    }
+
     // Tukar teks label berdasarkan pilihan kategori
     if (kat === 'Peguam') {
         labelNama.innerText = 'Nama Peguam';
@@ -8609,10 +8623,6 @@ function kawalKategoriPerwakilan() {
         ruanganFirma.style.display = 'block';
     } else if (kat === 'Saksi') {
         labelNama.innerText = 'Nama Saksi';
-        ruanganFirma.style.display = 'none';
-    } else {
-        // Label lalai jika tiada pilihan dibuat ('-Sila Pilih-')
-        labelNama.innerText = 'Nama Penuh Peguam / Saksi';
         ruanganFirma.style.display = 'none';
     }
 

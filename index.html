@@ -281,9 +281,11 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); z-index: 1000; align-items: center; justify-content: center;
         }
-        .modal-box {
+.modal-box {
             background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 550px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popUp 0.3s ease-out;
+            max-height: 90vh; /* Hadkan ketinggian kotak kepada 90% saiz skrin */
+            overflow-y: auto; /* Wujudkan fungsi scroll secara automatik jika terlampau panjang */
         }
         @keyframes popUp {
             from { opacity: 0; transform: translateY(-20px) scale(0.95); }

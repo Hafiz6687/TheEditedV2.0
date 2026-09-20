@@ -586,10 +586,11 @@
                 </select>
             </div>
             
+            <!-- SENARAI TUNTUTAN UNTUK DI SELESAIKAN -->
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                 <label style="text-align: left;">Senarai Tuntutan Diselesaikan <span>*</span></label>
                 <div id="mou_senarai_tuntutan" style="background: #f8fafc; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-                    <!-- Checkboxes dijana di sini -->
+                    <!-- Checkboxes akan dijana di sini oleh JavaScript -->
                 </div>
             </div>
 
@@ -601,49 +602,18 @@
                 </div>
             </div>
 
-            <!-- JADUAL ANSURAN DINAMIK -->
+            <!-- BAHAGIAN BARU: JADUAL ANSURAN (HANYA MUNCUL JIKA ANSURAN DIPILIH) -->
             <div class="form-group" id="ruangan_ansuran_mou" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                     <label style="text-align: left; margin: 0;">Jadual Bayaran Ansuran <span>*</span></label>
                     <button type="button" class="btn-add btn-terapung" style="padding: 4px 10px; font-size: 0.8em;" onclick="tambahAnsuranMou()">+ Tambah</button>
                 </div>
                 <div id="mou_senarai_ansuran" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px dashed var(--primary-blue);">
-                    <!-- Input tarikh & amaun dijana di sini -->
+                    <!-- Input ansuran dijana di sini -->
                 </div>
             </div>
             
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Jumlah Dibayar di Pejabat (RM)</label>
-                <div class="input-wrapper" style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-weight: 600;">RM</span>
-                    <input type="text" id="mk_dibayar_pejabat" placeholder="0.00" value="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="padding-left: 45px; width: 100%; box-sizing: border-box;">
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="document.getElementById('modalMou').style.display='none'">Batal</button>
-                <button id="btnTindakanMou" class="btn-save" onclick="tindakanMou()" disabled style="opacity: 0.5; cursor: not-allowed;">✔ Jana Dokumen</button>
-            </div>
-        </div>
-    </div>
-            
-            <!-- BAHAGIAN BARU: SENARAI TUNTUTAN UNTUK DI SELESAIKAN -->
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Senarai Tuntutan Diselesaikan <span>*</span><br><span style="font-size: 0.8em; color: var(--text-muted); font-weight: normal;">(Tandakan tuntutan dan isi jadual jika ansuran)</span></label>
-                <div id="mou_senarai_tuntutan" style="background: #f8fafc; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-                    <!-- Checkboxes akan dijana di sini oleh JavaScript -->
-                </div>
-            </div>
-
-            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Jumlah Dipersetujui (RM) <span>*</span></label>
-                <div class="input-wrapper" style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-weight: 600;">RM</span>
-                    <input type="text" id="mk_jumlah_mou" placeholder="Contoh: 1500.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="padding-left: 45px; width: 100%; box-sizing: border-box;">
-                </div>
-            </div>
-            
-            <!-- BAHAGIAN BARU: JUMLAH DIBAYAR DI PEJABAT -->
+            <!-- JUMLAH DIBAYAR DI PEJABAT -->
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                 <label style="text-align: left;">Jumlah Dibayar di Pejabat (RM)</label>
                 <div class="input-wrapper" style="position: relative;">

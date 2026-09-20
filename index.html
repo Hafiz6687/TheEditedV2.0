@@ -571,6 +571,7 @@
     <div class="modal-overlay" id="modalPerwakilan">
         <div class="modal-box">
             <div class="modal-title">Tambah Maklumat Wakil / Saksi</div>
+            <input type="hidden" id="pw_index" value="-1">
             
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                 <label style="text-align: left;">Kategori Kehadiran</label>
@@ -8643,6 +8644,7 @@ function kawalKategoriPerwakilan() {
 // 2. Buka modal dan set tajuk mengikut pihak
 function bukaModalPerwakilan(pihak) {
     pihakPerwakilanSemasa = pihak;
+    document.getElementById('pw_index').value = "-1"; // Reset untuk tambah baru
     const modalTitle = pihak === 'pengadu' ? 'Tambah Maklumat Wakil / Saksi (Pengadu)' : 'Tambah Maklumat Wakil / Saksi (Defendan)';
     document.querySelector('#modalPerwakilan .modal-title').innerText = modalTitle;
     
@@ -8664,7 +8666,7 @@ function bukaModalPerwakilan(pihak) {
     document.getElementById('modalPerwakilan').style.display = 'flex';
 }
 
-// 3. Simpan data ke memori mengikut pihak
+// 3. Simpan data ke memori mengikut pihak (Tambah atau Kemaskini)
 function simpanPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
     const nama = document.getElementById('pw_nama').value.trim();
@@ -8678,24 +8680,38 @@ function simpanPerwakilan() {
     const bdr = document.getElementById('pw_bandar').value.trim();
     const ngr = document.getElementById('pw_negeri').value.trim();
     
-    // Gabungkan alamat menjadi 1 baris di dalam jadual memori
+    const tel = document.getElementById('pw_tel').value.trim();
+    const emel = document.getElementById('pw_emel').value.trim();
+    const idxEdit = parseInt(document.getElementById('pw_index').value);
+
+    // KAWALAN WAJIB ISI (Hanya semak nama dan telefon jika kategori wujud)
+    if (kat !== '' && (!nama || !tel)) {
+        alert("Sila lengkapkan Nama dan No. Telefon.");
+        return;
+    }
+
+    // Gabungkan alamat menjadi 1 baris
     let alamatArr = [a1, a2, a3].filter(Boolean);
     let posBdr = [pos, bdr].filter(Boolean).join(' ');
     if (posBdr) alamatArr.push(posBdr);
     if (ngr) alamatArr.push(ngr);
     const alamat = alamatArr.join(', ');
 
-    const tel = document.getElementById('pw_tel').value.trim();
-    const emel = document.getElementById('pw_emel').value.trim();
-
     const kes = memoriSenaraiKes[indexKesSemasa];
+    const dataBaru = { 
+        kategori: kat, nama: nama, kp: kp, firma: firma, 
+        alamat: alamat, a1: a1, a2: a2, a3: a3, poskod: pos, bandar: bdr, negeri: ngr, 
+        tel: tel, emel: emel 
+    };
     
     if (pihakPerwakilanSemasa === 'pengadu') {
         if (!kes.senaraiPerwakilan) kes.senaraiPerwakilan = [];
-        kes.senaraiPerwakilan.push({ kategori: kat, nama: nama, kp: kp, firma: firma, alamat: alamat, tel: tel, emel: emel });
+        if (idxEdit > -1) kes.senaraiPerwakilan[idxEdit] = dataBaru; // Kemaskini
+        else kes.senaraiPerwakilan.push(dataBaru); // Tambah Baru
     } else {
         if (!kes.senaraiPerwakilanDefendan) kes.senaraiPerwakilanDefendan = [];
-        kes.senaraiPerwakilanDefendan.push({ kategori: kat, nama: nama, kp: kp, firma: firma, alamat: alamat, tel: tel, emel: emel });
+        if (idxEdit > -1) kes.senaraiPerwakilanDefendan[idxEdit] = dataBaru; // Kemaskini
+        else kes.senaraiPerwakilanDefendan.push(dataBaru); // Tambah Baru
     }
 
     simpanSenaraiKeLokal();
@@ -8703,30 +8719,67 @@ function simpanPerwakilan() {
     document.getElementById('modalPerwakilan').style.display = 'none';
 }
 
-// 4. Render kedua-dua jadual
+// 4. Buka Modal untuk Kemaskini (Edit) Maklumat Sedia Ada
+function editPerwakilan(index, pihak) {
+    pihakPerwakilanSemasa = pihak;
+    document.getElementById('pw_index').value = index;
+    
+    const modalTitle = pihak === 'pengadu' ? 'Kemaskini Maklumat Wakil / Saksi (Pengadu)' : 'Kemaskini Maklumat Wakil / Saksi (Defendan)';
+    document.querySelector('#modalPerwakilan .modal-title').innerText = modalTitle;
+
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    const item = pihak === 'pengadu' ? kes.senaraiPerwakilan[index] : kes.senaraiPerwakilanDefendan[index];
+
+    // Masukkan data ke dalam borang
+    document.getElementById('pw_kategori').value = item.kategori || '';
+    document.getElementById('pw_nama').value = item.nama || '';
+    document.getElementById('pw_kp').value = item.kp || '';
+    document.getElementById('pw_firma').value = item.firma || '';
+    
+    document.getElementById('pw_alamat1').value = item.a1 || '';
+    document.getElementById('pw_alamat2').value = item.a2 || '';
+    document.getElementById('pw_alamat3').value = item.a3 || '';
+    document.getElementById('pw_poskod').value = item.poskod || '';
+    
+    const bdrField = document.getElementById('pw_bandar');
+    bdrField.value = item.bandar || '';
+    if (item.bandar) bdrField.removeAttribute('readonly'); else bdrField.setAttribute('readonly', true);
+
+    const ngrField = document.getElementById('pw_negeri');
+    ngrField.value = item.negeri || '';
+    if (item.negeri) ngrField.removeAttribute('readonly'); else ngrField.setAttribute('readonly', true);
+
+    document.getElementById('pw_tel').value = item.tel || '';
+    document.getElementById('pw_emel').value = item.emel || '';
+
+    // Selaraskan kotak dan label berdasarkan kategori
+    kawalKategoriPerwakilan(); 
+    
+    document.getElementById('modalPerwakilan').style.display = 'flex';
+}
+
+// 5. Render kedua-dua jadual
 function renderSemuaJadualPerwakilan() {
     renderJadualPerwakilanPihak('pengadu', 'mk_body_perwakilan', 'kad_kehadiran_perwakilan');
     renderJadualPerwakilanPihak('defendan', 'mk_body_perwakilan_defendan', 'kad_kehadiran_perwakilan_defendan');
 }
 
-// 5. Fungsi Universal Render Jadual
+// 6. Fungsi Universal Render Jadual
 function renderJadualPerwakilanPihak(pihak, tbodyId, kadId) {
     const tbody = document.getElementById(tbodyId);
     const cardBody = document.querySelector(`#${kadId} .card-body`);
-    
     if (!tbody || !cardBody) return;
 
     const kes = memoriSenaraiKes[indexKesSemasa];
     const senarai = pihak === 'pengadu' ? (kes.senaraiPerwakilan || []) : (kes.senaraiPerwakilanDefendan || []);
-
     tbody.innerHTML = '';
 
     if (senarai.length === 0) {
-        cardBody.style.display = 'none'; // Sembunyi body jika tiada rekod
+        cardBody.style.display = 'none';
         return;
     }
 
-    cardBody.style.display = 'block'; // Papar semula jika ada
+    cardBody.style.display = 'block';
 
     senarai.forEach((item, index) => {
         let firmaHtml = item.kategori === 'Saksi' ? '<i style="color: #94a3b8;">Tidak Berkaitan</i>' : `<strong>${item.firma || '-'}</strong><br><span style="font-size:0.9em; color:#475569;">${item.alamat || '-'}</span>`;
@@ -8737,25 +8790,25 @@ function renderJadualPerwakilanPihak(pihak, tbodyId, kadId) {
             <tr>
                 <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">${index + 1}</td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${labelKat}</td>
-                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${item.nama}</strong><br><span style="font-size:0.9em; color:#475569;">KP: ${item.kp}</span></td>
+                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);"><strong>${item.nama}</strong><br><span style="font-size:0.9em; color:#475569;">KP: ${item.kp || '-'}</span></td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">${firmaHtml}</td>
                 <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">📞 ${item.tel}<br>✉️ ${item.emel || '-'}</td>
                 <td style="text-align:center; padding: 10px; border-bottom: 1px solid var(--border-color);">
-                    <button class="btn-delete-tbl" onclick="hapusPerwakilan(${index}, '${pihak}')" title="Hapus Rekod">🗑️ Hapus</button>
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="editPerwakilan(${index}, '${pihak}')" title="Kemaskini Rekod">✏️ Edit</button>
+                        <button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusPerwakilan(${index}, '${pihak}')" title="Hapus Rekod">🗑️ Hapus</button>
+                    </div>
                 </td>
             </tr>
         `;
     });
 }
 
-// 6. Hapus Rekod Perwakilan
+// 7. Hapus Rekod Perwakilan
 function hapusPerwakilan(index, pihak) {
     if (confirm("Adakah anda pasti mahu memadam rekod perwakilan ini?")) {
-        if (pihak === 'pengadu') {
-            memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);
-        } else {
-            memoriSenaraiKes[indexKesSemasa].senaraiPerwakilanDefendan.splice(index, 1);
-        }
+        if (pihak === 'pengadu') memoriSenaraiKes[indexKesSemasa].senaraiPerwakilan.splice(index, 1);
+        else memoriSenaraiKes[indexKesSemasa].senaraiPerwakilanDefendan.splice(index, 1);
         simpanSenaraiKeLokal();
         renderSemuaJadualPerwakilan();
     }

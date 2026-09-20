@@ -602,14 +602,34 @@
                 </div>
             </div>
 
-            <!-- BAHAGIAN BARU: JADUAL ANSURAN (HANYA MUNCUL JIKA ANSURAN DIPILIH) -->
+<!-- JADUAL ANSURAN DINAMIK -->
             <div class="form-group" id="ruangan_ansuran_mou" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                     <label style="text-align: left; margin: 0;">Jadual Bayaran Ansuran <span>*</span></label>
-                    <button type="button" class="btn-add btn-terapung" style="padding: 4px 10px; font-size: 0.8em;" onclick="tambahAnsuranMou()">+ Tambah</button>
+                    <!-- Butang tambah manual dikekalkan dengan warna sedikit gelap -->
+                    <button type="button" class="btn-add btn-terapung" style="padding: 4px 10px; font-size: 0.8em; background-color: #475569;" onclick="tambahAnsuranMou()">+ Tambah Manual</button>
                 </div>
-                <div id="mou_senarai_ansuran" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px dashed var(--primary-blue);">
-                    <!-- Input ansuran dijana di sini -->
+                
+                <!-- KOTAK AUTO-JANA ANSURAN PUKAL -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; margin-bottom: 10px;">
+                    <div style="font-size: 0.85em; font-weight: 600; color: var(--primary-blue); margin-bottom: 8px;">⚡ Auto-Jana Jadual Ansuran</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+                        <div>
+                            <label style="font-size: 0.8em; color: var(--text-muted); display: block; margin-bottom: 4px;">Bil. Ansuran (Bulan)</label>
+                            <input type="number" id="auto_bil_ansuran" placeholder="Cth: 5" min="1" style="width: 100%; padding: 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8em; color: var(--text-muted); display: block; margin-bottom: 4px;">Tarikh Bayaran Pertama</label>
+                            <input type="date" id="auto_tarikh_mula" style="width: 100%; padding: 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <button type="button" class="btn-save btn-terapung" style="padding: 6px 15px; font-size: 0.85em; border-radius: 4px; background-color: #0ea5e9; font-weight: 600;" onclick="janaAnsuranAuto()">Jana</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mou_senarai_ansuran" style="display: flex; flex-direction: column; gap: 8px; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px dashed var(--primary-blue);">
+                    <!-- Input tarikh & amaun dijana di sini -->
                 </div>
             </div>
             
@@ -9285,7 +9305,7 @@ function kawalAnsuranMou() {
     semakButangMou();
 }
 
-function tambahAnsuranMou() {
+function tambahAnsuranMou(tarikhVal = '', amaunVal = '') {
     const container = document.getElementById('mou_senarai_ansuran');
     const div = document.createElement('div');
     div.style.display = 'grid';
@@ -9294,15 +9314,70 @@ function tambahAnsuranMou() {
     div.style.alignItems = 'center';
     
     div.innerHTML = `
-        <input type="date" class="input-ansuran-tarikh" style="width: 100%; padding: 8px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" onchange="semakButangMou()">
+        <input type="date" class="input-ansuran-tarikh" value="${tarikhVal}" style="width: 100%; padding: 8px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" onchange="semakButangMou()">
         <div style="position: relative; width: 100%;">
             <span style="position: absolute; left: 8px; top: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.85em;">RM</span>
-            <input type="text" class="input-ansuran-amaun" style="width: 100%; padding: 8px 8px 8px 35px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)">
+            <input type="text" class="input-ansuran-amaun" value="${amaunVal}" style="width: 100%; padding: 8px 8px 8px 35px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)">
         </div>
         <button type="button" style="background: var(--danger); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 0.85em;" onclick="this.parentElement.remove(); semakButangMou();" title="Hapus">✖</button>
     `;
     container.appendChild(div);
     semakButangMou();
+}
+
+function janaAnsuranAuto() {
+    const bilBulan = parseInt(document.getElementById('auto_bil_ansuran').value);
+    const tarikhMula = document.getElementById('auto_tarikh_mula').value;
+    const jumTotalStr = document.getElementById('mk_jumlah_mou').value;
+    
+    if (!bilBulan || bilBulan <= 0) {
+        alert("Sila masukkan Bilangan Ansuran (Bulan) yang sah.");
+        return;
+    }
+    if (!tarikhMula) {
+        alert("Sila tetapkan Tarikh Bayaran Pertama.");
+        return;
+    }
+    if (!jumTotalStr || parseFloat(jumTotalStr.replace(/,/g, '')) <= 0) {
+        alert("Sila isi 'Jumlah Keseluruhan Dipersetujui' di atas terlebih dahulu untuk membolehkan sistem mengira pembahagian bayaran.");
+        return;
+    }
+
+    const jumlahTotal = parseFloat(jumTotalStr.replace(/,/g, ''));
+    const container = document.getElementById('mou_senarai_ansuran');
+    
+    // Kosongkan senarai lama jika pengguna tekan jana berulang kali
+    container.innerHTML = '';
+    
+    // Bahagikan secara sama rata (hingga 2 titik perpuluhan)
+    let baseAmaun = Math.floor((jumlahTotal / bilBulan) * 100) / 100;
+    // Kira baki tepat untuk bulan yang terakhir (supaya total ngam 100% sama dengan MOU)
+    let baki = jumlahTotal - (baseAmaun * (bilBulan - 1));
+    
+    let currentTarikh = new Date(tarikhMula);
+    let startDay = currentTarikh.getDate();
+
+    for (let i = 0; i < bilBulan; i++) {
+        // Unjak bulan demi bulan
+        let nextTarikh = new Date(currentTarikh.getFullYear(), currentTarikh.getMonth() + i, startDay);
+        
+        // Kes Khas: Jika tarikh 31hb tapi bulan depan cuma ada 30 hari (atau 28 hari utk Feb)
+        if (nextTarikh.getDate() !== startDay) {
+            nextTarikh.setDate(0); // Undur ke hari terakhir bulan tersebut
+        }
+
+        let yyyy = nextTarikh.getFullYear();
+        let mm = String(nextTarikh.getMonth() + 1).padStart(2, '0');
+        let dd = String(nextTarikh.getDate()).padStart(2, '0');
+        let tarikhFormat = `${yyyy}-${mm}-${dd}`;
+        
+        // Tentukan jumlah bayaran (Bulan terakhir ambil baki)
+        let amaunBulanIni = (i === bilBulan - 1) ? baki : baseAmaun;
+        let amaunFormat = amaunBulanIni.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        // Panggil fungsi tambah kotak dengan nilai auto-isi
+        tambahAnsuranMou(tarikhFormat, amaunFormat);
+    }
 }
 
 function semakButangMou() {

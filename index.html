@@ -1006,6 +1006,9 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('sebutan_tangguh')">
                             <span>📅 Sebutan Kes<br>(Tangguh)</span>
                         </button>
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('mou')">
+                            <span>🤝 MOU</span>
+                        </button>
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
                             <span>📄 Saman<br>(Borang A)</span>
                         </button>
@@ -1189,6 +1192,38 @@ Portal rasmi : jtksm.mohr.gov.my
             <div>
                 <button id="btnTindakanSaman" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanSamanA()" disabled>
                     📄 Jana Saman (Borang A)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- BAHAGIAN BARU: PENETAPAN MOU -->
+<div class="card full-width" id="kad_mou" style="display: none;">
+    <div class="card-header">Penetapan Tarikh MOU</div>
+    <div class="card-body">
+        <div class="sebutan-grid-labels">
+            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
+            <div class="info-label" style="margin:0;">Masa Hadir</div>
+            <div class="info-label" style="margin:0;">Tempat Hadir</div>
+            <div></div> 
+        </div>
+        
+        <div class="sebutan-grid-inputs">
+            <div>
+                <label class="mobile-label">Tarikh Hadir</label>
+                <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Masa Hadir</label>
+                <input type="time" id="mk_masa_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label class="mobile-label">Tempat Hadir</label>
+                <input type="text" id="mk_tempat_mou" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            </div>
+            <div>
+                <button id="btnTindakanMou" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanMou()" disabled>
+                    📄 Jana MOU
                 </button>
             </div>
         </div>
@@ -2473,6 +2508,12 @@ let htmlDefendan = '';
     if (typeof semakButangSaman === 'function') semakButangSaman();
     if (document.getElementById('kad_saman_hadir')) document.getElementById('kad_saman_hadir').style.display = 'none';
 
+    // Reset MOU
+    if (document.getElementById('mk_tarikh_mou')) document.getElementById('mk_tarikh_mou').value = '';
+    if (document.getElementById('mk_masa_mou')) document.getElementById('mk_masa_mou').value = '';
+    if (typeof semakButangMou === 'function') semakButangMou();
+    if (document.getElementById('kad_mou')) document.getElementById('kad_mou').style.display = 'none';
+    
     // Reset Saman Memo Luar Kawasan
     if (document.getElementById('mk_tarikh_saman_memo')) document.getElementById('mk_tarikh_saman_memo').value = '';
     if (document.getElementById('mk_pejabat_memo')) document.getElementById('mk_pejabat_memo').value = '';
@@ -6919,6 +6960,11 @@ if (kunci !== '') {
             else if (tdk === "Alamat Terkini Defendan") {
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
+                else if (tdk === "MOU") {
+                let dMatch = btr.match(/\[DATA_MOU:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewMou(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+            }
             else if (tdk === "Saman (Borang A)") {
                 let dMatch = btr.match(/\[DATA_SAMANA:(.*?)\]/);
                 let param = dMatch ? `'${dMatch[1]}'` : 'null';
@@ -7764,7 +7810,7 @@ function bukaPreviewSamanTampal() {
 function toggleKadUrus(jenis) {
     const idsKad = [
         'kad_sebutan_kes', 'kad_sebutan_tangguh', 'kad_sebutan_semula', 'kad_bicara',
-        'kad_bicara_tangguh', 'kad_bicara_sambung', 'kad_keputusan', 'kad_saman_hadir', 'kad_saman_memo'
+        'kad_bicara_tangguh', 'kad_bicara_sambung', 'kad_keputusan', 'kad_saman_hadir', 'kad_saman_memo', 'kad_mou'
     ];
 
     idsKad.forEach(id => {
@@ -7786,7 +7832,8 @@ function toggleKadUrus(jenis) {
         'bicara_sambung':   'kad_bicara_sambung',
         'keputusan':        'kad_keputusan',
         'saman_a':          'kad_saman_hadir',
-        'saman_memo':       'kad_saman_memo'
+        'saman_memo':       'kad_saman_memo',
+        'mou':              'kad_mou'
     };
 
     const idKadDipilih = mapKad[jenis];
@@ -7799,7 +7846,11 @@ function toggleKadUrus(jenis) {
 
     if (jenis === 'saman_a') {
         semakButangSaman();
-} else if (jenis === 'saman_memo') {
+    } 
+    else if (jenis === 'mou') {
+        semakButangMou();
+    }
+    else if (jenis === 'saman_memo') {
         // --- LOGIK AUTO-ISI NAMA & ALAMAT ASAL DEFENDAN ---
         const kes = memoriSenaraiKes[indexKesSemasa];
         if (kes) {
@@ -9135,6 +9186,247 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
     
+    tunjukSuisTandatangan(true);
+    document.getElementById('modalPreview').style.display = 'flex';
+}
+       // =========================================================================
+// FUNGSI MENJANA DAN MEMAPARKAN MOU
+// =========================================================================
+function semakButangMou() {
+    const elTarikh = document.getElementById('mk_tarikh_mou');
+    const elMasa = document.getElementById('mk_masa_mou');
+    const btn = document.getElementById('btnTindakanMou');
+    if (!elTarikh || !elMasa || !btn) return;
+
+    if (elTarikh.value && elMasa.value) {
+        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
+    }
+}
+
+function tindakanMou() {
+    const elTarikh = document.getElementById('mk_tarikh_mou');
+    const elMasa = document.getElementById('mk_masa_mou');
+    if (elTarikh && elMasa && elTarikh.value && elMasa.value) {
+        bukaPreviewMou();
+    } else {
+        alert("Sila lengkapkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
+    }
+}
+
+function bukaPreviewMou(dataSimpanan = null) {
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    if (!kes) return;
+
+    const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+
+    // Buka bungkusan data dari sejarah (jika ada)
+    let memoData = {};
+    if (dataSimpanan && dataSimpanan !== 'null') {
+        try { memoData = JSON.parse(decodeURIComponent(escape(atob(dataSimpanan)))); } catch(e){}
+    }
+
+    let noKes = kes.noKes.split('<br>')[0].trim();
+    let namaP = "", namaD = "", alamatD = "", alamatP = "";
+    let d_idStr = "(No. Pendaftaran/KP: ....................)";
+    let isMajikan = false;
+
+    if (kes.dataBorang && kes.dataBorang.inputs) {
+        const inputs = kes.dataBorang.inputs;
+        isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
+        
+        let arrDef = [inputs['alamatDefendan1'], inputs['alamatDefendan2'], inputs['alamatDefendan3'], (inputs['poskodDefendan'] || '') + " " + (inputs['bandarDefendan'] || ''), inputs['negeriDefendan']].filter(a => a && a.trim() !== "");
+        let arrPeng = [inputs['alamatPengadu1'], inputs['alamatPengadu2'], inputs['alamatPengadu3'], (inputs['poskodPengadu'] || '') + " " + (inputs['bandarPengadu'] || ''), inputs['negeriPengadu']].filter(a => a && a.trim() !== "");
+
+        if (isMajikan) {
+            namaP = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA SYARIKAT]';
+            alamatP = arrDef.join('<br>').toUpperCase() || '[ALAMAT PENGADU]';
+            namaD = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PEKERJA]';
+            alamatD = arrPeng.join(', ').toUpperCase() || '[ALAMAT DEFENDAN]';
+        } else {
+            namaP = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PENGADU]';
+            alamatP = arrPeng.join('<br>').toUpperCase() || '[ALAMAT PENGADU]';
+            namaD = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA DEFENDAN]';
+            alamatD = arrDef.join(', ').toUpperCase() || '[ALAMAT DEFENDAN]';
+        }
+    } else {
+        namaP = kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
+        namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
+        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
+        alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
+    }
+
+    // TARIK TARIKH & MASA MOU BAHARU
+    const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_mou')?.value;
+    const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_mou')?.value;
+    const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_mou')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
+    
+    let tarikhSebutanDD = ".......";
+    let tarikhSebutanMMYYYY = "........................";
+    if (tarikhRaw && tarikhRaw !== "") {
+        let t = new Date(tarikhRaw);
+        if (!isNaN(t.getTime())) {
+            tarikhSebutanDD = t.getDate();
+            tarikhSebutanMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        }
+    }
+
+    let masaSebutanText = ".......";
+    if (masaRaw && masaRaw !== "") {
+        let [jam, minit] = masaRaw.split(':');
+        let jamNum = parseInt(jam, 10);
+        if (!isNaN(jamNum)) {
+            let ampm = jamNum >= 12 ? "petang" : "pagi";
+            let jamFormat = jamNum % 12 || 12;
+            masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
+        }
+    }
+
+    const tH = new Date();
+    const tarikhSamanDD = tH.getDate();
+    const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
+    let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
+    const namaPegawai = namaPegawaiRaw.toUpperCase();
+
+    const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
+    
+    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
+
+    // STRUKTUR HTML MOU YANG AKAN DIEDIT KEMUDIAN
+    const htmlMou = `
+        <style>
+            @media print {
+                @page { margin: 0; size: A4 portrait; }
+                body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                body > *:not(#printArea) { display: none !important; }
+                #printArea { display: block !important; }
+                .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
+                .kertas-notis:last-child { page-break-after: auto; }
+            }
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
+            #kertasMouDraf { padding: 1.5cm 2.5cm !important; }
+            #kertasMouDraf .notis-body-wrapper { padding: 0 !important; }
+            #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
+            #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
+            .jarak-tab { display: inline-block; width: 30px; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
+            .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
+            .notis-logo img { width: 120px; height: auto; display: block; }
+            .notis-jabatan { text-align: left; line-height: 1.2; }
+            .notis-hubungi { flex-shrink: 0; width: 200px; font-size: 8pt; line-height: 1.3; }
+            .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; }
+            .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; }
+            .kol-label { width: 40%; white-space: nowrap; }
+            .kol-titik { width: 5%; text-align: center; }
+            .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; }
+            .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
+            .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+            .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
+            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
+            .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
+            .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+        </style>
+        
+        <!-- MUKA 1: KANDUNGAN MOU (YANG AKAN DIEDIT KEMUDIAN) -->
+        <div class="kertas-notis" id="kertasMouDraf">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
+                <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 25px; line-height: 1.25; margin-top: 40px; text-decoration: underline;">
+                    MEMORANDUM PERSEFAHAMAN (MOU)
+                </div>
+
+                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes No. ${noKes}</div>
+                <div style="text-align: center; margin-bottom: 10px;">Antara</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
+                <div style="text-align: center; margin-bottom: 10px;">Dan</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
+
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">
+                    [RUANG INI AKAN DIEDIT KEMUDIAN UNTUK ISI KANDUNGAN MOU] Kehadiran di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong>.
+                </div>
+
+                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25; margin-top: 60px;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
+                    <div></div> 
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MUKA 2: NOTIS MAKLUMAN -->
+        <div class="kertas-notis" id="kertasNotisSamanPengadu">
+            ${templateHeaderHTML}
+
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                <div class="notis-rujukan">
+                    Rujukan Kami : ${noKes}<br>
+                    Tarikh : ${tarikhSamanDD} ${tarikhSamanMMYYYY}
+                </div>
+
+                <div class="notis-alamat">
+                    <strong>${namaP}</strong><br>
+                    ${alamatP || '[ALAMAT PENGADU]'}
+                </div>
+
+                <div style="margin-bottom: 15px;">Tuan,</div>
+
+                <div class="notis-tajuk">
+                    KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>
+                    ANTARA PENGADU : ${namaP}<br>
+                    TERHADAP DEFENDAN : ${namaD}<br>
+                    PERKARA: NOTIS MOU
+                </div>
+                <hr class="notis-garis-tajuk">
+
+                <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+
+                <div class="notis-isi">
+                    2.<span class="jarak-tab"></span>Adalah dimaklumkan, satu Memorandum Persefahaman akan dimeterai pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong>.
+                </div>
+
+                ${templateFooterHTML}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('previewContent').innerHTML = htmlMou;
+    document.getElementById('printArea').innerHTML = htmlMou;
+
+    document.getElementById('menuCetakAkuan').style.display = 'none';
+    document.getElementById('menuCetakKenyataan').style.display = 'none';
+    document.getElementById('menuDaftar').style.display = 'none';
+    document.getElementById('menuSelesai').style.display = 'none';
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+
+    let menuCetakG1 = document.getElementById('menuCetakG1');
+    menuCetakG1.style.display = 'flex';
+    menuCetakG1.innerHTML = '🖨️ Cetak MOU';
+    
+    document.getElementById('menuKemaskini').style.display = 'flex';
+    document.getElementById('menuBatal').style.display = 'flex';
+
+    menuCetakG1.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        window.print();
+        
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+        rekodSejarahTindakan(indexKesSemasa, "MOU", `Dokumen MOU telah dijana dan dicetak. [DATA_MOU:${d64}]`);
+        
+        setTimeout(() => {
+            document.getElementById('modalPreview').style.display = 'none';
+            tukarView('senarai');
+        }, 500);
+    };
+
+    const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
+    if (radON) radON.checked = true;
+
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }

@@ -7815,7 +7815,7 @@ function bukaPreviewSamanTampal() {
 function toggleKadUrus(jenis) {
     const idsKad = [
         'kad_sebutan_kes', 'kad_sebutan_tangguh', 'kad_sebutan_semula', 'kad_bicara',
-        'kad_bicara_tangguh', 'kad_bicara_sambung', 'kad_keputusan', 'kad_saman_hadir', 'kad_saman_memo', 'kad_mou'
+        'kad_bicara_tangguh', 'kad_bicara_sambung', 'kad_keputusan', 'kad_saman_hadir', 'kad_saman_memo'
     ];
 
     idsKad.forEach(id => {
@@ -7837,8 +7837,7 @@ function toggleKadUrus(jenis) {
         'bicara_sambung':   'kad_bicara_sambung',
         'keputusan':        'kad_keputusan',
         'saman_a':          'kad_saman_hadir',
-        'saman_memo':       'kad_saman_memo',
-        'mou':              'kad_mou'
+        'saman_memo':       'kad_saman_memo'
     };
 
     const idKadDipilih = mapKad[jenis];
@@ -7852,9 +7851,7 @@ function toggleKadUrus(jenis) {
     if (jenis === 'saman_a') {
         semakButangSaman();
     } 
-    else if (jenis === 'mou') {
-        semakButangMou();
-    }
+ 
     else if (jenis === 'saman_memo') {
         // --- LOGIK AUTO-ISI NAMA & ALAMAT ASAL DEFENDAN ---
         const kes = memoriSenaraiKes[indexKesSemasa];

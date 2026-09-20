@@ -8586,15 +8586,38 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
 // =========================================================================
 let pihakPerwakilanSemasa = 'pengadu'; // Pembolehubah global penentu pihak
 
-// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih
+// 1. Paparkan medan firma & alamat jika Peguam/Kesatuan dipilih beserta Label Dinamik
 function kawalKategoriPerwakilan() {
     const kat = document.getElementById('pw_kategori').value;
     const ruanganFirma = document.getElementById('ruangan_pw_firma');
     
-    if (kat === 'Peguam' || kat === 'Wakil Kesatuan') {
+    // Kenal pasti label-label yang perlu ditukar teksnya
+    const labelNama = document.getElementById('pw_nama').previousElementSibling;
+    const labelFirma = document.getElementById('pw_firma').previousElementSibling;
+    const labelAlamat = document.getElementById('pw_alamat1').closest('.form-group').querySelector('label');
+    
+    // Tukar teks label berdasarkan pilihan kategori
+    if (kat === 'Peguam') {
+        labelNama.innerText = 'Nama Peguam';
+        labelFirma.innerText = 'Nama Firma Guaman';
+        labelAlamat.innerText = 'Alamat Firma';
         ruanganFirma.style.display = 'block';
-    } else {
+    } else if (kat === 'Wakil Kesatuan') {
+        labelNama.innerText = 'Nama Wakil Kesatuan';
+        labelFirma.innerText = 'Nama Kesatuan';
+        labelAlamat.innerText = 'Alamat Kesatuan';
+        ruanganFirma.style.display = 'block';
+    } else if (kat === 'Saksi') {
+        labelNama.innerText = 'Nama Saksi';
         ruanganFirma.style.display = 'none';
+    } else {
+        // Label lalai jika tiada pilihan dibuat ('-Sila Pilih-')
+        labelNama.innerText = 'Nama Penuh Peguam / Saksi';
+        ruanganFirma.style.display = 'none';
+    }
+
+    // Kosongkan semula kotak input alamat jika ia disembunyikan
+    if (kat !== 'Peguam' && kat !== 'Wakil Kesatuan') {
         document.getElementById('pw_firma').value = '';
         document.getElementById('pw_alamat1').value = '';
         document.getElementById('pw_alamat2').value = '';

@@ -590,7 +590,7 @@
                 <input type="text" id="pw_kp" placeholder="Contoh: 880101-01-1234" maxlength="14" oninput="formatMyKadWakil(this)">
             </div>
 
-            <!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
+<!-- RUANGAN INI HANYA MUNCUL JIKA PEGUAM / WAKIL KESATUAN -->
             <div id="ruangan_pw_firma" style="display: none;">
                 <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                     <label style="text-align: left;">Nama Firma Guaman / Kesatuan</label>
@@ -598,14 +598,22 @@
                 </div>
                 <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                     <label style="text-align: left;">Alamat Firma / Kesatuan</label>
-                    <textarea id="pw_alamat" rows="2" placeholder="Alamat penuh (Jika ada)" class="auto-expand" style="resize: vertical; width: 100%; box-sizing: border-box;"></textarea>
+                    <input type="text" id="pw_alamat1" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 1" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" id="pw_alamat2" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 2" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" id="pw_alamat3" style="margin-bottom: 8px; width: 100%; box-sizing: border-box;" placeholder="Baris 3" oninput="this.value = this.value.toUpperCase()">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="pw_poskod" placeholder="Poskod" maxlength="5" onkeyup="cariPoskodAutomatik('pw_poskod', 'pw_negeri', 'pw_bandar')" onblur="semakPoskod(this)" style="width: 100%; box-sizing: border-box;">
+                        <input type="text" id="pw_bandar" placeholder="Bandar" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <input type="text" id="pw_negeri" placeholder="Negeri" readonly style="width: 100%; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
                 </div>
             </div>
 
             <div class="form-group" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
                 <div>
                     <label style="text-align: left; display: block; margin-bottom: 5px;">No. Telefon</label>
-                    <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789" oninput="formatTelHP(this)" style="width: 100%; box-sizing: border-box;">
+                    <input type="text" id="pw_tel" placeholder="Contoh: 012-3456789 / 07-1234567" oninput="this.value = this.value.replace(/[^0-9-]/g, '')" style="width: 100%; box-sizing: border-box;" maxlength="15">
                 </div>
                 <div>
                     <label style="text-align: left; display: block; margin-bottom: 5px;">E-mel</label>
@@ -3332,23 +3340,23 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     // LOGIK CETAKAN BERKEMBAR (SALINAN PEGUAM AUTOMATIK)
     // ==========================================================
     
-    // 1. Ekstrak Maklumat Peguam Pengadu dari Jadual (Jika Ada)
+    // 1. Ekstrak Maklumat Peguam Pengadu dari Memori
     let peguamPengaduHTML = '';
-    const tablePengadu = document.querySelectorAll('#mk_body_perwakilan tr');
-    tablePengadu.forEach(tr => {
-        if (tr.cells.length >= 4 && tr.cells[1].innerText.trim().toUpperCase() === 'PEGUAM') {
-            peguamPengaduHTML = tr.cells[3].innerHTML; // Ambil HTML dari lajur Firma Guaman & Alamat
+    if (kes.senaraiPerwakilan) {
+        const peguamP = kes.senaraiPerwakilan.find(p => p.kategori === 'Peguam');
+        if (peguamP) {
+            peguamPengaduHTML = `${peguamP.firma.toUpperCase()}<br>${peguamP.alamat.toUpperCase().replace(/,\s*/g, '<br>')}`;
         }
-    });
+    }
 
-    // 2. Ekstrak Maklumat Peguam Defendan dari Jadual (Jika Ada)
+    // 2. Ekstrak Maklumat Peguam Defendan dari Memori
     let peguamDefendanHTML = '';
-    const tableDefendan = document.querySelectorAll('#mk_body_perwakilan_defendan tr');
-    tableDefendan.forEach(tr => {
-        if (tr.cells.length >= 4 && tr.cells[1].innerText.trim().toUpperCase() === 'PEGUAM') {
-            peguamDefendanHTML = tr.cells[3].innerHTML;
+    if (kes.senaraiPerwakilanDefendan) {
+        const peguamD = kes.senaraiPerwakilanDefendan.find(p => p.kategori === 'Peguam');
+        if (peguamD) {
+            peguamDefendanHTML = `${peguamD.firma.toUpperCase()}<br>${peguamD.alamat.toUpperCase().replace(/,\s*/g, '<br>')}`;
         }
-    });
+    }
 
     // 3. BINA TEMPLAT SURAT PENGADU (MUKA SURAT 1)
     let suratPengaduLengkap = `
@@ -8586,7 +8594,14 @@ function kawalKategoriPerwakilan() {
     } else {
         ruanganFirma.style.display = 'none';
         document.getElementById('pw_firma').value = '';
-        document.getElementById('pw_alamat').value = '';
+        document.getElementById('pw_alamat1').value = '';
+        document.getElementById('pw_alamat2').value = '';
+        document.getElementById('pw_alamat3').value = '';
+        document.getElementById('pw_poskod').value = '';
+        document.getElementById('pw_bandar').value = '';
+        document.getElementById('pw_negeri').value = '';
+        document.getElementById('pw_bandar').setAttribute('readonly', true);
+        document.getElementById('pw_negeri').setAttribute('readonly', true);
     }
 }
 
@@ -8600,7 +8615,14 @@ function bukaModalPerwakilan(pihak) {
     document.getElementById('pw_nama').value = '';
     document.getElementById('pw_kp').value = '';
     document.getElementById('pw_firma').value = '';
-    document.getElementById('pw_alamat').value = '';
+    document.getElementById('pw_alamat1').value = '';
+    document.getElementById('pw_alamat2').value = '';
+    document.getElementById('pw_alamat3').value = '';
+    document.getElementById('pw_poskod').value = '';
+    document.getElementById('pw_bandar').value = '';
+    document.getElementById('pw_negeri').value = '';
+    document.getElementById('pw_bandar').setAttribute('readonly', true);
+    document.getElementById('pw_negeri').setAttribute('readonly', true);
     document.getElementById('pw_tel').value = '';
     document.getElementById('pw_emel').value = '';
     kawalKategoriPerwakilan();
@@ -8613,7 +8635,21 @@ function simpanPerwakilan() {
     const nama = document.getElementById('pw_nama').value.trim();
     const kp = document.getElementById('pw_kp').value.trim();
     const firma = document.getElementById('pw_firma').value.trim();
-    const alamat = document.getElementById('pw_alamat').value.trim();
+    
+    const a1 = document.getElementById('pw_alamat1').value.trim();
+    const a2 = document.getElementById('pw_alamat2').value.trim();
+    const a3 = document.getElementById('pw_alamat3').value.trim();
+    const pos = document.getElementById('pw_poskod').value.trim();
+    const bdr = document.getElementById('pw_bandar').value.trim();
+    const ngr = document.getElementById('pw_negeri').value.trim();
+    
+    // Gabungkan alamat menjadi 1 baris di dalam jadual memori
+    let alamatArr = [a1, a2, a3].filter(Boolean);
+    let posBdr = [pos, bdr].filter(Boolean).join(' ');
+    if (posBdr) alamatArr.push(posBdr);
+    if (ngr) alamatArr.push(ngr);
+    const alamat = alamatArr.join(', ');
+
     const tel = document.getElementById('pw_tel').value.trim();
     const emel = document.getElementById('pw_emel').value.trim();
 

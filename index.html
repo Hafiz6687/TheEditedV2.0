@@ -9207,19 +9207,19 @@ function bukaModalMou() {
 
 function semakButangMou() {
     const t = document.getElementById('mk_tarikh_mou')?.value;
-    const m = document.getElementById('mk_masa_mou')?.value;
-    const tp = document.getElementById('mk_tempat_mou')?.value;
     const j = document.getElementById('mk_jumlah_mou')?.value;
     const k = document.getElementById('mk_kaedah_mou')?.value;
     const btn = document.getElementById('btnTindakanMou');
     if (!btn) return;
 
-    if (t && m && tp && j && k) {
+    // Sekarang sistem hanya semak Tarikh (t), Jumlah (j), dan Kaedah (k)
+    if (t && j && k) {
         btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     } else {
         btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
     }
 }
+
 
 function tindakanMou() {
     if (!document.getElementById('btnTindakanMou').disabled) {

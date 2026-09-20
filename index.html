@@ -9325,21 +9325,27 @@ function bukaPreviewMou(dataSimpanan = null) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // ==========================================
+// ==========================================
     // LOGIK PENGEKSTRAKAN NAMA TANDATANGAN
     // ==========================================
     let signNamaP = "", signKpP = "", signJawatanP = "";
     let wakilP = (kes.senaraiPerwakilan || []).find(w => w.kategori === 'Wakil Pengadu');
     
-    // Check Wakil Pengadu dahulu, jika tiada, semak jika Majikan adalah Pengadu
     if (wakilP) {
         signNamaP = wakilP.nama; signKpP = wakilP.kp; signJawatanP = wakilP.jawatan || "";
     } else if (isMajikan) {
-        signNamaP = (kes.dataBorang && kes.dataBorang.inputs['namaWakilMajikan']) || "";
-        signKpP = (kes.dataBorang && kes.dataBorang.inputs['noMyKadWakil']) || "";
-        signJawatanP = (kes.dataBorang && kes.dataBorang.inputs['jawatanWakilMajikan']) || "";
-        if (!signNamaP) signNamaP = namaP; 
+        // MAJIKAN ADALAH PENGADU: Semak wakil majikan dari Tab 1
+        let namaWM = (kes.dataBorang && kes.dataBorang.inputs['namaWakilMajikan']) || "";
+        if (namaWM) {
+            signNamaP = namaWM;
+            signKpP = (kes.dataBorang && kes.dataBorang.inputs['noMyKadWakil']) || "";
+            signJawatanP = (kes.dataBorang && kes.dataBorang.inputs['jawatanWakilMajikan']) || "";
+        } else {
+            // Kosongkan supaya user boleh tulis tangan
+            signNamaP = ""; signKpP = ""; signJawatanP = "";
+        }
     } else {
+        // PEKERJA ADALAH PENGADU
         signNamaP = (kes.dataBorang && kes.dataBorang.inputs['namaPengadu']) || namaP;
         signKpP = (kes.dataBorang && kes.dataBorang.inputs['noPendPengadu']) || "";
         signJawatanP = ""; 
@@ -9348,20 +9354,19 @@ function bukaPreviewMou(dataSimpanan = null) {
     let signNamaD = "", signKpD = "", signJawatanD = "";
     let wakilD = (kes.senaraiPerwakilanDefendan || []).find(w => w.kategori === 'Wakil Defendan');
     
-    // Check Wakil Defendan dahulu, jika tiada, semak adakah Defendan ini sebuah Syarikat
     if (wakilD) {
         signNamaD = wakilD.nama; signKpD = wakilD.kp; signJawatanD = wakilD.jawatan || "";
     } else if (!isMajikan) {
-        let pem = (kes.dataBorang && kes.dataBorang.inputs['namaPemilikDefendan']) || "";
-        let kpPem = (kes.dataBorang && kes.dataBorang.inputs['kpPemilikDefendan']) || "";
-        if (pem) { signNamaD = pem; signKpD = kpPem; signJawatanD = "Pemilik"; }
-        else { signNamaD = namaD; signKpD = (kes.dataBorang && kes.dataBorang.inputs['noPendDefendan']) || ""; signJawatanD = "Pengarah / Pengurus"; }
+        // KES NORMAL (Defendan adalah Syarikat): Kosongkan jika tiada wakil
+        signNamaD = ""; signKpD = ""; signJawatanD = "";
     } else {
+        // MAJIKAN ADALAH PENGADU (Defendan adalah Pekerja)
         signNamaD = (kes.dataBorang && kes.dataBorang.inputs['namaPengadu']) || namaD;
         signKpD = (kes.dataBorang && kes.dataBorang.inputs['noPendPengadu']) || "";
         signJawatanD = ""; 
     }
-// Logik Item 3 (Kaedah Bayaran)
+
+    // Logik Item 3 (Kaedah Bayaran)
     let item3HTML = '';
     if (kaedahBayaran === 'Penuh') {
         item3HTML = `<div style="display: flex; margin-bottom: 15px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.</div></div>`;
@@ -9478,7 +9483,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                         ${namaPegawai}
                     </div>
 
-<!-- Ruang Tandatangan -->
+                    <!-- Ruang Tandatangan -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px;">
                         
                         <!-- Tandatangan Pengadu -->
@@ -9487,9 +9492,10 @@ function bukaPreviewMou(dataSimpanan = null) {
                             <div style="margin-bottom: 15px;">Tandatangan Pengadu</div>
                             
                             <div style="text-align: left; line-height: 1.5; font-size: 10pt; display: inline-block; width: 100%;">
-                                Nama: <strong>${signNamaP.toUpperCase()}</strong><br>
-                                No. Kad Pengenalan: <strong>${signKpP}</strong><br>${signJawatanP ? `Jawatan: <strong>${signJawatanP.toUpperCase()}</strong><br>` : ''}
-                                Tarikh: <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY}</strong>
+                                Nama: ${signNamaP ? `<strong>${signNamaP.toUpperCase()}</strong>` : '.................................................................'}<br>
+                                No. Kad Pengenalan: ${signKpP ? `<strong>${signKpP}</strong>` : '........................................'}<br>
+                                ${isMajikan ? `Jawatan: ${signJawatanP ? `<strong>${signJawatanP.toUpperCase()}</strong>` : '.................................................................'}<br>` : ''}
+                                Tarikh: <strong>${tarikhSebutanDD}${tarikhSebutanMMYYYY}</strong>
                             </div>
                         </div>
                         
@@ -9499,9 +9505,10 @@ function bukaPreviewMou(dataSimpanan = null) {
                             <div style="margin-bottom: 15px;">Tandatangan Defendan</div>
                             
                             <div style="text-align: left; line-height: 1.5; font-size: 10pt; display: inline-block; width: 100%;">
-                                Nama: <strong>${signNamaD.toUpperCase()}</strong><br>
-                                No. Kad Pengenalan: <strong>${signKpD}</strong><br>${signJawatanD ? `Jawatan: <strong>${signJawatanD.toUpperCase()}</strong><br>` : ''}
-                                Tarikh: <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY}</strong>
+                                Nama: ${signNamaD ? `<strong>${signNamaD.toUpperCase()}</strong>` : '.................................................................'}<br>
+                                No. Kad Pengenalan: ${signKpD ? `<strong>${signKpD}</strong>` : '........................................'}<br>
+                                ${!isMajikan ? `Jawatan: ${signJawatanD ? `<strong>${signJawatanD.toUpperCase()}</strong>` : '.................................................................'}<br>` : ''}
+                                Tarikh: <strong>${tarikhSebutanDD}${tarikhSebutanMMYYYY}</strong>
                             </div>
                         </div>
                         

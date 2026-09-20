@@ -9409,20 +9409,28 @@ function bukaPreviewMou(dataSimpanan = null) {
         else { tuntutanDibuang.push(item); }
     });
 
-    let htmlJadualTuntutanMOU = "";
+let htmlJadualTuntutanMOU = "";
     if (tuntutanDipilih.length === 0) {
         htmlJadualTuntutanMOU = `<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">Tiada tuntutan dipilih.</td></tr>`;
     } else {
+        // Logik Pintar: Semak adakah ini tuntutan pukal (lebih dari 1) atau tunggal
+        let isPukal = tuntutanDipilih.length > 1;
+
         tuntutanDipilih.forEach((item, index) => {
             let keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+            
+            // Gantikan jumlah asal kepada jumlah penyelesaian / MOU
+            let nilaiPapar = isPukal ? `<em style="color: #475569;">(Pukal)</em>` : `${jumRM}`;
+
             htmlJadualTuntutanMOU += `
             <tr>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">RM ${Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${nilaiPapar}</td>
             </tr>`;
         });
-        // Baris Jumlah Keseluruhan dengan Input User
+        
+        // Baris Jumlah Keseluruhan
         htmlJadualTuntutanMOU += `
         <tr>
             <td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH PERINTAH / PENYELESAIAN</td>

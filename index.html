@@ -567,6 +567,39 @@
     <div class="modal-overlay" id="modalBatalKes">
         ...
     </div>
+    <!-- MODAL POP-UP KHAS UNTUK MOU -->
+    <div class="modal-overlay" id="modalMou">
+        <div class="modal-box">
+            <div class="modal-title">Penetapan Persetujuan Bersama (MOU)</div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Tarikh Hadir / Persetujuan <span>*</span></label>
+                <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="width: 100%; box-sizing: border-box;">
+            </div>
+            
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Jumlah Dipersetujui (RM) <span>*</span></label>
+                <div class="input-wrapper" style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-weight: 600;">RM</span>
+                    <input type="text" id="mk_jumlah_mou" placeholder="Contoh: 1500.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="padding-left: 45px; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Kaedah Bayaran <span>*</span></label>
+                <select id="mk_kaedah_mou" onchange="semakButangMou()" style="width: 100%; box-sizing: border-box;">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="Penuh">Penuh</option>
+                    <option value="Ansuran">Ansuran</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('modalMou').style.display='none'">Batal</button>
+                <button id="btnTindakanMou" class="btn-save" onclick="tindakanMou()" disabled style="opacity: 0.5; cursor: not-allowed;">✔ Jana Dokumen</button>
+            </div>
+        </div>
+    </div>
 <!-- MODAL POP-UP KHAS UNTUK JANA NOTIS LAIN-LAIN -->
     <div class="modal-overlay" id="modalNotisLain">
         <div class="modal-box">
@@ -1006,7 +1039,7 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('sebutan_tangguh')">
                             <span>📅 Sebutan Kes<br>(Tangguh)</span>
                         </button>
-                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('mou')">
+                        <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaModalMou()">
                             <span>🤝 MOU</span>
                         </button>
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
@@ -1197,48 +1230,7 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div>
-<!-- BAHAGIAN BARU: PENETAPAN MOU (PERSETUJUAN BERSAMA) -->
-<div class="card full-width" id="kad_mou" style="display: none;">
-    <div class="card-header">Penetapan Persetujuan Bersama (MOU)</div>
-    <div class="card-body">
-        <div class="grid-memo" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Hadir / Persetujuan</label>
-                <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-            </div>
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Masa Hadir</label>
-                <input type="time" id="mk_masa_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-            </div>
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Tempat Hadir</label>
-                <input type="text" id="mk_tempat_mou" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" oninput="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-            </div>
-        </div>
-        <div class="grid-memo" style="grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: end;">
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Jumlah Dipersetujui (RM)</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-weight: 600;">RM</span>
-                    <input type="text" id="mk_jumlah_mou" placeholder="Contoh: 1500.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="margin:0; height: 42px; box-sizing: border-box; width: 100%; padding-left: 45px;">
-                </div>
-            </div>
-            <div>
-                <label class="info-label" style="display: block; margin-bottom: 4px;">Kaedah Bayaran</label>
-                <select id="mk_kaedah_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
-                    <option value="">-Sila Pilih-</option>
-                    <option value="Penuh">Penuh</option>
-                    <option value="Ansuran">Ansuran</option>
-                </select>
-            </div>
-            <div>
-                <button id="btnTindakanMou" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanMou()" disabled>
-                    📄 Jana Dokumen
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 <!-- BAHAGIAN 4.6: Sebutan Kes (Penetapan semula) -->
             <div class="card full-width" id="kad_sebutan_semula" style="display: none;">
     <div class="card-header">Penetapan Tarikh Sebutan Kes (Penetapan Semula)</div>
@@ -9205,6 +9197,17 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
 // =========================================================================
 // FUNGSI MENJANA DAN MEMAPARKAN MOU (PERSETUJUAN BERSAMA & NOTIS)
 // =========================================================================
+
+function bukaModalMou() {
+    // Kosongkan semula data lama setiap kali modal dibuka
+    document.getElementById('mk_tarikh_mou').value = '';
+    document.getElementById('mk_jumlah_mou').value = '';
+    document.getElementById('mk_kaedah_mou').value = '';
+    semakButangMou(); // Kemaskini status butang "Jana"
+    
+    document.getElementById('modalMou').style.display = 'flex';
+}
+
 function semakButangMou() {
     const t = document.getElementById('mk_tarikh_mou')?.value;
     const m = document.getElementById('mk_masa_mou')?.value;
@@ -9557,8 +9560,11 @@ function bukaPreviewMou(dataSimpanan = null) {
     document.getElementById('menuBatal').style.display = 'flex';
 
     // Sembunyikan suis tandatangan (tiada surat automatik tandatangan)
-    tunjukSuisTandatangan(false);
-
+    tunjukSuisTandatangan(false); // Surat perjanjian tidak perlukan cop rasmi auto
+    
+    // TAMBAH BARIS INI UNTUK TUTUP POP-UP SELEPAS JANA
+    document.getElementById('modalMou').style.display = 'none'; 
+    
     document.getElementById('modalPreview').style.display = 'flex';
 }
 </script>

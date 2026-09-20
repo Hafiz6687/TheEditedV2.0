@@ -9329,16 +9329,16 @@ function bukaPreviewMou(dataSimpanan = null) {
     let jawatanPengaduHTML = isMajikan ? `Jawatan: .................................................................<br>` : '';
     let jawatanDefendanHTML = !isMajikan ? `Jawatan: .................................................................<br>` : '';
 
-    // Logik Item 3 (Kaedah Bayaran)
+// Logik Item 3 (Kaedah Bayaran)
     let item3HTML = '';
     if (kaedahBayaran === 'Penuh') {
-        item3HTML = `3)<span class="jarak-tab"></span>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.`;
+        item3HTML = `<div style="display: flex; margin-bottom: 15px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.</div></div>`;
     } else {
-        item3HTML = `3)<span class="jarak-tab"></span>Bayaran secara ansuran hendaklah dibuat atas nama Pengadu secara bank draf sebagaimana Lampiran A.`;
+        item3HTML = `<div style="display: flex; margin-bottom: 15px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran secara ansuran hendaklah dibuat atas nama Pengadu secara bank draf sebagaimana Lampiran A.</div></div>`;
     }
 
     const tH = new Date();
-    const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
+    const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]}${tH.getFullYear()}`;
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
@@ -9357,7 +9357,10 @@ function bukaPreviewMou(dataSimpanan = null) {
                 body.print-only-defendan .kumpulan-mou, body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            #kertasMouDraf { padding: 1.5cm 2.5cm !important; }
+            
+            /* CSS BARU: PADDING DISELARASKAN TEPAT SAMA DENGAN MUKA 2 & 3 */
+            #kertasMouDraf { padding: 1.5cm 1.27cm !important; }
+            
             .notis-body-wrapper { padding: 0 1.23cm; }
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
@@ -9409,24 +9412,27 @@ function bukaPreviewMou(dataSimpanan = null) {
                         Dengan ini dipersetujui antara kedua-dua pihak yang menandatangani di bawah ini bahawa tuntutan dalam kes ini hendaklah diselesaikan dengan sepenuhnya.
                     </div>
 
-                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
-                        1)<span class="jarak-tab"></span>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr}) wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.
+                    <!-- STRUKTUR BARU MENGGUNAKAN FLEXBOX UNTUK KUNCI KEDUDUKAN (HANGING INDENT) -->
+                    <div style="display: flex; margin-bottom: 15px; text-align: justify;">
+                        <div style="width: 35px; flex-shrink: 0;">1)</div>
+                        <div>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr}) wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.</div>
                     </div>
                     
-                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
-                        2)<span class="jarak-tab"></span>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.
+                    <div style="display: flex; margin-bottom: 15px; text-align: justify;">
+                        <div style="width: 35px; flex-shrink: 0;">2)</div>
+                        <div>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.</div>
                     </div>
                     
-                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
-                        ${item3HTML}
+                    ${item3HTML}
+                    
+                    <div style="display: flex; margin-bottom: 15px; text-align: justify;">
+                        <div style="width: 35px; flex-shrink: 0;">4)</div>
+                        <div>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.</div>
                     </div>
                     
-                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
-                        4)<span class="jarak-tab"></span>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.
-                    </div>
-                    
-                    <div style="text-align: justify; margin-bottom: 30px; padding-left: 25px; text-indent: -25px;">
-                        5)<span class="jarak-tab"></span>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.
+                    <div style="display: flex; margin-bottom: 30px; text-align: justify;">
+                        <div style="width: 35px; flex-shrink: 0;">5)</div>
+                        <div>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.</div>
                     </div>
 
                     <div style="margin-bottom: 40px;">

@@ -567,7 +567,7 @@
     <div class="modal-overlay" id="modalBatalKes">
         ...
     </div>
-    <!-- MODAL POP-UP KHAS UNTUK MOU -->
+<!-- MODAL POP-UP KHAS UNTUK MOU -->
     <div class="modal-overlay" id="modalMou">
         <div class="modal-box">
             <div class="modal-title">Penetapan Persetujuan Bersama (MOU)</div>
@@ -577,6 +577,14 @@
                 <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="width: 100%; box-sizing: border-box;">
             </div>
             
+            <!-- BAHAGIAN BARU: SENARAI TUNTUTAN UNTUK DI SELESAIKAN -->
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Senarai Tuntutan Diselesaikan <span>*</span><br><span style="font-size: 0.8em; color: var(--text-muted); font-weight: normal;">(Tandakan tuntutan yang dipersetujui)</span></label>
+                <div id="mou_senarai_tuntutan" style="background: #f8fafc; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Checkboxes akan dijana di sini oleh JavaScript -->
+                </div>
+            </div>
+
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
                 <label style="text-align: left;">Jumlah Dipersetujui (RM) <span>*</span></label>
                 <div class="input-wrapper" style="position: relative;">
@@ -592,6 +600,15 @@
                     <option value="Penuh">Penuh</option>
                     <option value="Ansuran">Ansuran</option>
                 </select>
+            </div>
+            
+            <!-- BAHAGIAN BARU: JUMLAH DIBAYAR DI PEJABAT -->
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
+                <label style="text-align: left;">Jumlah Dibayar di Pejabat (RM)</label>
+                <div class="input-wrapper" style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-weight: 600;">RM</span>
+                    <input type="text" id="mk_dibayar_pejabat" placeholder="0.00" value="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="padding-left: 45px; width: 100%; box-sizing: border-box;">
+                </div>
             </div>
 
             <div class="modal-actions">
@@ -9200,8 +9217,50 @@ function bukaModalMou() {
     document.getElementById('mk_tarikh_mou').value = '';
     document.getElementById('mk_jumlah_mou').value = '';
     document.getElementById('mk_kaedah_mou').value = '';
-    semakButangMou(); // Kemaskini status butang "Jana"
+    document.getElementById('mk_dibayar_pejabat').value = '0.00';
     
+    // 1. Dapatkan Senarai Tuntutan Asal dari Memori Kes Semasa
+    const kes = memoriSenaraiKes[indexKesSemasa];
+    let isMajikan = false;
+    let isBerkumpulan = false;
+    if (kes && kes.dataBorang && kes.dataBorang.inputs) {
+        isMajikan = kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true";
+        isBerkumpulan = kes.dataBorang.inputs['aduan'] === 'Berkumpulan';
+    } else {
+        isMajikan = kes.jenisAduan === 'Majikan';
+        isBerkumpulan = kes.jenisAduan === 'Berkumpulan';
+    }
+    
+    const isAutoGroup = isBerkumpulan && !isMajikan;
+    let senaraiTuntutan = [];
+    
+    if (kes && kes.dataBorang) {
+        senaraiTuntutan = isAutoGroup ? (kes.dataBorang.tuntutanKetua || []) : (kes.dataBorang.tuntutanBiasa || []);
+    } else {
+        senaraiTuntutan = isAutoGroup ? memoriTuntutanKetua : memoriTuntutan;
+    }
+    
+    // 2. Render Checkboxes ke dalam pop-up
+    const containerTuntutan = document.getElementById('mou_senarai_tuntutan');
+    containerTuntutan.innerHTML = '';
+    
+    if (senaraiTuntutan.length === 0) {
+        containerTuntutan.innerHTML = '<span style="font-size: 0.85em; color: var(--danger); font-style: italic;">Tiada tuntutan direkodkan. Sila tambah maklumat tuntutan pada tab pendaftaran dahulu.</span>';
+    } else {
+        senaraiTuntutan.forEach((item, index) => {
+            const jumCantik = Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
+            let ketCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+            
+            containerTuntutan.innerHTML += `
+                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 0.9em; font-weight: 500; color: var(--text-main);">
+                    <input type="checkbox" name="mou_tuntutan_cb" value="${index}" checked onchange="semakButangMou()" style="margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer;">
+                    <span style="line-height: 1.3;"><strong>${item.jenis}</strong> ${ketCetak}<br><span style="color: var(--primary-blue); font-weight: bold;">(RM ${jumCantik})</span></span>
+                </label>
+            `;
+        });
+    }
+
+    semakButangMou(); // Kemaskini status butang "Jana"
     document.getElementById('modalMou').style.display = 'flex';
 }
 
@@ -9209,11 +9268,12 @@ function semakButangMou() {
     const t = document.getElementById('mk_tarikh_mou')?.value;
     const j = document.getElementById('mk_jumlah_mou')?.value;
     const k = document.getElementById('mk_kaedah_mou')?.value;
+    const checkboxes = document.querySelectorAll('input[name="mou_tuntutan_cb"]:checked');
     const btn = document.getElementById('btnTindakanMou');
     if (!btn) return;
 
-    // Sekarang sistem hanya semak Tarikh (t), Jumlah (j), dan Kaedah (k)
-    if (t && j && k) {
+    // Pastikan sekurang-kurangnya 1 tuntutan ditanda
+    if (t && j && k && checkboxes.length > 0) {
         btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     } else {
         btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
@@ -9322,6 +9382,60 @@ function bukaPreviewMou(dataSimpanan = null) {
     let jumPersetujuanFormatted = parseFloat((jumlahRaw||"0").replace(/,/g, '')) || 0;
     let jumRM = `RM ${jumPersetujuanFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
 
+    // ==========================================
+    // LOGIK PENAPISAN TUNTUTAN DARI CHECKBOX
+    // ==========================================
+    const isBerkumpulanMOU = (kes.dataBorang && kes.dataBorang.inputs && kes.dataBorang.inputs['aduan'] === 'Berkumpulan') || kes.jenisAduan === 'Berkumpulan';
+    const isAutoGroup = isBerkumpulanMOU && !isMajikan;
+    let senaraiTuntutanAsal = isAutoGroup ? (kes.dataBorang.tuntutanKetua || []) : (kes.dataBorang.tuntutanBiasa || []);
+    
+    let selectedIndexes = [];
+    const dibayarPejabatRaw = memoData.dibayarPejabat !== undefined ? memoData.dibayarPejabat : (document.getElementById('mk_dibayar_pejabat')?.value || "0.00");
+    let jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
+    let jumDibayarPejabatStr = jumDibayarPejabatNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
+
+    if (!dataSimpanan) {
+        const cbs = document.querySelectorAll('input[name="mou_tuntutan_cb"]:checked');
+        cbs.forEach(cb => selectedIndexes.push(parseInt(cb.value)));
+    } else {
+        selectedIndexes = memoData.selectedIndexes || senaraiTuntutanAsal.map((_, i) => i);
+    }
+
+    let tuntutanDipilih = [];
+    let tuntutanDibuang = [];
+
+    senaraiTuntutanAsal.forEach((item, idx) => {
+        if (selectedIndexes.includes(idx)) { tuntutanDipilih.push(item); } 
+        else { tuntutanDibuang.push(item); }
+    });
+
+    let htmlJadualTuntutanMOU = "";
+    if (tuntutanDipilih.length === 0) {
+        htmlJadualTuntutanMOU = `<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">Tiada tuntutan dipilih.</td></tr>`;
+    } else {
+        tuntutanDipilih.forEach((item, index) => {
+            let keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+            htmlJadualTuntutanMOU += `
+            <tr>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">RM ${Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>`;
+        });
+        // Baris Jumlah Keseluruhan dengan Input User
+        htmlJadualTuntutanMOU += `
+        <tr>
+            <td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH PERINTAH / PENYELESAIAN</td>
+            <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; background-color: #e2e8f0;">${jumRM}</td>
+        </tr>`;
+    }
+
+    // Teks Dibuang (Jika ada checkbox yang tak ditanda)
+    let teksTuntutanDibuang = "";
+    if (tuntutanDibuang.length > 0) {
+        let ayatDibuang = tuntutanDibuang.map(t => `<strong>${t.jenis}</strong> ${t.keterangan !== '(Keterangan Berbeza)' ? t.keterangan : ''} (RM ${Number(t.jumlah).toLocaleString('en-MY', {minimumFractionDigits:2})})`).join(', ');
+        teksTuntutanDibuang = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan diperintahkan bahawa tuntutan ${ayatDibuang} adalah dibuang.</div>`;
+    }
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
@@ -9404,7 +9518,7 @@ function bukaPreviewMou(dataSimpanan = null) {
 
     // MUKA SURAT 2: BORANG C (Perintah MOU)
     const htmlBorangC = `
-        <div class="kertas-notis" id="kertasBorangCMou" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
+<div class="kertas-notis" id="kertasBorangCMou" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
                 <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
                 <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 25px; line-height: 1.25;">
@@ -9429,12 +9543,14 @@ function bukaPreviewMou(dataSimpanan = null) {
                             <tr>
                                 <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
                                 <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; background-color: #e2e8f0;">Jenis & Keterangan Tuntutan</th>
-                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Jumlah Perintah (RM)</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 30%; background-color: #e2e8f0;">Jumlah Perintah (RM)</th>
                             </tr>
                         </thead>
-                        <tbody>${htmlJadualTuntutan}</tbody>
+                        <tbody>${htmlJadualTuntutanMOU}</tbody>
                     </table>
                 </div>
+
+                ${teksTuntutanDibuang}
 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>
                 
@@ -9452,7 +9568,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                 
                 <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
                 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak RM0.00 bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
                     <div></div> 
@@ -9658,7 +9774,7 @@ function bukaPreviewMou(dataSimpanan = null) {
     if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisLainDefendan')) document.getElementById('menuCetakNotisLainDefendan').style.display = 'none';
 
-    // FUNGSI PRINT KHUSUS (MOU SAHAJA / NOTIS SAHAJA)
+// FUNGSI PRINT KHUSUS (MOU SAHAJA / NOTIS SAHAJA)
     window.cetakDokumenMou = function(jenis) {
         document.getElementById('actionMenu').classList.remove('show');
         document.body.classList.add('print-only-' + jenis);
@@ -9671,9 +9787,11 @@ function bukaPreviewMou(dataSimpanan = null) {
         else if (jenis === 'pengadu') { tjk = 'Notis MOU (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
         else if (jenis === 'defendan') { tjk = 'Notis MOU (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
         
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran };
+        // INI BARIS YANG DITUKAR
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIndexes: selectedIndexes };
+        
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-        rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} dan Perintah telah dicetak. [DATA_MOU:${d64}]`);
+        rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
         
         setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
     };

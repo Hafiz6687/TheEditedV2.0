@@ -567,18 +567,21 @@
     <div class="modal-overlay" id="modalBatalKes">
         ...
     </div>
-    <!-- MODAL POP-UP KHAS UNTUK JANA NOTIS LAIN-LAIN -->
+<!-- MODAL POP-UP KHAS UNTUK JANA NOTIS LAIN-LAIN -->
     <div class="modal-overlay" id="modalNotisLain">
         <div class="modal-box">
             <div class="modal-title">Jana Notis (Lain-lain)</div>
             
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
-                <label style="text-align: left;">Penerima Notis <span>*</span></label>
-                <select id="nl_penerima" style="width: 100%; box-sizing: border-box;">
-                    <option value="Kedua-duanya">Pengadu & Defendan</option>
-                    <option value="Pengadu">Pengadu Sahaja</option>
-                    <option value="Defendan">Defendan Sahaja</option>
-                </select>
+                <label style="text-align: left;">Penerima Notis <span>*</span><br><span style="font-size: 0.8em; color: var(--text-muted); font-weight: normal;">(Boleh tanda lebih dari satu)</span></label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Pengadu" checked> Pengadu</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Defendan" checked> Defendan</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Peguam Pengadu"> Peguam (Pengadu)</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Peguam Defendan"> Peguam (Defendan)</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Wakil Kesatuan Pengadu"> Kesatuan (Pengadu)</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500;"><input type="checkbox" name="nl_penerima" value="Wakil Kesatuan Defendan"> Kesatuan (Defendan)</label>
+                </div>
             </div>
 
             <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px;">
@@ -8862,20 +8865,31 @@ function hapusPerwakilan(index, pihak) {
         renderSemuaJadualPerwakilan();
     }
 }
-       // =========================================================================
+// =========================================================================
 // FUNGSI NOTIS (LAIN-LAIN) FREE TEXT
 // =========================================================================
 function bukaModalNotisLain() {
-    document.getElementById('nl_penerima').value = 'Kedua-duanya';
+    // Reset Checkbox (Hanya Pengadu & Defendan di tanda pada mulanya)
+    const checkboxes = document.querySelectorAll('input[name="nl_penerima"]');
+    checkboxes.forEach(cb => { cb.checked = (cb.value === 'Pengadu' || cb.value === 'Defendan'); });
+    
     document.getElementById('nl_tajuk').value = '';
     document.getElementById('nl_isi').value = '';
     document.getElementById('modalNotisLain').style.display = 'flex';
 }
 
 function janaNotisLain() {
-    const penerima = document.getElementById('nl_penerima').value;
+    const checkboxes = document.querySelectorAll('input[name="nl_penerima"]:checked');
+    let senaraiPenerima = [];
+    checkboxes.forEach((cb) => { senaraiPenerima.push(cb.value); });
+
     const tajukRaw = document.getElementById('nl_tajuk').value.trim();
     const isiRaw = document.getElementById('nl_isi').value.trim();
+
+    if (senaraiPenerima.length === 0) {
+        alert("Sila tanda sekurang-kurangnya SATU pihak penerima notis.");
+        return;
+    }
 
     if (!tajukRaw || !isiRaw) {
         alert("Sila lengkapkan Perkara/Tajuk Notis dan Isi Kandungan.");
@@ -8883,14 +8897,14 @@ function janaNotisLain() {
     }
 
     document.getElementById('modalNotisLain').style.display = 'none';
-    bukaPreviewNotisLain(penerima, tajukRaw, isiRaw);
+    bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw);
 }
 
-function bukaPreviewNotisLain(penerima, tajukRaw, isiRaw) {
+function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
-    // Ekstrak maklumat alamat asas
+    // 1. Ekstrak maklumat asas
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
 
@@ -8916,98 +8930,84 @@ function bukaPreviewNotisLain(penerima, tajukRaw, isiRaw) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // Template Header & Footer (Standard)
+    // 2. Template Header & Footer
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
-    // Penyusunan Tajuk & Isi Custom
+    // 3. Penyusunan Tajuk & Isi Custom
     let htmlTajuk = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: ${tajukRaw}</div>`;
-    
     let htmlIsi = `<div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>`;
     htmlIsi += `<div class="notis-isi" style="white-space: pre-wrap; text-align: justify; line-height: 1.4;">${isiRaw}</div>`;
 
-    // Semak Peguam (Cetakan Berkembar)
-    let peguamPengaduHTML = '';
-    if (kes.senaraiPerwakilan) { const peguamP = kes.senaraiPerwakilan.find(p => p.kategori === 'Peguam'); if (peguamP) peguamPengaduHTML = `${peguamP.firma.toUpperCase()}<br>${peguamP.alamat.toUpperCase().replace(/,\s*/g, '<br>')}`; }
-    let peguamDefendanHTML = '';
-    if (kes.senaraiPerwakilanDefendan) { const peguamD = kes.senaraiPerwakilanDefendan.find(p => p.kategori === 'Peguam'); if (peguamD) peguamDefendanHTML = `${peguamD.firma.toUpperCase()}<br>${peguamD.alamat.toUpperCase().replace(/,\s*/g, '<br>')}`; }
+    // 4. PENJANAAN DINAMIK BERDASARKAN CHECKBOX
+    let htmlSuratGabungan = '';
+    
+    senaraiPenerima.forEach(penerima => {
+        let nPenerima = "";
+        let aPenerima = "";
+        let lTambahan = "";
 
-    // Bina Surat Pengadu
-    let suratPengaduLengkap = '';
-    if (penerima === 'Pengadu' || penerima === 'Kedua-duanya') {
-        suratPengaduLengkap += `
+        if (penerima === 'Pengadu') { 
+            nPenerima = namaP; aPenerima = alamatP; 
+        }
+        else if (penerima === 'Defendan') { 
+            nPenerima = namaD; aPenerima = alamatD; 
+        }
+        else if (penerima === 'Peguam Pengadu') {
+            let peg = kes.senaraiPerwakilan?.find(p => p.kategori === 'Peguam');
+            if (peg) { nPenerima = peg.firma.toUpperCase(); aPenerima = peg.alamat.toUpperCase().replace(/,\s*/g, '<br>'); }
+            else { nPenerima = "[NAMA FIRMA PEGUAM PENGADU]"; aPenerima = "[MAKLUMAT TIDAK DIREKODKAN]"; }
+            lTambahan = `<br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Pengadu)</span>`;
+        }
+        else if (penerima === 'Peguam Defendan') {
+            let peg = kes.senaraiPerwakilanDefendan?.find(p => p.kategori === 'Peguam');
+            if (peg) { nPenerima = peg.firma.toUpperCase(); aPenerima = peg.alamat.toUpperCase().replace(/,\s*/g, '<br>'); }
+            else { nPenerima = "[NAMA FIRMA PEGUAM DEFENDAN]"; aPenerima = "[MAKLUMAT TIDAK DIREKODKAN]"; }
+            lTambahan = `<br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Defendan)</span>`;
+        }
+        else if (penerima === 'Wakil Kesatuan Pengadu') {
+            let peg = kes.senaraiPerwakilan?.find(p => p.kategori === 'Wakil Kesatuan');
+            if (peg) { nPenerima = peg.firma.toUpperCase(); aPenerima = peg.alamat.toUpperCase().replace(/,\s*/g, '<br>'); }
+            else { nPenerima = "[NAMA KESATUAN PENGADU]"; aPenerima = "[MAKLUMAT TIDAK DIREKODKAN]"; }
+            lTambahan = `<br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Wakil Kesatuan bagi Pengadu)</span>`;
+        }
+        else if (penerima === 'Wakil Kesatuan Defendan') {
+            let peg = kes.senaraiPerwakilanDefendan?.find(p => p.kategori === 'Wakil Kesatuan');
+            if (peg) { nPenerima = peg.firma.toUpperCase(); aPenerima = peg.alamat.toUpperCase().replace(/,\s*/g, '<br>'); }
+            else { nPenerima = "[NAMA KESATUAN DEFENDAN]"; aPenerima = "[MAKLUMAT TIDAK DIREKODKAN]"; }
+            lTambahan = `<br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Wakil Kesatuan bagi Defendan)</span>`;
+        }
+
+        htmlSuratGabungan += `
             <div class="kertas-notis">
                 ${templateHeaderHTML}
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
                     <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-                    <div class="notis-alamat"><strong>${namaP}</strong><br>${alamatP}</div>
+                    <div class="notis-alamat"><strong style="text-transform: uppercase;">${nPenerima}</strong>${lTambahan}<br>${aPenerima}</div>
                     <div style="margin-bottom: 15px;">Tuan/Puan,</div>
                     ${htmlTajuk}
                     <hr class="notis-garis-tajuk">
                     ${htmlIsi}
                     ${templateFooterHTML}
                 </div>
-            </div>`;
-        if (peguamPengaduHTML !== '') {
-            suratPengaduLengkap += `
-                <div class="kertas-notis">
-                    ${templateHeaderHTML}
-                    <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                        <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-                        <div class="notis-alamat"><strong style="text-transform: uppercase;">${peguamPengaduHTML}</strong><br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Pengadu)</span></div>
-                        <div style="margin-bottom: 15px;">Tuan/Puan,</div>
-                        ${htmlTajuk}
-                        <hr class="notis-garis-tajuk">
-                        ${htmlIsi}
-                        ${templateFooterHTML}
-                    </div>
-                </div>`;
-        }
-    }
-
-    // Bina Surat Defendan
-    let suratDefendanLengkap = '';
-    if (penerima === 'Defendan' || penerima === 'Kedua-duanya') {
-        suratDefendanLengkap += `
-            <div class="kertas-notis">
-                ${templateHeaderHTML}
-                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                    <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-                    <div class="notis-alamat"><strong>${namaD}</strong><br>${alamatD}</div>
-                    <div style="margin-bottom: 15px;">Tuan/Puan,</div>
-                    ${htmlTajuk}
-                    <hr class="notis-garis-tajuk">
-                    ${htmlIsi}
-                    ${templateFooterHTML}
-                </div>
-            </div>`;
-        if (peguamDefendanHTML !== '') {
-            suratDefendanLengkap += `
-                <div class="kertas-notis">
-                    ${templateHeaderHTML}
-                    <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                        <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-                        <div class="notis-alamat"><strong style="text-transform: uppercase;">${peguamDefendanHTML}</strong><br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Defendan)</span></div>
-                        <div style="margin-bottom: 15px;">Tuan/Puan,</div>
-                        ${htmlTajuk}
-                        <hr class="notis-garis-tajuk">
-                        ${htmlIsi}
-                        ${templateFooterHTML}
-                    </div>
-                </div>`;
-        }
-    }
+            </div>
+        `;
+    });
 
     const htmlNotisLengkap = `
         <style>
-            @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } 
-            body.print-only-pengadu .kumpulan-defendan { display: none !important; }
-            body.print-only-defendan .kumpulan-pengadu { display: none !important; } }
+            @media print { 
+                @page { margin: 0; } 
+                body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+                body > *:not(#printArea) { display: none !important; } 
+                #printArea { display: block !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
+                .kertas-notis:last-child { page-break-after: auto; } 
+            }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
-        <div class="kumpulan-pengadu">${suratPengaduLengkap}</div>
-        <div class="kumpulan-defendan">${suratDefendanLengkap}</div>
+        ${htmlSuratGabungan}
     `;
 
     document.getElementById('previewContent').innerHTML = htmlNotisLengkap;
@@ -9020,46 +9020,30 @@ function bukaPreviewNotisLain(penerima, tajukRaw, isiRaw) {
     document.getElementById('menuDaftar').style.display = 'none'; 
     document.getElementById('menuSelesai').style.display = 'none';
     if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none';
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
 
-    // FUNGSI CETAK KHAS UNTUK NOTIS LAIN
-    window.cetakNotisLainCustom = function(jenis) {
+    // FUNGSI CETAK KHAS UNTUK SEMUA PIHAK YANG DIPILIH
+    window.cetakSemuaNotisLain = function() {
         document.getElementById('actionMenu').classList.remove('show');
-        document.body.classList.add('print-only-' + jenis);
         window.print();
-        document.body.classList.remove('print-only-' + jenis);
 
-        let tjk = document.getElementById('nl_tajuk').value.trim() || 'Notis Tambahan';
-        if (jenis === 'pengadu') {
-            rekodSejarahTindakan(indexKesSemasa, "Notis Custom (Pengadu)", `Dokumen bertajuk '${tjk}' telah dicetak.`);
-            document.getElementById('menuCetakNotisLainPengadu').innerHTML = '✅ Cetak Notis Pengadu';
-            document.getElementById('menuCetakNotisLainPengadu').style.color = '#10b981';
-        } else {
-            rekodSejarahTindakan(indexKesSemasa, "Notis Custom (Defendan)", `Dokumen bertajuk '${tjk}' telah dicetak.`);
-            document.getElementById('menuCetakNotisLainDefendan').innerHTML = '✅ Cetak Notis Defendan';
-            document.getElementById('menuCetakNotisLainDefendan').style.color = '#10b981';
-        }
+        rekodSejarahTindakan(indexKesSemasa, "Notis Custom (Pelbagai)", `Dokumen bertajuk '${tajukRaw}' telah dicetak untuk pihak: ${senaraiPenerima.join(', ')}.`);
         
         setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
     };
 
-    // Urus Butang Berdasarkan Pilihan Penerima
-    let btnP = document.getElementById('menuCetakNotisLainPengadu');
-    if (!btnP) { btnP = document.createElement('a'); btnP.id = 'menuCetakNotisLainPengadu'; btnP.href = '#'; actionMenu.insertBefore(btnP, document.getElementById('menuBatal')); }
-    if (penerima === 'Pengadu' || penerima === 'Kedua-duanya') {
-        btnP.style.display = 'flex'; btnP.style.color = 'var(--text-main)'; btnP.innerHTML = '🖨️ Cetak Notis Pengadu';
-        btnP.onclick = function(e) { e.preventDefault(); window.cetakNotisLainCustom('pengadu'); };
-    } else { btnP.style.display = 'none'; }
+    let btnPrintAll = document.getElementById('menuCetakNotisLainPengadu'); // Pinjam ID lama supaya tak serabut DOM
+    if (!btnPrintAll) { btnPrintAll = document.createElement('a'); btnPrintAll.id = 'menuCetakNotisLainPengadu'; btnPrintAll.href = '#'; actionMenu.insertBefore(btnPrintAll, document.getElementById('menuBatal')); }
+    
+    btnPrintAll.style.display = 'flex'; 
+    btnPrintAll.style.color = 'var(--text-main)'; 
+    btnPrintAll.innerHTML = '🖨️ Cetak Dokumen';
+    btnPrintAll.onclick = function(e) { e.preventDefault(); window.cetakSemuaNotisLain(); };
 
+    // Sembunyikan butang defendan (kita hanya perlukan 1 butang Print All)
     let btnD = document.getElementById('menuCetakNotisLainDefendan');
-    if (!btnD) { btnD = document.createElement('a'); btnD.id = 'menuCetakNotisLainDefendan'; btnD.href = '#'; actionMenu.insertBefore(btnD, document.getElementById('menuBatal')); }
-    if (penerima === 'Defendan' || penerima === 'Kedua-duanya') {
-        btnD.style.display = 'flex'; btnD.style.color = 'var(--text-main)'; btnD.innerHTML = '🖨️ Cetak Notis Defendan';
-        btnD.onclick = function(e) { e.preventDefault(); window.cetakNotisLainCustom('defendan'); };
-    } else { btnD.style.display = 'none'; }
-
-    // HIDE Butang Notis Generik Lama (jika wujud) supaya tak serabut
-    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+    if (btnD) btnD.style.display = 'none';
 
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';

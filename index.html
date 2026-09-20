@@ -3241,6 +3241,40 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas akan disambung kepada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
             <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut dan adalah diingatkan bahawa kes ini akan dibicarakan dengan ketidakhadiran tuan jika tuan tidak hadir pada tarikh dan masa yang ditetapkan.</div>
         `;
+        } else if (kunci === 'keputusan') {
+        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS KEPUTUSAN KES</div>`;
+        tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS KEPUTUSAN KES</div>`;
+        
+        // Pengekstrakan maklumat Pejabat dari Sidebar (Nama Pejabat, Bandar, Negeri)
+        let ptkNamaPenuh = "PEJABAT TENAGA KERJA KLUANG";
+        let ptkBandar = "KLUANG";
+        let ptkNegeri = "JOHOR DARUL TAKZIM";
+        const statsDiv = document.querySelector('.stats div[contenteditable="true"]');
+        if (statsDiv) {
+            const lines = statsDiv.innerText.split('\n').map(l => l.trim()).filter(l => l !== '');
+            if (lines.length > 0) ptkNamaPenuh = lines[0]; 
+            const poskodLineIndex = lines.findIndex(l => /^\d{5}/.test(l));
+            if (poskodLineIndex !== -1) {
+                ptkBandar = lines[poskodLineIndex].replace(/^\d{5}\s*/, '').trim();
+                if (lines[poskodLineIndex + 1] && !lines[poskodLineIndex + 1].includes('Telefon')) {
+                    ptkNegeri = lines[poskodLineIndex + 1].trim();
+                }
+            }
+        }
+        
+        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
+        const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
+        const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+
+        isiPengadu = `
+            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa adalah dimaklumkan bahawa keputusan kes ini akan dibacakan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
+            <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut. Mohon tuan menepati masa yang telah ditetapkan dan kelewatan tuan akan mengganggu perjalanan kes lain.</div>
+        `;
+
+        isiDefendan = `
+            <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa adalah dimaklumkan bahawa keputusan kes ini akan dibacakan pada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
+            <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut. Mohon tuan menepati masa yang telah ditetapkan dan kelewatan tuan akan mengganggu perjalanan kes lain.</div>
+        `;
     } else {
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS ${c.tajukSurat}</div>`;

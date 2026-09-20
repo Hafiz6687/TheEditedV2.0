@@ -1197,33 +1197,43 @@ Portal rasmi : jtksm.mohr.gov.my
         </div>
     </div>
 </div>
-            <!-- BAHAGIAN BARU: PENETAPAN MOU -->
+<!-- BAHAGIAN BARU: PENETAPAN MOU (PERSETUJUAN BERSAMA) -->
 <div class="card full-width" id="kad_mou" style="display: none;">
-    <div class="card-header">Penetapan Tarikh MOU</div>
+    <div class="card-header">Penetapan Persetujuan Bersama (MOU)</div>
     <div class="card-body">
-        <div class="sebutan-grid-labels">
-            <div class="info-label" style="margin:0;">Tarikh Hadir</div>
-            <div class="info-label" style="margin:0;">Masa Hadir</div>
-            <div class="info-label" style="margin:0;">Tempat Hadir</div>
-            <div></div> 
+        <div class="grid-memo" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Tarikh Hadir / Persetujuan</label>
+                <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            </div>
+            <div>
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Masa Hadir</label>
+                <input type="time" id="mk_masa_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            </div>
+            <div>
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Tempat Hadir</label>
+                <input type="text" id="mk_tempat_mou" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" oninput="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+            </div>
         </div>
-        
-        <div class="sebutan-grid-inputs">
+        <div class="grid-memo" style="grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: end;">
             <div>
-                <label class="mobile-label">Tarikh Hadir</label>
-                <input type="date" id="mk_tarikh_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box;">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Jumlah Dipersetujui (RM)</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 12px; color: var(--text-muted); font-weight: 600;">RM</span>
+                    <input type="text" id="mk_jumlah_mou" placeholder="Contoh: 1500.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="margin:0; height: 42px; box-sizing: border-box; width: 100%; padding-left: 45px;">
+                </div>
             </div>
             <div>
-                <label class="mobile-label">Masa Hadir</label>
-                <input type="time" id="mk_masa_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box;">
-            </div>
-            <div>
-                <label class="mobile-label">Tempat Hadir</label>
-                <input type="text" id="mk_tempat_mou" value="Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+                <label class="info-label" style="display: block; margin-bottom: 4px;">Kaedah Bayaran</label>
+                <select id="mk_kaedah_mou" onchange="semakButangMou()" style="margin:0; height: 42px; box-sizing: border-box; width: 100%;">
+                    <option value="">-Sila Pilih-</option>
+                    <option value="Penuh">Penuh</option>
+                    <option value="Ansuran">Ansuran</option>
+                </select>
             </div>
             <div>
                 <button id="btnTindakanMou" class="btn-save" style="width: 100%; height: 42px; padding: 0 10px; font-size: 0.9em; display: flex; align-items: center; justify-content: center; gap: 8px; margin:0; opacity: 0.5; cursor: not-allowed; box-sizing: border-box;" onclick="tindakanMou()" disabled>
-                    📄 Jana MOU
+                    📄 Jana Dokumen
                 </button>
             </div>
         </div>
@@ -2511,6 +2521,9 @@ let htmlDefendan = '';
     // Reset MOU
     if (document.getElementById('mk_tarikh_mou')) document.getElementById('mk_tarikh_mou').value = '';
     if (document.getElementById('mk_masa_mou')) document.getElementById('mk_masa_mou').value = '';
+    if (document.getElementById('mk_tempat_mou')) document.getElementById('mk_tempat_mou').value = 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim';
+    if (document.getElementById('mk_jumlah_mou')) document.getElementById('mk_jumlah_mou').value = '';
+    if (document.getElementById('mk_kaedah_mou')) document.getElementById('mk_kaedah_mou').value = '';
     if (typeof semakButangMou === 'function') semakButangMou();
     if (document.getElementById('kad_mou')) document.getElementById('kad_mou').style.display = 'none';
     
@@ -9189,16 +9202,19 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
-       // =========================================================================
-// FUNGSI MENJANA DAN MEMAPARKAN MOU
+// =========================================================================
+// FUNGSI MENJANA DAN MEMAPARKAN MOU (PERSETUJUAN BERSAMA & NOTIS)
 // =========================================================================
 function semakButangMou() {
-    const elTarikh = document.getElementById('mk_tarikh_mou');
-    const elMasa = document.getElementById('mk_masa_mou');
+    const t = document.getElementById('mk_tarikh_mou')?.value;
+    const m = document.getElementById('mk_masa_mou')?.value;
+    const tp = document.getElementById('mk_tempat_mou')?.value;
+    const j = document.getElementById('mk_jumlah_mou')?.value;
+    const k = document.getElementById('mk_kaedah_mou')?.value;
     const btn = document.getElementById('btnTindakanMou');
-    if (!elTarikh || !elMasa || !btn) return;
+    if (!btn) return;
 
-    if (elTarikh.value && elMasa.value) {
+    if (t && m && tp && j && k) {
         btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
     } else {
         btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
@@ -9206,12 +9222,10 @@ function semakButangMou() {
 }
 
 function tindakanMou() {
-    const elTarikh = document.getElementById('mk_tarikh_mou');
-    const elMasa = document.getElementById('mk_masa_mou');
-    if (elTarikh && elMasa && elTarikh.value && elMasa.value) {
+    if (!document.getElementById('btnTindakanMou').disabled) {
         bukaPreviewMou();
     } else {
-        alert("Sila lengkapkan Tarikh Hadir dan Masa Hadir terlebih dahulu.");
+        alert("Sila lengkapkan semua maklumat Persetujuan Bersama terlebih dahulu.");
     }
 }
 
@@ -9221,17 +9235,17 @@ function bukaPreviewMou(dataSimpanan = null) {
 
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
 
-    // Buka bungkusan data dari sejarah (jika ada)
     let memoData = {};
     if (dataSimpanan && dataSimpanan !== 'null') {
         try { memoData = JSON.parse(decodeURIComponent(escape(atob(dataSimpanan)))); } catch(e){}
     }
 
     let noKes = kes.noKes.split('<br>')[0].trim();
-    let namaP = "", namaD = "", alamatD = "", alamatP = "";
-    let d_idStr = "(No. Pendaftaran/KP: ....................)";
+    let namaP = "", alamatP = "", namaD = "", alamatD = "";
+    let p_idStr = "", d_idStr = "";
     let isMajikan = false;
 
+    // Ekstrak Nama, Alamat dan ID
     if (kes.dataBorang && kes.dataBorang.inputs) {
         const inputs = kes.dataBorang.inputs;
         isMajikan = inputs['majikan'] === true || inputs['majikan'] === "true";
@@ -9243,32 +9257,51 @@ function bukaPreviewMou(dataSimpanan = null) {
             namaP = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA SYARIKAT]';
             alamatP = arrDef.join('<br>').toUpperCase() || '[ALAMAT PENGADU]';
             namaD = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PEKERJA]';
-            alamatD = arrPeng.join(', ').toUpperCase() || '[ALAMAT DEFENDAN]';
+            alamatD = arrPeng.join('<br>').toUpperCase() || '[ALAMAT DEFENDAN]';
+            let idDef = inputs['noPendDefendan'] || '....................';
+            p_idStr = `No. Pendaftaran: ${idDef}`;
+            let idPek = inputs['noPendPengadu'] || '....................';
+            d_idStr = `No. Kad Pengenalan: ${idPek}`;
         } else {
             namaP = inputs['namaPengadu'] ? inputs['namaPengadu'].toUpperCase() : '[NAMA PENGADU]';
             alamatP = arrPeng.join('<br>').toUpperCase() || '[ALAMAT PENGADU]';
             namaD = inputs['namaDefendan'] ? inputs['namaDefendan'].toUpperCase() : '[NAMA DEFENDAN]';
-            alamatD = arrDef.join(', ').toUpperCase() || '[ALAMAT DEFENDAN]';
+            alamatD = arrDef.join('<br>').toUpperCase() || '[ALAMAT DEFENDAN]';
+            let idPek = inputs['noPendPengadu'] || '....................';
+            p_idStr = `No. Kad Pengenalan: ${idPek}`;
+            let idDef = inputs['noPendDefendan'] || '....................';
+            let jenisDaftarDef = inputs['jenisDaftarDefendan'] || '';
+            let labelDef = jenisDaftarDef === 'MyKad' ? 'No. Kad Pengenalan' : 'No. Pendaftaran';
+            d_idStr = `${labelDef}: ${idDef}`;
         }
     } else {
         namaP = kes.namaPengadu.replace(/<br>.*$/g, '').toUpperCase();
         namaD = kes.namaDefendan.replace(/<br>.*$/g, '').toUpperCase();
-        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
         alamatP = "[ALAMAT PENGADU TIDAK LENGKAP]";
+        alamatD = "[ALAMAT DEFENDAN TIDAK LENGKAP]";
     }
 
-    // TARIK TARIKH & MASA MOU BAHARU
+    // Ekstrak Input Pengguna
     const tarikhRaw = memoData.tarikh !== undefined ? memoData.tarikh : document.getElementById('mk_tarikh_mou')?.value;
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_mou')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_mou')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
-    
+    const jumlahRaw = memoData.jumlah !== undefined ? memoData.jumlah : document.getElementById('mk_jumlah_mou')?.value;
+    const kaedahBayaran = memoData.kaedah !== undefined ? memoData.kaedah : document.getElementById('mk_kaedah_mou')?.value;
+
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
+    let tarikhMOU14_Str = "........................";
+    
     if (tarikhRaw && tarikhRaw !== "") {
         let t = new Date(tarikhRaw);
         if (!isNaN(t.getTime())) {
             tarikhSebutanDD = t.getDate();
             tarikhSebutanMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+            
+            // Kira +14 Hari
+            let t14 = new Date(t);
+            t14.setDate(t14.getDate() + 14);
+            tarikhMOU14_Str = `${t14.getDate()} ${bulanMY[t14.getMonth()]} ${t14.getFullYear()}`;
         }
     }
 
@@ -9282,18 +9315,33 @@ function bukaPreviewMou(dataSimpanan = null) {
             masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
         }
     }
+    
+    const tarikhMasaLengkap = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
 
-    const tH = new Date();
-    const tarikhSamanDD = tH.getDate();
-    const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
+    // Format Jumlah
+    let jumPersetujuanFormatted = parseFloat((jumlahRaw||"0").replace(/,/g, '')) || 0;
+    let jumRM = `RM ${jumPersetujuanFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
+
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
+    // Logik Jawatan Kad (Persetujuan Bersama)
+    let jawatanPengaduHTML = isMajikan ? `Jawatan: .................................................................<br>` : '';
+    let jawatanDefendanHTML = !isMajikan ? `Jawatan: .................................................................<br>` : '';
+
+    // Logik Item 3 (Kaedah Bayaran)
+    let item3HTML = '';
+    if (kaedahBayaran === 'Penuh') {
+        item3HTML = `3)<span class="jarak-tab"></span>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.`;
+    } else {
+        item3HTML = `3)<span class="jarak-tab"></span>Bayaran secara ansuran hendaklah dibuat atas nama Pengadu secara bank draf sebagaimana Lampiran A.`;
+    }
+
+    const tH = new Date();
+    const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
-    
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
-    // STRUKTUR HTML MOU YANG AKAN DIEDIT KEMUDIAN
     const htmlMou = `
         <style>
             @media print {
@@ -9303,12 +9351,14 @@ function bukaPreviewMou(dataSimpanan = null) {
                 #printArea { display: block !important; }
                 .kertas-notis { margin: 0 !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; }
                 .kertas-notis:last-child { page-break-after: auto; }
+                
+                body.print-only-mou .kumpulan-pengadu, body.print-only-mou .kumpulan-defendan { display: none !important; }
+                body.print-only-pengadu .kumpulan-mou, body.print-only-pengadu .kumpulan-defendan { display: none !important; }
+                body.print-only-defendan .kumpulan-mou, body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
-            .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
+            .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             #kertasMouDraf { padding: 1.5cm 2.5cm !important; }
-            #kertasMouDraf .notis-body-wrapper { padding: 0 !important; }
-            #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
-            #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
+            .notis-body-wrapper { padding: 0 1.23cm; }
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; }
             .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; }
@@ -9328,66 +9378,126 @@ function bukaPreviewMou(dataSimpanan = null) {
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
-        <!-- MUKA 1: KANDUNGAN MOU (YANG AKAN DIEDIT KEMUDIAN) -->
-        <div class="kertas-notis" id="kertasMouDraf">
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
-                <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 25px; line-height: 1.25; margin-top: 40px; text-decoration: underline;">
-                    MEMORANDUM PERSEFAHAMAN (MOU)
-                </div>
+        <!-- MUKA 1: PERSETUJUAN BERSAMA -->
+        <div class="kumpulan-mou">
+            <div class="kertas-notis" id="kertasMouDraf">
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5;">
+                    
+                    <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                        <img src="jata-negara.png" alt="Jata Negara" style="width: 100px; height: auto;">
+                    </div>
+                    
+                    <div style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 20px;">
+                        PERSETUJUAN BERSAMA
+                    </div>
+                    
+                    <div style="text-align: center; font-weight: bold; margin-bottom: 20px; text-transform: uppercase;">
+                        KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 10px;">Antara</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 10px;">Dan</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                        <div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div>
+                    </div>
 
-                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes No. ${noKes}</div>
-                <div style="text-align: center; margin-bottom: 10px;">Antara</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
-                <div style="text-align: center; margin-bottom: 10px;">Dan</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
+                    <div style="text-align: justify; margin-bottom: 20px;">
+                        Dengan ini dipersetujui antara kedua-dua pihak yang menandatangani di bawah ini bahawa tuntutan dalam kes ini hendaklah diselesaikan dengan sepenuhnya.
+                    </div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">
-                    [RUANG INI AKAN DIEDIT KEMUDIAN UNTUK ISI KANDUNGAN MOU] Kehadiran di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong>.
-                </div>
+                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                        1)<span class="jarak-tab"></span>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr}) wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.
+                    </div>
+                    
+                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                        2)<span class="jarak-tab"></span>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.
+                    </div>
+                    
+                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                        ${item3HTML}
+                    </div>
+                    
+                    <div style="text-align: justify; margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                        4)<span class="jarak-tab"></span>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.
+                    </div>
+                    
+                    <div style="text-align: justify; margin-bottom: 30px; padding-left: 25px; text-indent: -25px;">
+                        5)<span class="jarak-tab"></span>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.
+                    </div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25; margin-top: 60px;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    <div style="margin-bottom: 40px;">
+                        Bertarikh : <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong>
+                    </div>
+
+                    <div style="margin-bottom: 50px;">
+                        Di hadapan,
+                    </div>
+                    <div style="font-weight: bold; text-transform: uppercase;">
+                        ${namaPegawai}
+                    </div>
+
+                    <!-- Kad Tandatangan -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
+                        <div style="border: 1px solid #000; padding: 20px; border-radius: 8px;">
+                            <div style="font-weight: bold; margin-bottom: 40px; text-decoration: underline;">Tandatangan Pengadu</div>
+                            <div style="line-height: 2; font-size: 10pt;">
+                                Nama: .................................................................<br>
+                                No. Kad Pengenalan: ........................................<br>
+                                ${jawatanPengaduHTML}
+                                Tarikh: .................................................................
+                            </div>
+                        </div>
+                        <div style="border: 1px solid #000; padding: 20px; border-radius: 8px;">
+                            <div style="font-weight: bold; margin-bottom: 40px; text-decoration: underline;">Tandatangan Defendan</div>
+                            <div style="line-height: 2; font-size: 10pt;">
+                                Nama: .................................................................<br>
+                                No. Kad Pengenalan: ........................................<br>
+                                ${jawatanDefendanHTML}
+                                Tarikh: .................................................................
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- MUKA 2: NOTIS MAKLUMAN -->
-        <div class="kertas-notis" id="kertasNotisSamanPengadu">
-            ${templateHeaderHTML}
-
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                <div class="notis-rujukan">
-                    Rujukan Kami : ${noKes}<br>
-                    Tarikh : ${tarikhSamanDD} ${tarikhSamanMMYYYY}
+        <!-- MUKA 2: NOTIS MAKLUMAN PENGADU -->
+        <div class="kumpulan-pengadu">
+            <div class="kertas-notis" style="padding: 1.5cm 1.27cm !important;">
+                ${templateHeaderHTML}
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                    <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
+                    <div class="notis-alamat"><strong>${namaP}</strong><br>${alamatP || '[ALAMAT PENGADU]'}</div>
+                    <div style="margin-bottom: 15px;">Tuan/Puan,</div>
+                    <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS MEMORANDUM PERSEFAHAMAN (MOU)</div>
+                    <hr class="notis-garis-tajuk">
+                    <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+                    <div class="notis-isi">2.<span class="jarak-tab"></span>Adalah dimaklumkan bahawa satu Memorandum Persefahaman (MOU) / Persetujuan Bersama akan dimeterai pada <strong>${tarikhMasaLengkap}</strong> bertempat di <strong>${tempatSamanRaw}</strong>.</div>
+                    <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan/Puan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian bahawa kes boleh dibatalkan sekiranya pengadu gagal hadir.</div>
+                    ${templateFooterHTML}
                 </div>
+            </div>
+        </div>
 
-                <div class="notis-alamat">
-                    <strong>${namaP}</strong><br>
-                    ${alamatP || '[ALAMAT PENGADU]'}
+        <!-- MUKA 3: NOTIS MAKLUMAN DEFENDAN -->
+        <div class="kumpulan-defendan">
+            <div class="kertas-notis" style="padding: 1.5cm 1.27cm !important;">
+                ${templateHeaderHTML}
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                    <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
+                    <div class="notis-alamat"><strong>${namaD}</strong><br>${alamatD || '[ALAMAT DEFENDAN]'}</div>
+                    <div style="margin-bottom: 15px;">Tuan/Puan,</div>
+                    <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS MEMORANDUM PERSEFAHAMAN (MOU)</div>
+                    <hr class="notis-garis-tajuk">
+                    <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+                    <div class="notis-isi">2.<span class="jarak-tab"></span>Adalah dimaklumkan bahawa satu Memorandum Persefahaman (MOU) / Persetujuan Bersama akan dimeterai pada <strong>${tarikhMasaLengkap}</strong> bertempat di <strong>${tempatSamanRaw}</strong>.</div>
+                    <div class="notis-isi">3.<span class="jarak-tab"></span>Tuan/Puan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian bahawa tindakan penguatkuasaan atau perbicaraan boleh diteruskan sekiranya defendan gagal hadir.</div>
+                    ${templateFooterHTML}
                 </div>
-
-                <div style="margin-bottom: 15px;">Tuan,</div>
-
-                <div class="notis-tajuk">
-                    KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>
-                    ANTARA PENGADU : ${namaP}<br>
-                    TERHADAP DEFENDAN : ${namaD}<br>
-                    PERKARA: NOTIS MOU
-                </div>
-                <hr class="notis-garis-tajuk">
-
-                <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-
-                <div class="notis-isi">
-                    2.<span class="jarak-tab"></span>Adalah dimaklumkan, satu Memorandum Persefahaman akan dimeterai pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong>.
-                </div>
-
-                ${templateFooterHTML}
             </div>
         </div>
     `;
@@ -9395,39 +9505,60 @@ function bukaPreviewMou(dataSimpanan = null) {
     document.getElementById('previewContent').innerHTML = htmlMou;
     document.getElementById('printArea').innerHTML = htmlMou;
 
+    // Bersihkan Menu Action Dropdown
+    let actionMenu = document.getElementById('actionMenu');
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
     document.getElementById('menuSelesai').style.display = 'none';
-    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+    if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none';
+    if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisLainDefendan')) document.getElementById('menuCetakNotisLainDefendan').style.display = 'none';
 
-    let menuCetakG1 = document.getElementById('menuCetakG1');
-    menuCetakG1.style.display = 'flex';
-    menuCetakG1.innerHTML = '🖨️ Cetak MOU';
-    
+    // FUNGSI PRINT KHUSUS (MOU SAHAJA / NOTIS SAHAJA)
+    window.cetakDokumenMou = function(jenis) {
+        document.getElementById('actionMenu').classList.remove('show');
+        document.body.classList.add('print-only-' + jenis);
+        window.print();
+        document.body.classList.remove('print-only-' + jenis);
+
+        // Rekod Sejarah
+        let tjk = '';
+        if (jenis === 'mou') { tjk = 'Persetujuan Bersama'; document.getElementById('menuCetakMouMain').innerHTML = '✅ Cetak Persetujuan Bersama'; document.getElementById('menuCetakMouMain').style.color = '#10b981'; }
+        else if (jenis === 'pengadu') { tjk = 'Notis MOU (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
+        else if (jenis === 'defendan') { tjk = 'Notis MOU (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
+        
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran };
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+        rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
+        
+        setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
+    };
+
+    // CIPTA BUTANG: Cetak Persetujuan Bersama
+    let btnMouMain = document.getElementById('menuCetakMouMain');
+    if (!btnMouMain) { btnMouMain = document.createElement('a'); btnMouMain.id = 'menuCetakMouMain'; btnMouMain.href = '#'; actionMenu.insertBefore(btnMouMain, document.getElementById('menuBatal')); }
+    btnMouMain.style.display = 'flex'; btnMouMain.style.color = 'var(--text-main)'; btnMouMain.innerHTML = '🖨️ Cetak Persetujuan Bersama';
+    btnMouMain.onclick = function(e) { e.preventDefault(); window.cetakDokumenMou('mou'); };
+
+    // CIPTA BUTANG: Cetak Notis Pengadu
+    let btnMouPengadu = document.getElementById('menuCetakMouPengadu');
+    if (!btnMouPengadu) { btnMouPengadu = document.createElement('a'); btnMouPengadu.id = 'menuCetakMouPengadu'; btnMouPengadu.href = '#'; actionMenu.insertBefore(btnMouPengadu, document.getElementById('menuBatal')); }
+    btnMouPengadu.style.display = 'flex'; btnMouPengadu.style.color = 'var(--text-main)'; btnMouPengadu.innerHTML = '🖨️ Cetak Notis Pengadu';
+    btnMouPengadu.onclick = function(e) { e.preventDefault(); window.cetakDokumenMou('pengadu'); };
+
+    // CIPTA BUTANG: Cetak Notis Defendan
+    let btnMouDefendan = document.getElementById('menuCetakMouDefendan');
+    if (!btnMouDefendan) { btnMouDefendan = document.createElement('a'); btnMouDefendan.id = 'menuCetakMouDefendan'; btnMouDefendan.href = '#'; actionMenu.insertBefore(btnMouDefendan, document.getElementById('menuBatal')); }
+    btnMouDefendan.style.display = 'flex'; btnMouDefendan.style.color = 'var(--text-main)'; btnMouDefendan.innerHTML = '🖨️ Cetak Notis Defendan';
+    btnMouDefendan.onclick = function(e) { e.preventDefault(); window.cetakDokumenMou('defendan'); };
+
     document.getElementById('menuKemaskini').style.display = 'flex';
     document.getElementById('menuBatal').style.display = 'flex';
 
-    menuCetakG1.onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('actionMenu').classList.remove('show');
-        window.print();
-        
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
-        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-        rekodSejarahTindakan(indexKesSemasa, "MOU", `Dokumen MOU telah dijana dan dicetak. [DATA_MOU:${d64}]`);
-        
-        setTimeout(() => {
-            document.getElementById('modalPreview').style.display = 'none';
-            tukarView('senarai');
-        }, 500);
-    };
+    // Sembunyikan suis tandatangan (tiada surat automatik tandatangan)
+    tunjukSuisTandatangan(false);
 
-    const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
-    if (radON) radON.checked = true;
-
-    tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
 </script>

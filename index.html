@@ -432,6 +432,11 @@
         .anim-slide-in {
             animation: slideInShort 0.3s ease-out forwards;
         }
+        
+        .sortable-th { cursor: pointer; user-select: none; transition: background 0.2s; position: relative; padding-right: 25px !important; }
+        .sortable-th:hover { background-color: #cbd5e1 !important; }
+        .sort-icon { position: absolute; right: 8px; font-size: 0.85em; color: #94a3b8; top: 50%; transform: translateY(-50%); }
+        
         /* KELAS KHUSUS UNTUK CETAKAN ASING (Custom Print Media Queries) */
         @media print {
             .kertas-a4 { margin: 0; padding: 0; box-shadow: none; width: 100%; min-height: auto; page-break-after: always; }
@@ -901,10 +906,10 @@ Portal rasmi : jtksm.mohr.gov.my
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 15%;">No. Kes</th>
-                                <th style="width: 25%;">Pengadu</th>
-                                <th style="width: 25%;">Defendan</th>
-                                <th style="width: 15%;">Tarikh Daftar</th>
+                                <th class="sortable-th" style="width: 15%;" onclick="sortSenaraiTugas('noKes')" title="Klik untuk susun">No. Kes <span id="sort_noKes" class="sort-icon">↕️</span></th>
+                                <th class="sortable-th" style="width: 25%;" onclick="sortSenaraiTugas('pengadu')" title="Klik untuk susun">Pengadu <span id="sort_pengadu" class="sort-icon">↕️</span></th>
+                                <th class="sortable-th" style="width: 25%;" onclick="sortSenaraiTugas('defendan')" title="Klik untuk susun">Defendan <span id="sort_defendan" class="sort-icon">↕️</span></th>
+                                <th class="sortable-th" style="width: 15%;" onclick="sortSenaraiTugas('tarikh')" title="Klik untuk susun">Tarikh Daftar <span id="sort_tarikh" class="sort-icon">↕️</span></th>
                                 <th style="width: 20%; text-align: center;">Tindakan</th>
                             </tr>
                         </thead>
@@ -10083,6 +10088,65 @@ function janaSemulaNotisLain(dataSimpanan) {
         alert("Harap maklum: Memori sejarah lama tidak menyimpan isi teks. Sistem akan membuka borang baru untuk anda.");
         bukaModalNotisLain();
     }
+}
+       // =========================================================
+// FUNGSI SORTING JADUAL SENARAI TUGASAN
+// =========================================================
+let sortCol = '';
+let sortAsc = true;
+
+function sortSenaraiTugas(col) {
+    if (sortCol === col) {
+        sortAsc = !sortAsc; // Terbalikkan susunan (A-Z ke Z-A) jika klik lajur yang sama
+    } else {
+        sortCol = col;
+        sortAsc = true; // Susunan menaik (A-Z) secara lalai jika lajur baru ditekan
+    }
+
+    memoriSenaraiKes.sort((a, b) => {
+        let valA = '', valB = '';
+
+        // Ekstrak data mentah tanpa tag HTML (<br>, <span> dll)
+        if (col === 'noKes') {
+            valA = a.noKes.split('<br>')[0].trim();
+            valB = b.noKes.split('<br>')[0].trim();
+        } else if (col === 'pengadu') {
+            valA = a.namaPengadu.split('<br>')[0].trim().toLowerCase();
+            valB = b.namaPengadu.split('<br>')[0].trim().toLowerCase();
+        } else if (col === 'defendan') {
+            valA = a.namaDefendan.split('<br>')[0].trim().toLowerCase();
+            valB = b.namaDefendan.split('<br>')[0].trim().toLowerCase();
+        } else if (col === 'tarikh') {
+            // Pecahkan tarikh (DD/MM/YYYY) untuk tujuan perbandingan masa
+            let pa = a.tarikh.split('/');
+            let pb = b.tarikh.split('/');
+            if (pa.length === 3) valA = new Date(pa[2], pa[1] - 1, pa[0]).getTime();
+            if (pb.length === 3) valB = new Date(pb[2], pb[1] - 1, pb[0]).getTime();
+        }
+
+        if (valA < valB) return sortAsc ? -1 : 1;
+        if (valA > valB) return sortAsc ? 1 : -1;
+        return 0;
+    });
+
+    // Kemaskini Ikon ↕️, ⬆️, ⬇️ pada pengepala (header) jadual
+    const cols = ['noKes', 'pengadu', 'defendan', 'tarikh'];
+    cols.forEach(c => {
+        let el = document.getElementById('sort_' + c);
+        if (el) {
+            if (c === sortCol) {
+                el.innerHTML = sortAsc ? '⬆️' : '⬇️';
+                el.style.color = 'var(--primary-blue)';
+            } else {
+                el.innerHTML = '↕️';
+                el.style.color = '#94a3b8';
+            }
+        }
+    });
+
+    // Simpan susunan baharu dan paparkan semula jadual
+    simpanSenaraiKeLokal();
+    renderSenaraiTugas();
 }
 </script>
 </body>

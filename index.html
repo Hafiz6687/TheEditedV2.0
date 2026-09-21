@@ -9730,13 +9730,30 @@ function bukaPreviewMou(dataSimpanan = null) {
         negeriSaman = toTitleCase(arraySaman[arraySaman.length - 1].trim());
     }
 
-   // ==========================================
+// ==========================================
     // LOGIK PENAPISAN TUNTUTAN DARI CHECKBOX
     // ==========================================
     const isAutoGroup = ((kes.dataBorang && kes.dataBorang.inputs && kes.dataBorang.inputs['aduan'] === 'Berkumpulan') || kes.jenisAduan === 'Berkumpulan') && !isMajikan;
     
+    // --- KOD TAMBAHAN UNTUK EKSTRAK BILANGAN PENGADU LAIN ---
+    let bilP_total = 1;
+    if (kes.dataBorang && kes.dataBorang.inputs && kes.dataBorang.inputs['bilPengadu']) {
+        bilP_total = parseInt(kes.dataBorang.inputs['bilPengadu']) || 1;
+    }
+    let bilDiwakili = bilP_total > 1 ? bilP_total - 1 : 0;
+    
+    let teksDanLainLainCetak = (isAutoGroup && bilDiwakili > 0) ? ` DAN ${bilDiwakili} YANG LAIN` : "";
+    let teksDanLainLainKecil = (isAutoGroup && bilDiwakili > 0) ? ` dan ${bilDiwakili} yang lain` : "";
+
+    // KAWALAN PERENGGAN TEMPOH BAYARAN BORANG C
+    let teksTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
+    if (isAutoGroup && kaedahBayaran === 'Ansuran') {
+        teksTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
+    }
+    // ---------------------------------------------------------
+
     let selectedIds = [];
-    let ansuranDetails = []; 
+    let ansuranDetails = [];
 
     const dibayarPejabatRaw = memoData.dibayarPejabat !== undefined ? memoData.dibayarPejabat : (document.getElementById('mk_dibayar_pejabat')?.value || "0.00");
     let jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
@@ -9864,7 +9881,7 @@ function bukaPreviewMou(dataSimpanan = null) {
     // PENJANAAN LAMPIRAN A (JIKA ANSURAN)
     // ==========================================
     let htmlLampiranA = "";
-    if (kaedahBayaran === 'Ansuran') {
+    if (kaedahBayaran === 'Ansuran' || isAutoGroup) {
         let rowsLampiran = "";
         let totalAns = 0;
         let bilRowspan = ansuranDetails.length > 0 ? ansuranDetails.length : 1;
@@ -9960,7 +9977,7 @@ function bukaPreviewMou(dataSimpanan = null) {
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
-    const htmlBorangC = `
+const htmlBorangC = `
         <div class="kertas-notis" id="kertasBorangCMou" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
                 <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
@@ -9970,13 +9987,13 @@ function bukaPreviewMou(dataSimpanan = null) {
 
                 <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
                 <div style="text-align: center; margin-bottom: 10px;">Antara</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}${teksDanLainLainCetak}</div><div>... Pengadu</div></div>
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>${bandarSaman}</strong>, Negeri <strong>${negeriSaman}</strong> pada <strong>${tarikhSebutanDD} haribulan ${tarikhSebutanMMYYYY}</strong> Bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
                 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) beralamat di <strong>${alamatD_Terkini_Inline}</strong> membayar kepada pengadu melalui Penolong Pengarah Tenaga Kerja Kanan ${bandarSaman} bagi pihak <strong>${namaP.toUpperCase()}</strong> (${p_idStr}) wang sebanyak <strong>${jumRM}</strong>.</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) beralamat di <strong>${alamatD_Terkini_Inline}</strong> membayar kepada pengadu melalui Penolong Pengarah Tenaga Kerja Kanan ${bandarSaman} bagi pihak <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} wang sebanyak <strong>${jumRM}</strong>.</div>
                 
                 <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pecahan jenis bayaran adalah seperti berikut:</div>
 
@@ -9995,7 +10012,7 @@ function bukaPreviewMou(dataSimpanan = null) {
 
                 ${teksTuntutanDibuang}
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>
+                ${teksTempohBayaran}
                 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
 
@@ -10025,7 +10042,7 @@ function bukaPreviewMou(dataSimpanan = null) {
         </div>
     `;
 
-    const htmlMou = `
+const htmlMou = `
         <style>
             @media print {
                 @page { margin: 0; size: A4 portrait; }
@@ -10070,7 +10087,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                     <div style="text-align: center; font-weight: bold; margin-bottom: 20px; text-transform: uppercase;">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}</div> 
                     <div style="text-align: center; margin-bottom: 10px;">Antara</div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div>
+                        <div style="text-transform: uppercase; font-weight: bold;">${namaP}${teksDanLainLainCetak}</div><div>... Pengadu</div>
                     </div>
                     
                     <div style="text-align: center; margin-bottom: 10px;">Dan</div>
@@ -10080,13 +10097,14 @@ function bukaPreviewMou(dataSimpanan = null) {
 
                     <div style="text-align: justify; margin-bottom: 10px;">Dengan ini dipersetujui antara kedua-dua pihak yang menandatangani di bawah ini bahawa tuntutan dalam kes ini hendaklah diselesaikan dengan sepenuhnya.</div>
 
+                    <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">1)</div><div>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr})${teksDanLainLainKecil} wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.</div></div>
                     <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">1)</div><div>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr}) wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.</div></div>
                     <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">2)</div><div>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.</div></div>
                     ${item3HTML}
                     <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">4)</div><div>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.</div></div>
                     <div style="display: flex; margin-bottom: 15px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">5)</div><div>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.</div></div>
 
-<div style="margin-bottom: 15px;">Bertarikh : <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
+                    <div style="margin-bottom: 15px;">Bertarikh : <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
                     <div style="margin-bottom: 55px;">Di hadapan,</div>
                     <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
 

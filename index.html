@@ -9413,12 +9413,21 @@ const isAutoGroup = isBerkumpulan && !isMajikan;
         // LOGIK UNTUK ADUAN BERKUMPULAN (ASINGKAN IKUT INDIVIDU)
         let adaTuntutan = false;
 
-        // 1. KETUA PENGADU
-        let senaraiKetua = kes && kes.dataBorang ? (kes.dataBorang.tuntutanKetua || []) : memoriTuntutanKetua;
-        if (senaraiKetua && senaraiKetua.length > 0) {
-            adaTuntutan = true;
-            let namaKetua = (kes && kes.dataBorang && kes.dataBorang.inputs['namaPengadu']) || document.getElementById('namaPengadu').value || "Ketua Pengadu";
-            containerTuntutan.innerHTML += `<div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue); margin-top: 5px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">${namaKetua.toUpperCase()} (Ketua)</div>`;
+// 1. KETUA PENGADU
+            let senaraiKetua = kes && kes.dataBorang ? (kes.dataBorang.tuntutanKetua || []) : memoriTuntutanKetua;
+            if (senaraiKetua && senaraiKetua.length > 0) {
+                adaTuntutan = true;
+                let namaKetua = (kes && kes.dataBorang && kes.dataBorang.inputs['namaPengadu']) || document.getElementById('namaPengadu').value || "Ketua Pengadu";
+                
+                // KOTAK NAMA & INPUT NILAI KETUA
+                containerTuntutan.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 5px;">
+                        <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue);">${namaKetua.toUpperCase()} (Ketua)</div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 0.8em; color: var(--text-muted); font-weight: bold;">Persetujuan: RM</span>
+                            <input type="text" class="input-mou-individu" data-id="ketua" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); kiraTotalMouIndividu(); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="width: 90px; padding: 4px 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: bold; color: var(--primary-blue); text-align: right;">
+                        </div>
+                    </div>`;
 
             senaraiKetua.forEach((item, index) => {
                 const jumCantik = Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
@@ -9432,15 +9441,24 @@ const isAutoGroup = isBerkumpulan && !isMajikan;
             });
         }
 
-        // 2. PENGADU TAMBAHAN
-        const bilPengadu = parseInt((kes && kes.dataBorang && kes.dataBorang.inputs['bilPengadu']) || document.getElementById('bilPengadu')?.value) || 1;
-        for (let i = 2; i <= bilPengadu; i++) {
-            let senaraiTambahan = (kes && kes.dataBorang && kes.dataBorang.tuntutanTambahan) ? kes.dataBorang.tuntutanTambahan[i] : memoriTuntutanTambahan[i];
-            
-            if (senaraiTambahan && senaraiTambahan.length > 0) {
-                adaTuntutan = true;
-                let namaP = (kes && kes.dataBorang && kes.dataBorang.inputs['namaPengaduTambahan'+i]) || document.getElementById('namaPengaduTambahan'+i)?.value || `Pengadu ${i}`;
-                containerTuntutan.innerHTML += `<div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue); margin-top: 15px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">${namaP.toUpperCase()} (Pengadu ${i})</div>`;
+// 2. PENGADU TAMBAHAN
+            const bilPengadu = parseInt((kes && kes.dataBorang && kes.dataBorang.inputs['bilPengadu']) || document.getElementById('bilPengadu')?.value) || 1;
+            for (let i = 2; i <= bilPengadu; i++) {
+                let senaraiTambahan = (kes && kes.dataBorang && kes.dataBorang.tuntutanTambahan) ? kes.dataBorang.tuntutanTambahan[i] : memoriTuntutanTambahan[i];
+                
+                if (senaraiTambahan && senaraiTambahan.length > 0) {
+                    adaTuntutan = true;
+                    let namaP = (kes && kes.dataBorang && kes.dataBorang.inputs['namaPengaduTambahan'+i]) || document.getElementById('namaPengaduTambahan'+i)?.value || `Pengadu ${i}`;
+                    
+                    // KOTAK NAMA & INPUT NILAI TAMBAHAN
+                    containerTuntutan.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 5px;">
+                            <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue);">${namaP.toUpperCase()} (Pengadu ${i})</div>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <span style="font-size: 0.8em; color: var(--text-muted); font-weight: bold;">Persetujuan: RM</span>
+                                <input type="text" class="input-mou-individu" data-id="tambahan_${i}" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); kiraTotalMouIndividu(); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="width: 90px; padding: 4px 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: bold; color: var(--primary-blue); text-align: right;">
+                            </div>
+                        </div>`;
 
                 senaraiTambahan.forEach((item, index) => {
                     const jumCantik = Number(item.jumlah).toLocaleString('en-MY', { minimumFractionDigits: 2 });
@@ -9577,6 +9595,20 @@ function janaAnsuranAuto() {
     }
 }
 
+       // FUNGSI BARU: Auto-kira jumlah individu ke dalam Jumlah Keseluruhan MOU
+function kiraTotalMouIndividu() {
+    const inputs = document.querySelectorAll('.input-mou-individu');
+    let total = 0;
+    inputs.forEach(inp => {
+        let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
+        total += val;
+    });
+    const mainInput = document.getElementById('mk_jumlah_mou');
+    if(mainInput && total > 0) {
+        mainInput.value = total.toLocaleString('en-MY', { minimumFractionDigits: 2 });
+    }
+}
+       
 function semakButangMou() {
     const t = document.getElementById('mk_tarikh_mou')?.value;
     const j = document.getElementById('mk_jumlah_mou')?.value;
@@ -9735,7 +9767,6 @@ function bukaPreviewMou(dataSimpanan = null) {
     // ==========================================
     const isAutoGroup = ((kes.dataBorang && kes.dataBorang.inputs && kes.dataBorang.inputs['aduan'] === 'Berkumpulan') || kes.jenisAduan === 'Berkumpulan') && !isMajikan;
     
-    // --- KOD TAMBAHAN UNTUK EKSTRAK BILANGAN PENGADU LAIN ---
     let bilP_total = 1;
     if (kes.dataBorang && kes.dataBorang.inputs && kes.dataBorang.inputs['bilPengadu']) {
         bilP_total = parseInt(kes.dataBorang.inputs['bilPengadu']) || 1;
@@ -9745,15 +9776,14 @@ function bukaPreviewMou(dataSimpanan = null) {
     let teksDanLainLainCetak = (isAutoGroup && bilDiwakili > 0) ? ` DAN ${bilDiwakili} YANG LAIN` : "";
     let teksDanLainLainKecil = (isAutoGroup && bilDiwakili > 0) ? ` dan ${bilDiwakili} yang lain` : "";
 
-    // KAWALAN PERENGGAN TEMPOH BAYARAN BORANG C
     let teksTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
     if (isAutoGroup && kaedahBayaran === 'Ansuran') {
         teksTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
     }
-    // ---------------------------------------------------------
 
     let selectedIds = [];
-    let ansuranDetails = [];
+    let ansuranDetails = []; 
+    let jumlahIndividu = {}; // KOD BARU TANGKAP NILAI INDIVIDU
 
     const dibayarPejabatRaw = memoData.dibayarPejabat !== undefined ? memoData.dibayarPejabat : (document.getElementById('mk_dibayar_pejabat')?.value || "0.00");
     let jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
@@ -9761,7 +9791,12 @@ function bukaPreviewMou(dataSimpanan = null) {
 
     if (!dataSimpanan) {
         const cbs = document.querySelectorAll('input[name="mou_tuntutan_cb"]:checked');
-        cbs.forEach(cb => selectedIds.push(cb.value)); // Guna string value ID
+        cbs.forEach(cb => selectedIds.push(cb.value));
+        
+        // TANGKAP NILAI INDIVIDU
+        document.querySelectorAll('.input-mou-individu').forEach(inp => {
+            jumlahIndividu[inp.dataset.id] = inp.value;
+        });
         
         if (kaedahBayaran === 'Ansuran') {
             const tarikhs = document.querySelectorAll('.input-ansuran-tarikh');
@@ -9775,69 +9810,48 @@ function bukaPreviewMou(dataSimpanan = null) {
     } else {
         selectedIds = memoData.selectedIds || (memoData.selectedIndexes ? memoData.selectedIndexes.map(String) : []);
         ansuranDetails = memoData.ansuranDetails || [];
+        jumlahIndividu = memoData.jumlahIndividu || {};
     }
 
     let tuntutanDipilih = [];
     let tuntutanDibuang = [];
 
     if (isAutoGroup) {
-        // TANGKAP SEMUA MAKLUMAT TUNTUTAN KUMPULAN KE DALAM 1 ARRAY GABUNGAN
         let senaraiTuntutanBerkumpulan = [];
         let nKetua = (kes.dataBorang && kes.dataBorang.inputs['namaPengadu']) || document.getElementById('namaPengadu')?.value || "Ketua Pengadu";
         let senaraiKetua = kes.dataBorang ? (kes.dataBorang.tuntutanKetua || []) : memoriTuntutanKetua;
 
-        senaraiKetua.forEach((item, idx) => {
-            senaraiTuntutanBerkumpulan.push({ id: `ketua_${idx}`, pemilik: nKetua, ...item });
-        });
+        senaraiKetua.forEach((item, idx) => { senaraiTuntutanBerkumpulan.push({ id: `ketua_${idx}`, pemilik: nKetua, ...item }); });
 
         const bilP = parseInt((kes.dataBorang && kes.dataBorang.inputs['bilPengadu']) || document.getElementById('bilPengadu')?.value) || 1;
         for (let i = 2; i <= bilP; i++) {
             let nTambahan = (kes.dataBorang && kes.dataBorang.inputs['namaPengaduTambahan'+i]) || document.getElementById('namaPengaduTambahan'+i)?.value || `Pengadu ${i}`;
             let sTambahan = (kes.dataBorang && kes.dataBorang.tuntutanTambahan) ? kes.dataBorang.tuntutanTambahan[i] : memoriTuntutanTambahan[i];
             
-            if (sTambahan) {
-                sTambahan.forEach((item, idx) => {
-                    senaraiTuntutanBerkumpulan.push({ id: `tambahan_${i}_${idx}`, pemilik: nTambahan, ...item });
-                });
-            }
+            if (sTambahan) { sTambahan.forEach((item, idx) => { senaraiTuntutanBerkumpulan.push({ id: `tambahan_${i}_${idx}`, pemilik: nTambahan, ...item }); }); }
         }
 
-        // TAPIS BERDASARKAN CHECKBOX YANG DITANDA
         senaraiTuntutanBerkumpulan.forEach(item => {
             let cloneItem = { ...item };
             let ketAsal = cloneItem.keterangan === "(Keterangan Berbeza)" ? "" : cloneItem.keterangan;
-            // Suntik Nama Pekerja ke dalam jadual Borang C!
             cloneItem.keterangan = `${ketAsal} <br><span style="font-size:0.85em; font-weight:600; font-style:italic;">[Tuntutan: ${cloneItem.pemilik.toUpperCase()}]</span>`;
-
-            if (selectedIds.includes(item.id)) {
-                tuntutanDipilih.push(cloneItem);
-            } else {
-                tuntutanDibuang.push(cloneItem);
-            }
+            if (selectedIds.includes(item.id)) tuntutanDipilih.push(cloneItem); else tuntutanDibuang.push(cloneItem);
         });
 
     } else {
-        // LOGIK ASAL UNTUK INDIVIDU / MAJIKAN
         let senaraiTuntutanAsal = kes.dataBorang ? (kes.dataBorang.tuntutanBiasa || []) : memoriTuntutan;
-        senaraiTuntutanAsal.forEach((item, idx) => {
-            if (selectedIds.includes(String(idx))) {
-                tuntutanDipilih.push(item);
-            } else {
-                tuntutanDibuang.push(item);
-            }
-        });
+        senaraiTuntutanAsal.forEach((item, idx) => { if (selectedIds.includes(String(idx))) tuntutanDipilih.push(item); else tuntutanDibuang.push(item); });
     }
 
-// --- BORANG C ASAL YANG DIBETULKAN ---
+    // --- BORANG C ASAL YANG DIBETULKAN ---
     let htmlJadualTuntutanMOU = "";
     if (tuntutanDipilih.length === 0) {
         htmlJadualTuntutanMOU = `<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">Tiada tuntutan dipilih.</td></tr>`;
     } else {
-        // LOGIK PINTAR: Saring jenis tuntutan (unik) jika aduan berkumpulan
         let senaraiPaparanBorangC = [];
         if (isAutoGroup) {
             let jenisUnik = new Set();
-            tuntutanDipilih.forEach(t => jenisUnik.add(t.jenis)); // Simpan 'jenis' sahaja tanpa duplicate
+            tuntutanDipilih.forEach(t => jenisUnik.add(t.jenis)); 
             senaraiPaparanBorangC = Array.from(jenisUnik).map(j => ({ jenis: j, keterangan: "" }));
         } else {
             senaraiPaparanBorangC = tuntutanDipilih;
@@ -9846,21 +9860,15 @@ function bukaPreviewMou(dataSimpanan = null) {
         let isPukal = senaraiPaparanBorangC.length > 1;
         senaraiPaparanBorangC.forEach((item, index) => {
             let keteranganCetak = "";
-            if (!isAutoGroup) { // Jika kes individu, kekalkan keterangan asal
-                keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
-            }
+            if (!isAutoGroup) { keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan; }
             
             htmlJadualTuntutanMOU += `
             <tr>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>`;
             if (isPukal) {
-                if (index === 0) {
-                    htmlJadualTuntutanMOU += `<td rowspan="${senaraiPaparanBorangC.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`;
-                }
-            } else {
-                htmlJadualTuntutanMOU += `<td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${jumRM}</td>`;
-            }
+                if (index === 0) { htmlJadualTuntutanMOU += `<td rowspan="${senaraiPaparanBorangC.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`; }
+            } else { htmlJadualTuntutanMOU += `<td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${jumRM}</td>`; }
             htmlJadualTuntutanMOU += `</tr>`;
         });
         
@@ -9877,11 +9885,81 @@ function bukaPreviewMou(dataSimpanan = null) {
         teksTuntutanDibuang = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan diperintahkan bahawa tuntutan ${ayatDibuang} adalah dibuang.</div>`;
     }
 
-// ==========================================
-    // PENJANAAN LAMPIRAN A (JIKA ANSURAN)
+    // ==========================================
+    // PENJANAAN LAMPIRAN A (PINTAR: PENUH / ANSURAN)
     // ==========================================
     let htmlLampiranA = "";
-    if (kaedahBayaran === 'Ansuran' || isAutoGroup) {
+    
+    if (isAutoGroup && kaedahBayaran === 'Penuh') {
+        // LAMPIRAN A KHAS: PENUH & BERKUMPULAN
+        let rowsLampiran = "";
+        let totalPenuh = 0;
+        let bil = 1;
+
+        let dataPengadu = {};
+        tuntutanDipilih.forEach(t => {
+            let pParts = t.id.split('_'); 
+            let pId = pParts[0] === 'ketua' ? 'ketua' : pParts[0] + '_' + pParts[1]; 
+            
+            if (!dataPengadu[pId]) {
+                let noKp = "";
+                if (pId === 'ketua') { noKp = (kes.dataBorang && kes.dataBorang.inputs['noPendPengadu']) || ""; } 
+                else { let i = pParts[1]; noKp = (kes.dataBorang && kes.dataBorang.inputs['kpPengaduTambahan'+i]) || ""; }
+                
+                let valIndividu = parseFloat((jumlahIndividu[pId] || "0").replace(/,/g, '')) || 0;
+                
+                dataPengadu[pId] = { nama: t.pemilik, kp: noKp, tuntutanList: [], jumlah: valIndividu };
+            }
+            dataPengadu[pId].tuntutanList.push(`• ${t.jenis}`);
+        });
+
+        for (let pId in dataPengadu) {
+            let d = dataPengadu[pId];
+            totalPenuh += d.jumlah;
+            let kpCetak = d.kp ? `<br><span style="font-size: 0.9em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
+            let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
+            
+            rowsLampiran += `
+                <tr>
+                    <td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td>
+                    <td style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;">
+                        <strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}
+                        <div style="margin-top: 8px;">${unikTuntutan}</div>
+                    </td>
+                    <td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top; font-weight: bold; font-size: 1.05em;">
+                        RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}
+                    </td>
+                </tr>
+            `;
+        }
+
+        htmlLampiranA = `
+            <div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+                    <div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div>
+                    <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 15px;">JADUAL PERSETUJUAN PENYELESAIAN (KAEDAH BAYARAN PENUH)</div>
+                    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: left; background-color: #e2e8f0;">Butiran & Jenis Tuntutan</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; width: 30%; background-color: #e2e8f0;">Jumlah Persetujuan (RM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsLampiran}
+                            <tr>
+                                <td colspan="2" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td>
+                                <td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalPenuh.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } 
+    else if (kaedahBayaran === 'Ansuran') {
+        // LOGIK LAMA: LAMPIRAN A (ANSURAN)
         let rowsLampiran = "";
         let totalAns = 0;
         let bilRowspan = ansuranDetails.length > 0 ? ansuranDetails.length : 1;
@@ -9892,50 +9970,22 @@ function bukaPreviewMou(dataSimpanan = null) {
         }).join('<br><br>');
 
         if (ansuranDetails.length === 0) {
-            rowsLampiran = `
-                <tr>
-                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td>
-                    <td style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td>
-                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">-</td>
-                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">-</td>
-                </tr>
-            `;
+            rowsLampiran = `<tr><td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td><td style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td><td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">-</td><td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">-</td></tr>`;
         } else {
             ansuranDetails.forEach((ans, idx) => {
                 let valNum = parseFloat(String(ans.amaun).replace(/,/g, '')) || 0;
                 totalAns += valNum;
                 let amaunCantik = valNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
-                
                 let tarikhCetak = "..................";
-                if (ans.tarikh) {
-                    let t = new Date(ans.tarikh);
-                    if (!isNaN(t.getTime())) tarikhCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
-                }
+                if (ans.tarikh) { let t = new Date(ans.tarikh); if (!isNaN(t.getTime())) tarikhCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`; }
 
                 if (idx === 0) {
                     let btmBorder = ansuranDetails.length === 1 ? "1px solid #000" : "1px solid #cbd5e1";
-                    rowsLampiran += `
-                        <tr>
-                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td>
-                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td>
-                            <td style="border-bottom: ${btmBorder}; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
-                            <td style="border-bottom: ${btmBorder}; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
-                        </tr>
-                    `;
+                    rowsLampiran += `<tr><td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td><td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td><td style="border-bottom: ${btmBorder}; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: ${btmBorder}; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
                 } else if (idx === ansuranDetails.length - 1) {
-                    rowsLampiran += `
-                        <tr>
-                            <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
-                            <td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
-                        </tr>
-                    `;
+                    rowsLampiran += `<tr><td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
                 } else {
-                    rowsLampiran += `
-                        <tr>
-                            <td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
-                            <td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
-                        </tr>
-                    `;
+                    rowsLampiran += `<tr><td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
                 }
             });
         }
@@ -9946,7 +9996,6 @@ function bukaPreviewMou(dataSimpanan = null) {
             <div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
                     <div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div>
-                    
                     <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; margin-top: 15px; color: #000;">
                         <thead>
                             <tr>
@@ -10199,7 +10248,7 @@ const htmlMou = `
         else if (jenis === 'pengadu') { tjk = 'Notis MOU (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
         else if (jenis === 'defendan') { tjk = 'Notis MOU (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
         
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails };
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails, jumlahIndividu: jumlahIndividu };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
         

@@ -6530,9 +6530,18 @@ function bukaPreviewPDF(jenisBorang) {
             isKenyataanPrinted = false;
             
             document.getElementById('menuCetakAkuan').style.display = 'flex';
-            document.getElementById('menuCetakKenyataan').style.display = 'flex';
-            document.getElementById('menuCetakG1').style.display = 'none'; 
-            document.getElementById('menuDaftar').style.display = 'none';
+    document.getElementById('menuCetakKenyataan').style.display = 'flex';
+    if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none'; 
+    document.getElementById('menuDaftar').style.display = 'none';
+    document.getElementById('menuSelesai').style.display = 'none';
+
+    // TUTUP KEBOCORAN BUTANG DINAMIK DARI NOTIS/MOU/SAMAN
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+    if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
+    if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
 
 // Sembunyikan suis tandatangan
     tunjukSuisTandatangan(false);
@@ -6740,11 +6749,19 @@ function bukaPreviewUrus() {
     document.getElementById('previewContent').innerHTML = htmlDokumen;
     document.getElementById('printArea').innerHTML = htmlDokumen;
     
-    // Sembunyikan Butang Cetakan Borang (Sebab ini flow Pengurusan)
+// Sembunyikan Butang Cetakan Borang (Sebab ini flow Pengurusan)
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
-    document.getElementById('menuCetakG1').style.display = 'none'; 
+    if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none'; 
     document.getElementById('menuSelesai').style.display = 'none';
+
+    // TUTUP KEBOCORAN BUTANG DINAMIK DARI NOTIS/MOU/SAMAN
+    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+    if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
+    if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
 
     // Tunjukkan Kemaskini, Daftar & Batal SAHAJA
     document.getElementById('menuKemaskini').style.display = 'flex';

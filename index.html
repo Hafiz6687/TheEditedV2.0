@@ -2505,19 +2505,34 @@ let htmlDefendan = '';
     }
     document.getElementById('mk_grid_defendan').innerHTML = htmlDefendan;
     
-    const tbodyTuntutan = document.getElementById('mk_body_tuntutan');
+const tbodyTuntutan = document.getElementById('mk_body_tuntutan');
     tbodyTuntutan.innerHTML = '';
     
     let senaraiTuntutanSemasa = [];
-    if (kes.dataBorang && kes.dataBorang.tuntutanBiasa && kes.dataBorang.tuntutanBiasa.length > 0) {
-        senaraiTuntutanSemasa = kes.dataBorang.tuntutanBiasa;
+    if (kes.dataBorang) {
+        if (isBerkumpulan && !isMajikan) {
+            // Gabungkan Tuntutan Ketua
+            if (kes.dataBorang.tuntutanKetua) {
+                kes.dataBorang.tuntutanKetua.forEach(t => senaraiTuntutanSemasa.push({ ...t, jenis: t.jenis + " (Ketua)" }));
+            }
+            // Gabungkan Tuntutan Pengadu Tambahan
+            if (kes.dataBorang.tuntutanTambahan) {
+                for (let key in kes.dataBorang.tuntutanTambahan) {
+                    kes.dataBorang.tuntutanTambahan[key].forEach(t => senaraiTuntutanSemasa.push({ ...t, jenis: t.jenis + " (Pengadu " + key + ")" }));
+                }
+            }
+        } else {
+            if (kes.dataBorang.tuntutanBiasa) {
+                senaraiTuntutanSemasa = kes.dataBorang.tuntutanBiasa;
+            }
+        }
     } else if (!kes.dataBorang) {
         senaraiTuntutanSemasa = [
             {jenis: "Baki Gaji", keterangan: "(MEI 2026)", jumlah: "2645.00"},
             {jenis: "Baki Gaji", keterangan: "(JUN 2026)", jumlah: "1600.00"}
         ];
     }
-
+    
     let jumlahKeseluruhan = 0;
     senaraiTuntutanSemasa.forEach((item, idx) => {
         const jumlahNum = parseFloat(item.jumlah);
@@ -5870,9 +5885,20 @@ for (const key in formData) {
         toggleAlamatKerja();
         janaKenyataanAwal();
         
-        // LANGKAH 4: Load semula Jadual Tuntutan Kewangan
+// LANGKAH 4: Load semula Jadual Tuntutan Kewangan
         memoriTuntutan = kes.dataBorang.tuntutanBiasa ? JSON.parse(JSON.stringify(kes.dataBorang.tuntutanBiasa)) : [];
         memoriTuntutanKetua = kes.dataBorang.tuntutanKetua ? JSON.parse(JSON.stringify(kes.dataBorang.tuntutanKetua)) : [];
+        memoriTuntutanTambahan = kes.dataBorang.tuntutanTambahan ? JSON.parse(JSON.stringify(kes.dataBorang.tuntutanTambahan)) : {};
+        
+        // BINA SEMULA KOTAK-KOTAK PENGADU TAMBAHAN
+        const bilPengaduRekod = parseInt(formData['bilPengadu']) || 1;
+        const isBknMajikan = formData['majikan'] === false || formData['majikan'] === 'false' || !formData['majikan'];
+        if (formData['aduan'] === 'Berkumpulan' && isBknMajikan) {
+            if (bilPengaduRekod > 1) {
+                janaJadualPengaduTambahan(bilPengaduRekod);
+            }
+        }
+        
         renderJadualTuntutan();
         
     } else {

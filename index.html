@@ -2957,12 +2957,19 @@ window.cetakNotis = function(jenis) {
         rekodSejarahTindakan(indexKesSemasa, d.tindakan + " (Pengadu)", `${butiran} (Surat ${d.tindakan} Pengadu dijana dan dicetak).`);
         const btnP = document.getElementById('menuCetakNotisPengadu');
         if (btnP) { btnP.innerHTML = '✅ Cetak ' + d.tindakan + ' Pengadu'; btnP.style.color = '#10b981'; }
-    } else if (jenis === 'defendan') {
-        window.isNotisDefendanPrinted = true;
-        rekodSejarahTindakan(indexKesSemasa, d.tindakan + " (Defendan)", `${butiran} (Surat ${d.tindakan} Defendan dijana dan dicetak).`);
-        const btnD = document.getElementById('menuCetakNotisDefendan');
-        if (btnD) { btnD.innerHTML = '✅ Cetak ' + d.tindakan + ' Defendan'; btnD.style.color = '#10b981'; }
-    }
+} else if (jenis === 'defendan') {
+            window.isNotisDefendanPrinted = true;
+            
+            // KAWALAN KHAS NAMA REKOD & BUTANG HIJAU
+            let labelTindakanD = d.tindakan;
+            if (d.kunci === 'sebutan_semula') {
+                labelTindakanD = 'Borang A (Saman)';
+            }
+            
+            rekodSejarahTindakan(indexKesSemasa, labelTindakanD + " (Defendan)", `${butiran} (Surat ${labelTindakanD} Defendan dijana dan dicetak).`);
+            const btnD = document.getElementById('menuCetakNotisDefendan');
+            if (btnD) { btnD.innerHTML = '✅ Cetak ' + labelTindakanD + ' Defendan'; btnD.style.color = '#10b981'; }
+        }
 
     if (window.isNotisPengaduPrinted && window.isNotisDefendanPrinted) {
         setTimeout(() => {
@@ -3652,7 +3659,15 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
 
     let btnNotisDefendan = document.getElementById('menuCetakNotisDefendan');
     if (!btnNotisDefendan) { btnNotisDefendan = document.createElement('a'); btnNotisDefendan.id = 'menuCetakNotisDefendan'; btnNotisDefendan.href = '#'; actionMenu.insertBefore(btnNotisDefendan, document.getElementById('menuBatal')); }
-    btnNotisDefendan.style.display = 'flex'; btnNotisDefendan.style.color = 'var(--text-main)'; btnNotisDefendan.innerHTML = '🖨️ Cetak ' + c.tindakan + ' Defendan';
+    btnNotisDefendan.style.display = 'flex'; btnNotisDefendan.style.color = 'var(--text-main)'; 
+    
+    // KAWALAN KHAS NAMA BUTANG UNTUK SEBUTAN SEMULA (DEFENDAN)
+    if (kunci === 'sebutan_semula') {
+        btnNotisDefendan.innerHTML = '🖨️ Cetak Borang A (Saman) Defendan';
+    } else {
+        btnNotisDefendan.innerHTML = '🖨️ Cetak ' + c.tindakan + ' Defendan';
+    }
+    
     btnNotisDefendan.onclick = function(e) { e.preventDefault(); window.cetakNotis('defendan'); };
 
     document.getElementById('menuCetakAkuan').style.display = 'none'; document.getElementById('menuCetakKenyataan').style.display = 'none'; document.getElementById('menuDaftar').style.display = 'none'; document.getElementById('menuSelesai').style.display = 'none';

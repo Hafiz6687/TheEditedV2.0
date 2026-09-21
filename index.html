@@ -824,10 +824,10 @@
     <span style="font-weight: 700; font-size: 0.9em; color: var(--text-main);">Tandatangan Pegawai:</span>
     <div class="radio-group" style="margin: 0; height: auto;">
         <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: #10b981; font-size: 0.9em;">
-            <input type="radio" name="radTandatangan" value="ON" checked onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> ON
+            <input type="radio" name="radTandatangan" value="ON" onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> ON
         </label>
         <label style="cursor: pointer; display: flex; align-items: center; font-weight: 700; color: var(--danger); font-size: 0.9em;">
-            <input type="radio" name="radTandatangan" value="OFF" onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> OFF
+            <input type="radio" name="radTandatangan" value="OFF" checked onchange="kawalTandatanganCetak()" style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> OFF
         </label>
     </div>
 </div>
@@ -8745,7 +8745,8 @@ function kawalTandatanganCetak() {
         semuaGambar.forEach(el => el.style.visibility = 'hidden');
     }
 }
-// =========================================================================
+
+       // =========================================================================
 // FUNGSI KAWAL KEMUNCULAN SUIS TANDATANGAN PADA MODAL
 // =========================================================================
 function tunjukSuisTandatangan(perluTunjuk = true) {
@@ -8754,10 +8755,10 @@ function tunjukSuisTandatangan(perluTunjuk = true) {
     
     if (perluTunjuk) {
         bekasSuis.style.display = 'flex';
-        // Reset semula radio kepada ON secara lalai
-        const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
-        if (radON) {
-            radON.checked = true;
+        // Paksa reset semula radio kepada OFF secara lalai demi standard profesional
+        const radOFF = document.querySelector('input[name="radTandatangan"][value="OFF"]');
+        if (radOFF) {
+            radOFF.checked = true;
             kawalTandatanganCetak();
         }
     } else {

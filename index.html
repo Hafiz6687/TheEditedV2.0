@@ -7020,7 +7020,7 @@ function renderJadualSejarah(index) {
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
             
-            if (tdk.includes("Notis") && !tdk.includes("Notis Custom")) {
+if ((tdk.includes("Notis") && !tdk.includes("Notis Custom")) || tdk.includes("Borang A (Saman) (Defendan)")) {
                 let tMatch = btr.match(/pada (.*?) jam/);
                 let mMatch = btr.match(/jam (.*?)\./);
                 let tarikhHst = tMatch ? tMatch[1] : '';
@@ -7030,6 +7030,7 @@ function renderJadualSejarah(index) {
                 if (tdk.includes("Notis Sebutan (Pengadu)") || tdk.includes("Notis Sebutan (Defendan)")) kunci = 'sebutan';
                 else if (tdk.includes("Notis Sebutan (Tangguh)")) kunci = 'sebutan_tangguh';
                 else if (tdk.includes("Notis Sebutan (Penetapan Semula)")) kunci = 'sebutan_semula';
+                else if (tdk.includes("Borang A (Saman) (Defendan)")) kunci = 'sebutan_semula';
                 else if (tdk.includes("Notis Perbicaraan (Tangguh)")) kunci = 'bicara_tangguh';
                 else if (tdk.includes("Notis Perbicaraan (Sambung)")) kunci = 'bicara_sambung';
                 else if (tdk.includes("Notis Perbicaraan")) kunci = 'bicara';

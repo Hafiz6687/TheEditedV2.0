@@ -9625,10 +9625,10 @@ function bukaPreviewMou(dataSimpanan = null) {
         if (ansuranDetails.length === 0) {
             rowsLampiran = `
                 <tr>
-                    <td style="border-bottom: 1px solid #000; padding: 8px; text-align: center; vertical-align: top;">1</td>
-                    <td style="border-bottom: 1px solid #000; padding: 8px; vertical-align: top; line-height: 1.5;">${gabunganTuntutanCetak}</td>
-                    <td style="border-bottom: 1px solid #000; padding: 8px; text-align: center;">-</td>
-                    <td style="border-bottom: 1px solid #000; padding: 8px; text-align: right;">-</td>
+                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td>
+                    <td style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td>
+                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">-</td>
+                    <td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">-</td>
                 </tr>
             `;
         } else {
@@ -9647,24 +9647,24 @@ function bukaPreviewMou(dataSimpanan = null) {
                     let btmBorder = ansuranDetails.length === 1 ? "1px solid #000" : "1px solid #cbd5e1";
                     rowsLampiran += `
                         <tr>
-                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 8px; text-align: center; vertical-align: top;">1</td>
-                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 8px; vertical-align: top; line-height: 1.5;">${gabunganTuntutanCetak}</td>
-                            <td style="border-bottom: ${btmBorder}; padding: 8px; text-align: center;">${tarikhCetak}</td>
-                            <td style="border-bottom: ${btmBorder}; padding: 8px; text-align: right;">RM ${amaunCantik}</td>
+                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">1</td>
+                            <td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 4px; vertical-align: top; line-height: 1.25;">${gabunganTuntutanCetak}</td>
+                            <td style="border-bottom: ${btmBorder}; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
+                            <td style="border-bottom: ${btmBorder}; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
                         </tr>
                     `;
                 } else if (idx === ansuranDetails.length - 1) {
                     rowsLampiran += `
                         <tr>
-                            <td style="border-bottom: 1px solid #000; padding: 8px; text-align: center;">${tarikhCetak}</td>
-                            <td style="border-bottom: 1px solid #000; padding: 8px; text-align: right;">RM ${amaunCantik}</td>
+                            <td style="border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
+                            <td style="border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
                         </tr>
                     `;
                 } else {
                     rowsLampiran += `
                         <tr>
-                            <td style="border-bottom: 1px solid #cbd5e1; padding: 8px; text-align: center;">${tarikhCetak}</td>
-                            <td style="border-bottom: 1px solid #cbd5e1; padding: 8px; text-align: right;">RM ${amaunCantik}</td>
+                            <td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
+                            <td style="border-bottom: 1px solid #cbd5e1; padding: 4px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
                         </tr>
                     `;
                 }
@@ -9675,26 +9675,26 @@ function bukaPreviewMou(dataSimpanan = null) {
 
         htmlLampiranA = `
             <div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
-                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; padding: 0 !important;">
-                    <div style="text-align: right; font-weight: bold; font-size: 11pt; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div>
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+                    <div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div>
                     
-                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; line-height: 1.4; margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; margin-top: 15px; color: #000;">
                         <thead>
                             <tr>
-                                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
-                                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: left; width: 45%; background-color: #e2e8f0;">Jenis Tuntutan</th>
-                                <th colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; background-color: #e2e8f0;">Persetujuan</th>
+                                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; width: 45%; background-color: #e2e8f0;">Jenis Tuntutan</th>
+                                <th colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; background-color: #e2e8f0;">Persetujuan</th>
                             </tr>
                             <tr>
-                                <th style="border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 25%; background-color: #e2e8f0;">Tarikh Bayaran</th>
-                                <th style="border-bottom: 1px solid #000; padding: 8px; text-align: right; width: 25%; background-color: #e2e8f0;">Amaun (RM)</th>
+                                <th style="border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 25%; background-color: #e2e8f0;">Tarikh Bayaran</th>
+                                <th style="border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Amaun (RM)</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${rowsLampiran}
                             <tr>
-                                <td colspan="3" style="border-bottom: 1px solid #000; padding: 10px 15px 10px 8px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td>
-                                <td style="border-bottom: 1px solid #000; padding: 10px 8px; text-align: right; font-weight: bold; background-color: #f8fafc;">RM ${totalAnsStr}</td>
+                                <td colspan="3" style="border-bottom: 1px solid #000; padding: 6px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td>
+                                <td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; background-color: #f8fafc;">RM ${totalAnsStr}</td>
                             </tr>
                         </tbody>
                     </table>

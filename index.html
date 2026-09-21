@@ -6972,7 +6972,7 @@ function renderJadualSejarah(index) {
 
             let paparanButiran = btr.replace(/ \[DATA_.*?\]/g, '');
             
-if (tdk.includes("Notis")) {
+            if (tdk.includes("Notis") && !tdk.includes("Notis Custom")) {
                 let tMatch = btr.match(/pada (.*?) jam/);
                 let mMatch = btr.match(/jam (.*?)\./);
                 let tarikhHst = tMatch ? tMatch[1] : '';

@@ -3550,8 +3550,31 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         `;
     }
 
-    // 4. BINA TEMPLAT SURAT DEFENDAN (MUKA SURAT 2)
-    let suratDefendanLengkap = `
+// 4. BINA TEMPLAT SURAT DEFENDAN (MUKA SURAT 2)
+    let suratDefendanLengkap = '';
+    
+    if (kunci === 'sebutan_semula') {
+        suratDefendanLengkap = `
+        <!-- NOTIS KEPADA DEFENDAN (BORANG A - TIADA LETTERHEAD) -->
+        <div class="kertas-notis" id="kertasNotisDefendan">
+            ${isiDefendan}
+        </div>
+        `;
+        
+        // Salinan peguam juga dapat Borang A yang sama
+        if (peguamDefendanHTML !== '') {
+            suratDefendanLengkap += `
+            <!-- SALINAN PEGUAM DEFENDAN (BORANG A) -->
+            <div class="kertas-notis" id="kertasNotisPeguamDefendan">
+                <div style="text-align: left; font-weight: bold; font-size: 9pt; margin-bottom: 15px; font-style: italic; color: #475569;">
+                    *Salinan untuk Peguamcara Defendan:<br><span style="text-transform: uppercase;">${peguamDefendanHTML}</span>
+                </div>
+                ${isiDefendan}
+            </div>
+            `;
+        }
+    } else {
+        suratDefendanLengkap = `
         <!-- NOTIS KEPADA DEFENDAN (ASAL) -->
         <div class="kertas-notis" id="kertasNotisDefendan">
             ${templateHeaderHTML}
@@ -3565,31 +3588,35 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
                 ${templateFooterHTML}
             </div>
         </div>
-    `;
-
-    // Jika Peguam Defendan wujud, cantumkan salinan kedua ke dalam templat
-    if (peguamDefendanHTML !== '') {
-        suratDefendanLengkap += `
-        <!-- NOTIS KEPADA PEGUAM DEFENDAN (SALINAN BERKEMBAR) -->
-        <div class="kertas-notis">
-            ${templateHeaderHTML}
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
-                <div class="notis-alamat"><strong style="text-transform: uppercase;">${peguamDefendanHTML}</strong><br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Defendan)</span></div>
-                <div style="margin-bottom: 15px;">Tuan,</div>
-                ${tajukDefendan}
-                <hr class="notis-garis-tajuk">
-                ${isiDefendan}
-                ${templateFooterHTML}
-            </div>
-        </div>
         `;
+
+        if (peguamDefendanHTML !== '') {
+            suratDefendanLengkap += `
+            <!-- NOTIS KEPADA PEGUAM DEFENDAN (SALINAN BERKEMBAR) -->
+            <div class="kertas-notis">
+                ${templateHeaderHTML}
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                    <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
+                    <div class="notis-alamat"><strong style="text-transform: uppercase;">${peguamDefendanHTML}</strong><br><span style="font-size: 0.9em; font-style: italic; font-weight: bold;">(Peguamcara bagi Defendan)</span></div>
+                    <div style="margin-bottom: 15px;">Tuan,</div>
+                    ${tajukDefendan}
+                    <hr class="notis-garis-tajuk">
+                    ${isiDefendan}
+                    ${templateFooterHTML}
+                </div>
+            </div>
+            `;
+        }
     }
 
 // 5. CANTUMKAN KESELURUHAN DOKUMEN
     const htmlNotisGenerik = `
         <style>
-            @media print { 
+            ${cssSebutanSemulaKhas}
+            #kertasNotisPeguamDefendan { padding: 1.5cm 2.5cm !important; }
+            #kertasNotisPeguamDefendan .notis-body-wrapper { padding: 0 !important; }
+            
+            @media print {
                 @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 

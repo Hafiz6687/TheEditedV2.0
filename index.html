@@ -9131,9 +9131,41 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
 
-    // 3. Penyusunan Tajuk & Isi Custom
+// 3. Penyusunan Tajuk & Isi Custom
     let htmlTajuk = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: ${tajukRaw}</div>`;
     let htmlIsi = `<div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>`;
+    
+    // FUNGSI PINTAR UNTUK AUTO-BOLD TARIKH & MASA
+    function autoBoldTarikhMasa(teks) {
+        // Kesan format: 12/12/2026, 12-12-2026, 12.12.2026
+        let regexTarikh1 = /\b\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}\b/g; 
+        // Kesan format: 12 Ogos 2026, 2hb Mac 2026
+        let regexTarikh2 = /\b\d{1,2}(?:hb)?\s+(?:Januari|Februari|Mac|April|Mei|Jun|Julai|Ogos|September|Oktober|November|Disember|Jan|Feb|Mar|Apr|Mei|Jun|Jul|Ogos|Sep|Okt|Nov|Dis)\s+\d{2,4}\b/gi; 
+        // Kesan format: jam 10:00 pagi, 2.30 petang, 14:00
+        let regexMasa = /\b(?:jam\s+|pukul\s+)?\d{1,2}[:\.]\d{2}\s*(?:pagi|tengah hari|petang|malam|am|pm)?\b/gi; 
+
+        return teks.replace(regexTarikh1, "<strong>$&</strong>")
+                   .replace(regexTarikh2, "<strong>$&</strong>")
+                   .replace(regexMasa, "<strong>$&</strong>");
+    }
+
+    // LOGIK AUTO-TAB & AUTO-BOLD UNTUK PERENGGAN
+    let perengganArray = isiRaw.split('\n');
+    perengganArray.forEach(p => {
+        let teksBersih = p.trim();
+        if (teksBersih !== "") {
+            // Semak jika perenggan bermula dengan nombor (Cth: "2. ", "3.")
+            let match = teksBersih.match(/^(\d+\.)\s*(.*)/);
+            if (match) {
+                let nombor = match[1];
+                let isiPerenggan = autoBoldTarikhMasa(match[2]);
+                htmlIsi += `<div class="notis-isi" style="text-align: justify; line-height: 1.4;">${nombor}<span class="jarak-tab"></span>${isiPerenggan}</div>`;
+            } else {
+                let isiPerenggan = autoBoldTarikhMasa(teksBersih);
+                htmlIsi += `<div class="notis-isi" style="text-align: justify; line-height: 1.4;">${isiPerenggan}</div>`;
+            }
+        }
+    });
     
     // LOGIK AUTO-TAB UNTUK NOMBOR PERENGGAN (NOTIS LAIN-LAIN)
     let perengganArray = isiRaw.split('\n');

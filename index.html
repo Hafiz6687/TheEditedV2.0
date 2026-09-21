@@ -9166,23 +9166,7 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
             }
         }
     });
-    
-    // LOGIK AUTO-TAB UNTUK NOMBOR PERENGGAN (NOTIS LAIN-LAIN)
-    let perengganArray = isiRaw.split('\n');
-    perengganArray.forEach(p => {
-        let teksBersih = p.trim();
-        if (teksBersih !== "") {
-            // Semak jika perenggan bermula dengan nombor dan titik (Contoh: "2. ", "3.", "10.")
-            let match = teksBersih.match(/^(\d+\.)\s*(.*)/);
-            if (match) {
-                // Jika ya, asingkan nombor dan letakkan <span class="jarak-tab"></span> secara automatik
-                htmlIsi += `<div class="notis-isi" style="text-align: justify; line-height: 1.4;">${match[1]}<span class="jarak-tab"></span>${match[2]}</div>`;
-            } else {
-                // Jika tiada nombor di hadapan, kekalkan sebagai perenggan biasa
-                htmlIsi += `<div class="notis-isi" style="text-align: justify; line-height: 1.4;">${teksBersih}</div>`;
-            }
-        }
-    });
+
 
     // 4. PENJANAAN DINAMIK BERDASARKAN CHECKBOX
     let htmlSuratGabungan = '';

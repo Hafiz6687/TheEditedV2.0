@@ -9811,21 +9811,35 @@ function bukaPreviewMou(dataSimpanan = null) {
         });
     }
 
-    // --- BORANG C ASAL YANG DIBETULKAN ---
+// --- BORANG C ASAL YANG DIBETULKAN ---
     let htmlJadualTuntutanMOU = "";
     if (tuntutanDipilih.length === 0) {
         htmlJadualTuntutanMOU = `<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">Tiada tuntutan dipilih.</td></tr>`;
     } else {
-        let isPukal = tuntutanDipilih.length > 1;
-        tuntutanDipilih.forEach((item, index) => {
-            let keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+        // LOGIK PINTAR: Saring jenis tuntutan (unik) jika aduan berkumpulan
+        let senaraiPaparanBorangC = [];
+        if (isAutoGroup) {
+            let jenisUnik = new Set();
+            tuntutanDipilih.forEach(t => jenisUnik.add(t.jenis)); // Simpan 'jenis' sahaja tanpa duplicate
+            senaraiPaparanBorangC = Array.from(jenisUnik).map(j => ({ jenis: j, keterangan: "" }));
+        } else {
+            senaraiPaparanBorangC = tuntutanDipilih;
+        }
+
+        let isPukal = senaraiPaparanBorangC.length > 1;
+        senaraiPaparanBorangC.forEach((item, index) => {
+            let keteranganCetak = "";
+            if (!isAutoGroup) { // Jika kes individu, kekalkan keterangan asal
+                keteranganCetak = item.keterangan === "(Keterangan Berbeza)" ? "" : item.keterangan;
+            }
+            
             htmlJadualTuntutanMOU += `
             <tr>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>`;
             if (isPukal) {
                 if (index === 0) {
-                    htmlJadualTuntutanMOU += `<td rowspan="${tuntutanDipilih.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`;
+                    htmlJadualTuntutanMOU += `<td rowspan="${senaraiPaparanBorangC.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`;
                 }
             } else {
                 htmlJadualTuntutanMOU += `<td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${jumRM}</td>`;

@@ -10147,39 +10147,38 @@ const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:
             ansuranDetails.forEach(ans => {
                 totalAns += parseFloat(String(ans.amaun).replace(/,/g, '')) || 0;
             });
-
 if (isAutoGroup) {
-                // LOGIK BARU: Asingkan jadual kiri (Pengadu) dan kanan (Ansuran) supaya tidak terikat (tiada gap)
-                let pKeys = Object.keys(dataPengadu);
-                let pRows = pKeys.length;
-                let aRows = ansuranDetails.length;
+                // LOGIK BARU (PROFESIONAL): Asingkan kepada 2 Jadual Atas & Bawah
+                
+                // --- JADUAL 1: SENARAI PENGADU ---
+                let rowsPengadu = "";
+                let totalPersetujuan = 0;
+                let bilP = 1;
+                
+                for (let pId in dataPengadu) {
+                    let d = dataPengadu[pId];
+                    totalPersetujuan += d.jumlah;
+                    let kpCetak = d.kp ? `<br><span style="font-size: 0.85em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
+                    let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
+                    
+                    rowsPengadu += `
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bilP++}</td>
+                        <td style="border: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div></td>
+                        <td style="border: 1px solid #000; padding: 6px; text-align: right; vertical-align: top; font-weight: bold;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td>
+                    </tr>`;
+                }
 
-                if (pRows === 0 && aRows === 0) {
-                    rowsLampiran = `<tr><td colspan="4" style="border-bottom: 1px solid #000; padding: 6px; text-align: center;">Tiada data direkodkan.</td></tr>`;
+                // --- JADUAL 2: JADUAL ANSURAN ---
+                let rowsAnsuran = "";
+                let totalAnsuranKira = 0;
+                
+                if (ansuranDetails.length === 0) {
+                    rowsAnsuran = `<tr><td colspan="3" style="border: 1px solid #000; padding: 6px; text-align: center;">Tiada jadual bayaran ditetapkan.</td></tr>`;
                 } else {
-                    // JADUAL BERSARANG KIRI (PENGADU SAHAJA)
-                    let htmlKiri = '<table style="width: 100%; border-collapse: collapse;">';
-                    for (let i = 0; i < pRows; i++) {
-                        let pId = pKeys[i];
-                        let d = dataPengadu[pId];
-                        let kpCetak = d.kp ? `<br><span style="font-size: 0.9em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
-                        let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
-                        let butiranHtml = `<strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div>`;
-
-                        let bBorder = (i === pRows - 1) ? 'none' : '1px solid #000'; // Elak garisan berganda di bawah
-                        
-                        htmlKiri += `<tr>
-                            <td style="width: 10%; border-bottom: ${bBorder}; padding: 10px 6px; text-align: center; vertical-align: top;">${i + 1}</td>
-                            <td style="width: 90%; border-bottom: ${bBorder}; padding: 10px 6px; vertical-align: top; line-height: 1.4;">${butiranHtml}</td>
-                        </tr>`;
-                    }
-                    htmlKiri += '</table>';
-
-                    // JADUAL BERSARANG KANAN (TARIKH & AMAUN SAHAJA)
-                    let htmlKanan = '<table style="width: 100%; border-collapse: collapse;">';
-                    for (let i = 0; i < aRows; i++) {
-                        let ans = ansuranDetails[i];
+                    ansuranDetails.forEach((ans, idx) => {
                         let valNum = parseFloat(String(ans.amaun).replace(/,/g, '')) || 0;
+                        totalAnsuranKira += valNum;
                         let amaunCantik = valNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
                         let tarikhCetak = "..................";
                         if (ans.tarikh) {
@@ -10187,42 +10186,65 @@ if (isAutoGroup) {
                             if (!isNaN(t.getTime())) tarikhCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
                         }
 
-                        let bBorder = (i === aRows - 1) ? 'none' : '1px solid #000'; // Elak garisan berganda di bawah
-                        
-                        htmlKanan += `<tr>
-                            <td style="width: 50%; border-bottom: ${bBorder}; padding: 10px 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td>
-                            <td style="width: 50%; border-bottom: ${bBorder}; padding: 10px 6px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td>
+                        rowsAnsuran += `
+                        <tr>
+                            <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">Ansuran ${idx + 1}</td>
+                            <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 45%;">${tarikhCetak}</td>
+                            <td style="border: 1px solid #000; padding: 6px; text-align: right; width: 40%;">RM ${amaunCantik}</td>
                         </tr>`;
-                    }
-                    htmlKanan += '</table>';
-
-                    // CANTUMKAN KEDUA-DUA JADUAL KIRI & KANAN
-                    rowsLampiran = `
-                        <tr>
-                            <td colspan="2" style="padding: 0; vertical-align: top; border-right: none;">${htmlKiri}</td>
-                            <td colspan="2" style="padding: 0; vertical-align: top; border-left: none;">${htmlKanan}</td>
-                        </tr>
-                    `;
+                    });
                 }
-            } else {
-                // LOGIK UNTUK ADUAN INDIVIDU / MAJIKAN
-                let gabunganTuntutanCetak = tuntutanDipilih.map(t => { 
-                    let k = t.keterangan === "(Keterangan Berbeza)" ? "" : t.keterangan; 
-                    return `<strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${k}</span>`; 
-                }).join('<br><br>');
-                
-                let htmlKiri = `
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td style="width: 10%; border-bottom: none; padding: 10px 6px; text-align: center; vertical-align: top;">1</td>
-                            <td style="width: 90%; border-bottom: none; padding: 10px 6px; vertical-align: top; line-height: 1.4;">${gabunganTuntutanCetak}</td>
-                        </tr>
-                    </table>
-                `;
 
-                let htmlKanan = '<table style="width: 100%; border-collapse: collapse;">';
+                let totalAnsStr = totalAnsuranKira.toLocaleString('en-MY', { minimumFractionDigits: 2 });
+
+                // --- CANTUMKAN KE DALAM LAMPIRAN A ---
+                htmlLampiranA = `
+                <div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
+                    <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+                        <div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 25px; text-decoration: underline;">Lampiran A</div>
+                        
+                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10.5pt;">A. MAKLUMAT PENGADU & TUNTUTAN</div>
+                        <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; color: #000; margin-bottom: 25px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: center; width: 5%;">Bil.</th>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: left; width: 65%;">Butiran Pengadu & Jenis Tuntutan</th>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: right; width: 30%;">Persetujuan (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsPengadu}
+                            </tbody>
+                        </table>
+
+                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10.5pt;">B. JADUAL BAYARAN ANSURAN (PUKAL)</div>
+                        <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; color: #000;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: center;">Bil.</th>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: center;">Tarikh Bayaran</th>
+                                    <th style="border: 1px solid #000; background-color: #e2e8f0; padding: 6px; text-align: right;">Amaun (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsAnsuran}
+                                <tr>
+                                    <td colspan="2" style="border: 1px solid #000; padding: 8px 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td>
+                                    <td style="border: 1px solid #000; padding: 8px 6px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalAnsStr}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+                
+            } else {
+                // LOGIK LAMA KEKAL UNTUK ADUAN INDIVIDU / MAJIKAN
+                let bilRowspan = ansuranDetails.length > 0 ? ansuranDetails.length : 1;
+                let gabunganTuntutanCetak = tuntutanDipilih.map(t => { let k = t.keterangan === "(Keterangan Berbeza)" ? "" : t.keterangan; return `<strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${k}</span>`; }).join('<br><br>');
+                
+                let rowsLampiran = "";
                 if (ansuranDetails.length === 0) {
-                    htmlKanan += `<tr><td style="width: 50%; border-bottom: none; padding: 10px 6px; text-align: center; vertical-align: top;">-</td><td style="width: 50%; border-bottom: none; padding: 10px 6px; text-align: right; vertical-align: top;">-</td></tr>`;
+                    rowsLampiran = `<tr><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">1</td><td style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;">${gabunganTuntutanCetak}</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">-</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top;">-</td></tr>`;
                 } else {
                     ansuranDetails.forEach((ans, idx) => {
                         let valNum = parseFloat(String(ans.amaun).replace(/,/g, '')) || 0;
@@ -10233,23 +10255,18 @@ if (isAutoGroup) {
                             if (!isNaN(t.getTime())) tarikhCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`; 
                         }
                         
-                        let bBorder = (idx === ansuranDetails.length - 1) ? 'none' : '1px solid #000';
-                        htmlKanan += `<tr><td style="width: 50%; border-bottom: ${bBorder}; padding: 10px 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="width: 50%; border-bottom: ${bBorder}; padding: 10px 6px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
+                        if (idx === 0) {
+                            rowsLampiran += `<tr><td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">1</td><td rowspan="${bilRowspan}" style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;">${gabunganTuntutanCetak}</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
+                        } else {
+                            rowsLampiran += `<tr><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top;">RM ${amaunCantik}</td></tr>`;
+                        }
                     });
                 }
-                htmlKanan += '</table>';
-
-                rowsLampiran = `
-                    <tr>
-                        <td colspan="2" style="padding: 0; vertical-align: top; border-right: none;">${htmlKiri}</td>
-                        <td colspan="2" style="padding: 0; vertical-align: top; border-left: none;">${htmlKanan}</td>
-                    </tr>
-                `;
+                
+                let totalAnsStr = totalAns.toLocaleString('en-MY', { minimumFractionDigits: 2 });
+                htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA_Ansuran}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalAnsStr}</td></tr></tbody></table></div></div>`;
             }
-            let totalAnsStr = totalAns.toLocaleString('en-MY', { minimumFractionDigits: 2 });
-            htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA_Ansuran}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalAnsStr}</td></tr></tbody></table></div></div>`;
         }
-    }
 
 const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;

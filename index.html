@@ -2233,11 +2233,15 @@ if (posDisimpan) {
         } // <--- penutup if (gambarDisimpan)
 
         // --- KEMASKINI: Tarik data dari Local Storage supaya tak hilang bila refresh ---
-        const senaraiTersimpan = localStorage.getItem('eLC_senaraiKes');
-        if (senaraiTersimpan) {
-            // Jika ada memori lama, gunakan memori tersebut
-            memoriSenaraiKes = JSON.parse(senaraiTersimpan);
-        } else {
+const senaraiTersimpan = localStorage.getItem('eLC_senaraiKes');
+if (senaraiTersimpan) {
+    try {
+        memoriSenaraiKes = JSON.parse(senaraiTersimpan);
+    } catch (error) {
+        console.error("Data memori korup. Memuatkan semula data kosong.");
+        memoriSenaraiKes = []; 
+    }
+} else {
             // Jika sistem baru pertama kali dibuka, masukkan 1 data contoh (dummy)
             memoriSenaraiKes = [{
                 noKes: "KBR/10103/2026/0001", 
@@ -4052,7 +4056,6 @@ function semakBilanganPengadu(input) {
         if (nilai <= 1) {
             alert("Tindakan Ditolak: Bagi aduan jenis Berkumpulan, bilangan pengadu mestilah 2 orang atau lebih.");
             input.value = ""; 
-            input.focus();    
             janaJadualPengaduTambahan(0); 
         } else {
             janaJadualPengaduTambahan(nilai); 
@@ -9624,6 +9627,11 @@ function tambahAnsuranMou(tarikhVal = '', amaunVal = '') {
 
 function janaAnsuranAuto() {
     const bilBulan = parseInt(document.getElementById('auto_bil_ansuran').value);
+// TAMBAHKAN KOD INI SELEPAS VALIDASI SEDIA ADA:
+if (bilBulan > 120) { // Hadkan maksimum kepada 10 tahun (120 bulan)
+    alert("Jumlah bulan ansuran terlalu besar. Maksimum 120 bulan dibenarkan.");
+    return;
+}
     const tarikhMula = document.getElementById('auto_tarikh_mula').value;
     const jumTotalStr = document.getElementById('mk_jumlah_mou').value;
     

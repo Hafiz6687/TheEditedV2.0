@@ -10070,8 +10070,13 @@ function bukaPreviewMou(dataSimpanan = null) {
         ansuranIndividuMap = memoData.ansuranIndividu || {};
     }
 
-    let htmlLampiranA = "";
-const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:checked')?.value || 'Pukal';
+let htmlLampiranA = "";
+    let jenisAnsuran = 'Pukal';
+    if (!dataSimpanan) {
+        jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:checked')?.value || 'Pukal';
+    } else {
+        jenisAnsuran = memoData.jenisAnsuran || 'Pukal';
+    }
     
     // 1. Header untuk jadual ANSURAN (Ada Tarikh Bayaran)
     const headerJadualA_Ansuran = `
@@ -10088,7 +10093,7 @@ const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:
         </thead>
     `;
 
-// 2. Header untuk jadual PENUH (Tiada Tarikh Bayaran)
+    // 2. Header untuk jadual PENUH (Tiada Tarikh Bayaran)
     const headerJadualA_Penuh = `
         <thead>
             <tr>
@@ -10105,10 +10110,8 @@ const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:
             let d = dataPengadu[pId]; totalPenuh += d.jumlah;
             let kpCetak = d.kp ? `<br><span style="font-size: 0.9em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
             let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
-            // Lajur <td>-</td> untuk tarikh telah dibuang
             rowsLampiran += `<tr><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div></td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top; font-weight: bold; font-size: 1.05em;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         }
-        // Guna headerJadualA_Penuh dan colspan="2" pada ruangan total
         htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA_Penuh}<tbody>${rowsLampiran}<tr><td colspan="2" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalPenuh.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
     
     } else if (kaedahBayaran === 'Ansuran') {
@@ -10147,17 +10150,14 @@ const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:
             htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA_Ansuran}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalSemua.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
 
         } else {
-            // ADUAN BERKUMPULAN / INDIVIDU - JADUAL ANSURAN PUKAL SERAGAM
             let rowsLampiran = ""; 
             let totalAns = 0; 
             
-            // Kira jumlah keseluruhan ansuran
             ansuranDetails.forEach(ans => {
                 totalAns += parseFloat(String(ans.amaun).replace(/,/g, '')) || 0;
             });
-if (isAutoGroup) {
-                // LOGIK BARU (PROFESIONAL): Asingkan kepada 2 Jadual Atas & Bawah
-                
+
+            if (isAutoGroup) {
                 // --- JADUAL 1: SENARAI PENGADU ---
                 let rowsPengadu = "";
                 let totalPersetujuan = 0;
@@ -10196,7 +10196,7 @@ if (isAutoGroup) {
 
                         rowsAnsuran += `
                         <tr>
-                            <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">Ansuran ${idx + 1}</td>
+                            <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">${idx + 1}</td>
                             <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 45%;">${tarikhCetak}</td>
                             <td style="border: 1px solid #000; padding: 6px; text-align: right; width: 40%;">RM ${amaunCantik}</td>
                         </tr>`;
@@ -10205,7 +10205,6 @@ if (isAutoGroup) {
 
                 let totalAnsStr = totalAnsuranKira.toLocaleString('en-MY', { minimumFractionDigits: 2 });
 
-                // --- CANTUMKAN KE DALAM LAMPIRAN A ---
                 htmlLampiranA = `
                 <div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
                     <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
@@ -10225,7 +10224,7 @@ if (isAutoGroup) {
                             </tbody>
                         </table>
 
-                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10.5pt;">B. JADUAL BAYARAN ANSURAN (PUKAL)</div>
+                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10.5pt;">B. MAKLUMAT BAYARAN</div>
                         <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; color: #000;">
                             <thead>
                                 <tr>
@@ -10246,7 +10245,6 @@ if (isAutoGroup) {
                 </div>`;
                 
             } else {
-                // LOGIK LAMA KEKAL UNTUK ADUAN INDIVIDU / MAJIKAN
                 let bilRowspan = ansuranDetails.length > 0 ? ansuranDetails.length : 1;
                 let gabunganTuntutanCetak = tuntutanDipilih.map(t => { let k = t.keterangan === "(Keterangan Berbeza)" ? "" : t.keterangan; return `<strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${k}</span>`; }).join('<br><br>');
                 
@@ -10275,7 +10273,7 @@ if (isAutoGroup) {
                 htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA_Ansuran}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalAnsStr}</td></tr></tbody></table></div></div>`;
             }
         }
-}
+    }
 const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
@@ -10503,7 +10501,7 @@ const tH = new Date();
         else if (jenis === 'pengadu') { tjk = 'Notis MOU (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
         else if (jenis === 'defendan') { tjk = 'Notis MOU (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
         
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails, jumlahIndividu: jumlahIndividu, ansuranIndividu: ansuranIndividuMap };
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails, jumlahIndividu: jumlahIndividu, ansuranIndividu: ansuranIndividuMap, jenisAnsuran: jenisAnsuran };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
         

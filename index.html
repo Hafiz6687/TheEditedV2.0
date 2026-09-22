@@ -9747,56 +9747,7 @@ function janaAnsuranAutoIndividu(id) {
     }
 }
        
-function semakButangMou() {
-    const t = document.getElementById('mk_tarikh_mou')?.value;
-    const j = document.getElementById('mk_jumlah_mou')?.value;
-    const k = document.getElementById('mk_kaedah_mou')?.value;
-    const checkboxes = document.querySelectorAll('input[name="mou_tuntutan_cb"]:checked');
-    const btn = document.getElementById('btnTindakanMou');
-    if (!btn) return;
 
-    let ansuranValid = true;
-    if (k === 'Ansuran') {
-        // --- PEMBETULAN: Baca status Berkumpulan dari memori kes ---
-        let isBerkumpulan = false;
-        if (indexKesSemasa > -1) {
-            const kes = memoriSenaraiKes[indexKesSemasa];
-            if (kes && kes.dataBorang && kes.dataBorang.inputs) {
-                const isMajikan = kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true";
-                isBerkumpulan = kes.dataBorang.inputs['aduan'] === 'Berkumpulan' && !isMajikan;
-            } else if (kes) {
-                isBerkumpulan = kes.jenisAduan === 'Berkumpulan' && kes.jenisAduan !== 'Majikan';
-            }
-        }
-        // -----------------------------------------------------------
-        
-        const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:checked')?.value;
-        
-        if (isBerkumpulan && jenisAnsuran === 'Individu') {
-            document.querySelectorAll('.input-mou-individu').forEach(inp => {
-                let id = inp.dataset.id;
-                let targetVal = parseFloat(inp.value.replace(/,/g, '')) || 0;
-                if (targetVal > 0) {
-                    let totalAns = 0;
-                    document.querySelectorAll(`.input-ans-amaun-${id}`).forEach(ansInp => { totalAns += parseFloat(ansInp.value.replace(/,/g, '')) || 0; });
-                    if (Math.abs(targetVal - totalAns) > 0.01) ansuranValid = false;
-                    if (document.querySelectorAll(`.input-ans-tarikh-${id}`).length === 0) ansuranValid = false;
-                }
-            });
-        } else {
-            const tarikhs = document.querySelectorAll('.input-ansuran-tarikh');
-            const amauns = document.querySelectorAll('.input-ansuran-amaun');
-            if (tarikhs.length === 0) ansuranValid = false;
-            else { for(let i=0; i<tarikhs.length; i++){ if(!tarikhs[i].value || !amauns[i].value) { ansuranValid = false; break; } } }
-        }
-    }
-
-    if (t && j && k && checkboxes.length > 0 && ansuranValid) {
-        btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-    } else {
-        btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
-    }
-}
 
 function tindakanMou() {
     if (!document.getElementById('btnTindakanMou').disabled) {
@@ -10057,7 +10008,7 @@ function bukaPreviewMou(dataSimpanan = null) {
         let totalPenuh = 0;
         let bil = 1;
 
-        // Kumpul data pengadu yang seragam untuk Penuh dan Ansuran Individu
+// Kumpul data pengadu yang seragam untuk Penuh dan Ansuran Individu
     let dataPengadu = {};
     if (isAutoGroup) {
         tuntutanDipilih.forEach(t => {
@@ -10094,15 +10045,30 @@ function bukaPreviewMou(dataSimpanan = null) {
     let htmlLampiranA = "";
     const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:checked')?.value || 'Pukal';
     
+    // FORMAT HEADER JADUAL STANDARD (Sama dan Seragam untuk Semua Kaedah)
+    const headerJadualA = `
+        <thead>
+            <tr>
+                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                <th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; width: 45%; background-color: #e2e8f0;">Butiran & Jenis Tuntutan</th>
+                <th colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; background-color: #e2e8f0;">Persetujuan</th>
+            </tr>
+            <tr>
+                <th style="border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 25%; background-color: #e2e8f0; white-space: nowrap;">Tarikh Bayaran</th>
+                <th style="border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0; white-space: nowrap;">Amaun (RM)</th>
+            </tr>
+        </thead>
+    `;
+
     if (isAutoGroup && kaedahBayaran === 'Penuh') {
         let rowsLampiran = ""; let totalPenuh = 0; let bil = 1;
         for (let pId in dataPengadu) {
             let d = dataPengadu[pId]; totalPenuh += d.jumlah;
             let kpCetak = d.kp ? `<br><span style="font-size: 0.9em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
             let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
-            rowsLampiran += `<tr><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div></td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top; font-weight: bold; font-size: 1.05em;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+            rowsLampiran += `<tr><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td style="border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div></td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">-</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; vertical-align: top; font-weight: bold; font-size: 1.05em;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         }
-        htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;"><thead><tr><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: left; background-color: #e2e8f0;">Butiran & Jenis Tuntutan</th><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; width: 30%; background-color: #e2e8f0; white-space: nowrap;">Jumlah Persetujuan (RM)</th></tr></thead><tbody>${rowsLampiran}<tr><td colspan="2" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalPenuh.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
+        htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalPenuh.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
     
     } else if (kaedahBayaran === 'Ansuran') {
         if (isAutoGroup && jenisAnsuran === 'Individu') {
@@ -10112,11 +10078,14 @@ function bukaPreviewMou(dataSimpanan = null) {
                 if (d.jumlah > 0) {
                     totalSemua += d.jumlah;
                     let kpCetak = d.kp ? `<br><span style="font-size: 0.9em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
+                    let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
                     let ansuranKhusus = ansuranIndividuMap[pId] || [];
                     let personRowspan = ansuranKhusus.length > 0 ? ansuranKhusus.length : 1;
                     
+                    let butiranHtml = `<strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}<div style="margin-top: 8px;">${unikTuntutan}</div>`;
+
                     if (ansuranKhusus.length === 0) {
-                        rowsLampiran += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center;">-</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right;">-</td></tr>`;
+                        rowsLampiran += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;">${butiranHtml}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center;">-</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: right;">-</td></tr>`;
                     } else {
                         ansuranKhusus.forEach((ans, ansIdx) => {
                             let tarikhCetak = "..................";
@@ -10125,7 +10094,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                             
                             if (ansIdx === 0) {
                                 let btmBorder = ansuranKhusus.length === 1 ? "1px solid #000" : "1px dashed #cbd5e1";
-                                rowsLampiran += `<tr><td rowspan="${personRowspan}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td rowspan="${personRowspan}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;"><strong style="color: var(--primary-blue); font-size: 1.05em; text-transform: uppercase;">${d.nama}</strong>${kpCetak}</td><td style="border-top: 1px solid #000; border-bottom: ${btmBorder}; padding: 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-top: 1px solid #000; border-bottom: ${btmBorder}; padding: 6px; text-align: right; vertical-align: top;">RM ${amaunCetak}</td></tr>`;
+                                rowsLampiran += `<tr><td rowspan="${personRowspan}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bil++}</td><td rowspan="${personRowspan}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px; vertical-align: top; line-height: 1.3;">${butiranHtml}</td><td style="border-top: 1px solid #000; border-bottom: ${btmBorder}; padding: 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-top: 1px solid #000; border-bottom: ${btmBorder}; padding: 6px; text-align: right; vertical-align: top;">RM ${amaunCetak}</td></tr>`;
                             } else {
                                 let btmBorder = ansIdx === ansuranKhusus.length - 1 ? "1px solid #000" : "1px dashed #cbd5e1";
                                 rowsLampiran += `<tr><td style="border-bottom: ${btmBorder}; padding: 6px; text-align: center; vertical-align: top;">${tarikhCetak}</td><td style="border-bottom: ${btmBorder}; padding: 6px; text-align: right; vertical-align: top;">RM ${amaunCetak}</td></tr>`;
@@ -10134,7 +10103,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                     }
                 }
             }
-            htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 15px;">JADUAL PERSETUJUAN PENYELESAIAN (KAEDAH ANSURAN BERASINGAN)</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;"><thead><tr><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: left; background-color: #e2e8f0;">Butiran Pengadu</th><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: center; width: 25%; background-color: #e2e8f0;">Tarikh Bayaran</th><th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; text-align: right; width: 25%; background-color: #e2e8f0;">Amaun (RM)</th></tr></thead><tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalSemua.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
+            htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.3; margin-top: 15px; color: #000;">${headerJadualA}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 8px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; background-color: #f8fafc; font-size: 1.05em;">RM ${totalSemua.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</td></tr></tbody></table></div></div>`;
 
         } else {
             // LOGIK LAMA: ANSURAN PUKAL SERAGAM
@@ -10158,7 +10127,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                 });
             }
             let totalAnsStr = totalAns.toLocaleString('en-MY', { minimumFractionDigits: 2 });
-            htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; margin-top: 15px; color: #000;"><thead><tr><th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th><th rowspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; width: 45%; background-color: #e2e8f0;">Jenis Tuntutan</th><th colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; background-color: #e2e8f0;">Persetujuan</th></tr><tr><th style="border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 25%; background-color: #e2e8f0;">Tarikh Bayaran</th><th style="border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Amaun (RM)</th></tr></thead><tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 6px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; background-color: #f8fafc;">RM ${totalAnsStr}</td></tr></tbody></table></div></div>`;
+            htmlLampiranA = `<div class="kertas-notis" id="kertasLampiranA" style="padding: 1.5cm 2.5cm !important; page-break-before: always;"><div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;"><div style="text-align: right; font-weight: bold; font-size: 11pt; font-family: Arial, sans-serif; margin-bottom: 30px; text-decoration: underline;">Lampiran A</div><table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; margin-top: 15px; color: #000;">${headerJadualA}<tbody>${rowsLampiran}<tr><td colspan="3" style="border-bottom: 1px solid #000; padding: 6px; padding-right: 15px; text-align: right; font-weight: bold; background-color: #f8fafc;">JUMLAH KESELURUHAN</td><td style="border-bottom: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; background-color: #f8fafc;">RM ${totalAnsStr}</td></tr></tbody></table></div></div>`;
         }
     }
 

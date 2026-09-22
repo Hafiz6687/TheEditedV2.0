@@ -9865,7 +9865,7 @@ function bukaPreviewMou(dataSimpanan = null) {
             htmlJadualTuntutanMOU += `
             <tr>
                 <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; vertical-align: top;">${index + 1}</td>
-                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${keteranganCetak}</span></td>`;
+                <td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; vertical-align: top;">${item.jenis} <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${keteranganCetak}</span></td>`;
             if (isPukal) {
                 if (index === 0) { htmlJadualTuntutanMOU += `<td rowspan="${senaraiPaparanBorangC.length}" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: middle; font-weight: bold; font-size: 1.05em;">${jumRM}</td>`; }
             } else { htmlJadualTuntutanMOU += `<td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; vertical-align: top;">${jumRM}</td>`; }
@@ -9915,7 +9915,7 @@ function bukaPreviewMou(dataSimpanan = null) {
             // Kita buang tag <br> yang disuntik khusus untuk Borang C tadi supaya keterangan ini kekal bersih
             let ketAsal = t.keterangan.split('<br>')[0].trim(); 
             if (ketAsal) {
-                dataPengadu[pId].tuntutanList.push(`• <strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333;">${ketAsal}</span>`);
+                dataPengadu[pId].tuntutanList.push(`• <strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${ketAsal}</span>`);
             } else {
                 dataPengadu[pId].tuntutanList.push(`• <strong>${t.jenis}</strong>`);
             }
@@ -9974,7 +9974,7 @@ function bukaPreviewMou(dataSimpanan = null) {
 
         let gabunganTuntutanCetak = tuntutanDipilih.map(t => {
             let k = t.keterangan === "(Keterangan Berbeza)" ? "" : t.keterangan;
-            return `<strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333;">${k}</span>`;
+            return `<strong>${t.jenis}</strong> <span style="font-size: 0.9em; color: #333; white-space: nowrap;">${k}</span>`;
         }).join('<br><br>');
 
         if (ansuranDetails.length === 0) {

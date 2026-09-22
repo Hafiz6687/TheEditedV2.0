@@ -9747,7 +9747,35 @@ function janaAnsuranAutoIndividu(id) {
     }
 }
        
+// =========================================================================
+// FUNGSI VALIDASI BUTANG MOU
+// =========================================================================
+function semakButangMou() {
+    const tarikh = document.getElementById('mk_tarikh_mou')?.value;
+    const kaedah = document.getElementById('mk_kaedah_mou')?.value;
+    const jumlah = document.getElementById('mk_jumlah_mou')?.value;
+    const btn = document.getElementById('btnTindakanMou');
+    
+    if (!btn) return;
 
+    // Pastikan sekurang-kurangnya satu tuntutan dipilih
+    const senaraiTuntutanCbox = document.querySelectorAll('input[name="mou_tuntutan_cb"]:checked');
+    const adaTuntutan = senaraiTuntutanCbox.length > 0;
+
+    // Pastikan jumlah dimasukkan lebih dari 0
+    const jumlahSah = jumlah && parseFloat(jumlah.replace(/,/g, '')) > 0;
+
+    // Hidupkan butang jika semua kriteria asas dipenuhi
+    if (tarikh && kaedah && jumlahSah && adaTuntutan) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+}
 
 function tindakanMou() {
     if (!document.getElementById('btnTindakanMou').disabled) {

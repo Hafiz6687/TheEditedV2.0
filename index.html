@@ -9546,15 +9546,26 @@ function kawalAnsuranMou() {
     const jenisAnsuranDiv = document.getElementById('ruangan_jenis_ansuran');
     const modalBox = document.getElementById('modalBoxMou') || document.querySelector('#modalMou .modal-box');
     
-    // Semak jika kes ini berkumpulan
-    const isBerkumpulan = document.getElementById('aduanBerkumpulan')?.checked && !document.getElementById('majikan')?.checked;
+    // --- PEMBETULAN: Baca status Berkumpulan dari memori kes, bukan dari borang ---
+    let isBerkumpulan = false;
+    if (indexKesSemasa > -1) {
+        const kes = memoriSenaraiKes[indexKesSemasa];
+        if (kes && kes.dataBorang && kes.dataBorang.inputs) {
+            const isMajikan = kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true";
+            isBerkumpulan = kes.dataBorang.inputs['aduan'] === 'Berkumpulan' && !isMajikan;
+        } else if (kes) {
+            isBerkumpulan = kes.jenisAduan === 'Berkumpulan' && kes.jenisAduan !== 'Majikan';
+        }
+    }
+    // ------------------------------------------------------------------------------
 
     if (kaedah === 'Ansuran') {
         if (modalBox) modalBox.style.maxWidth = '600px'; 
         
         if (isBerkumpulan) {
-            jenisAnsuranDiv.style.display = 'grid';
-            const jenisJadual = document.querySelector('input[name="jenis_jadual_ansuran"]:checked').value;
+            if (jenisAnsuranDiv) jenisAnsuranDiv.style.display = 'grid';
+            const jenisAnsuranNode = document.querySelector('input[name="jenis_jadual_ansuran"]:checked');
+            const jenisJadual = jenisAnsuranNode ? jenisAnsuranNode.value : 'Pukal';
             
             if (jenisJadual === 'Pukal') {
                 ruanganAnsuran.style.display = 'block';
@@ -9565,7 +9576,7 @@ function kawalAnsuranMou() {
                 document.querySelectorAll('.btn-togol-ansuran-individu').forEach(el => el.style.display = 'block');
             }
         } else {
-            jenisAnsuranDiv.style.display = 'none';
+            if (jenisAnsuranDiv) jenisAnsuranDiv.style.display = 'none';
             ruanganAnsuran.style.display = 'block';
             document.querySelectorAll('.btn-togol-ansuran-individu').forEach(el => el.style.display = 'none');
         }
@@ -9746,7 +9757,19 @@ function semakButangMou() {
 
     let ansuranValid = true;
     if (k === 'Ansuran') {
-        const isBerkumpulan = document.getElementById('aduanBerkumpulan')?.checked && !document.getElementById('majikan')?.checked;
+        // --- PEMBETULAN: Baca status Berkumpulan dari memori kes ---
+        let isBerkumpulan = false;
+        if (indexKesSemasa > -1) {
+            const kes = memoriSenaraiKes[indexKesSemasa];
+            if (kes && kes.dataBorang && kes.dataBorang.inputs) {
+                const isMajikan = kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true";
+                isBerkumpulan = kes.dataBorang.inputs['aduan'] === 'Berkumpulan' && !isMajikan;
+            } else if (kes) {
+                isBerkumpulan = kes.jenisAduan === 'Berkumpulan' && kes.jenisAduan !== 'Majikan';
+            }
+        }
+        // -----------------------------------------------------------
+        
         const jenisAnsuran = document.querySelector('input[name="jenis_jadual_ansuran"]:checked')?.value;
         
         if (isBerkumpulan && jenisAnsuran === 'Individu') {

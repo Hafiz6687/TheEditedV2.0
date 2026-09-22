@@ -9422,7 +9422,7 @@ const isAutoGroup = isBerkumpulan && !isMajikan;
                 // KOTAK NAMA & INPUT NILAI KETUA
                 containerTuntutan.innerHTML += `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 5px;">
-                        <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue);">${namaKetua.toUpperCase()} (Ketua)</div>
+                        <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue); line-height: 1.3;">${namaKetua.toUpperCase()}<br><span style="font-size: 0.85em; color: var(--text-muted); font-weight: 500;">(Ketua)</span></div>
                         <div style="display: flex; align-items: center; gap: 5px;">
                             <span style="font-size: 0.8em; color: var(--text-muted); font-weight: bold;">Persetujuan: RM</span>
                             <input type="text" class="input-mou-individu" data-id="ketua" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); kiraTotalMouIndividu(); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="width: 90px; padding: 4px 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: bold; color: var(--primary-blue); text-align: right;">
@@ -9453,7 +9453,7 @@ const isAutoGroup = isBerkumpulan && !isMajikan;
                     // KOTAK NAMA & INPUT NILAI TAMBAHAN
                     containerTuntutan.innerHTML += `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 5px;">
-                            <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue);">${namaP.toUpperCase()} (Pengadu ${i})</div>
+                            <div style="font-size: 0.9em; font-weight: bold; color: var(--primary-blue); line-height: 1.3;">${namaP.toUpperCase()}<br><span style="font-size: 0.85em; color: var(--text-muted); font-weight: 500;">(Pengadu ${i})</span></div>
                             <div style="display: flex; align-items: center; gap: 5px;">
                                 <span style="font-size: 0.8em; color: var(--text-muted); font-weight: bold;">Persetujuan: RM</span>
                                 <input type="text" class="input-mou-individu" data-id="tambahan_${i}" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); kiraTotalMouIndividu(); semakButangMou();" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="width: 90px; padding: 4px 6px; font-size: 0.85em; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: bold; color: var(--primary-blue); text-align: right;">

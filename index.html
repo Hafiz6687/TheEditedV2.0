@@ -10533,8 +10533,25 @@ const tH = new Date();
     btnMouDefendan.style.display = 'flex'; btnMouDefendan.style.color = 'var(--text-main)'; btnMouDefendan.innerHTML = '🖨️ Cetak Notis Defendan';
     btnMouDefendan.onclick = function(e) { e.preventDefault(); window.cetakDokumenMou('defendan'); };
 
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+// KAWALAN BUTANG KEMASKINI KHAS UNTUK MOU
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none'; // Tutup Preview
+        document.getElementById('modalMou').style.display = 'flex'; // Buka semula Pop-up MOU
+    };
+
+    // KAWALAN BUTANG BATAL KHAS UNTUK MOU
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none'; // Hanya tutup Preview
+        // Sistem akan kembali ke paparan Maklumat Kes di belakangnya
+    };
 
     tunjukSuisTandatangan(true); 
     document.getElementById('modalMou').style.display = 'none'; 

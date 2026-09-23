@@ -6434,6 +6434,21 @@ function bukaPreviewPDF(jenisBorang) {
         document.getElementById('menuCetakKenyataan').style.display = 'none';
         document.getElementById('menuDaftar').style.display = 'none';
         document.getElementById('menuCetakG1').style.display = 'flex';
+        const btnKemaskini = document.getElementById('menuKemaskini');
+        btnKemaskini.style.display = 'flex';
+        btnKemaskini.onclick = function(e) {
+            if(e) e.preventDefault();
+            document.getElementById('actionMenu').classList.remove('show');
+            document.getElementById('modalPreview').style.display = 'none';
+        };
+
+        const btnBatal = document.getElementById('menuBatal');
+        btnBatal.style.display = 'flex';
+        btnBatal.onclick = function(e) {
+            if(e) e.preventDefault();
+            document.getElementById('actionMenu').classList.remove('show');
+            document.getElementById('modalPreview').style.display = 'none';
+        };
 
     } else if (jenisBorang === 'G1 Borang') {
         
@@ -6582,7 +6597,7 @@ function bukaPreviewPDF(jenisBorang) {
         const kawasanCetak = document.getElementById('printArea');
         if (kawasanCetak) kawasanCetak.innerHTML = htmlG1;
 
-// Sembunyikan suis tandatangan
+        // Sembunyikan suis tandatangan
         tunjukSuisTandatangan(false);
 
         document.getElementById('modalPreview').style.display = 'flex';
@@ -6591,6 +6606,21 @@ function bukaPreviewPDF(jenisBorang) {
         document.getElementById('menuCetakKenyataan').style.display = 'none';
         document.getElementById('menuDaftar').style.display = 'none';
         document.getElementById('menuCetakG1').style.display = 'flex';
+        const btnKemaskini = document.getElementById('menuKemaskini');
+        btnKemaskini.style.display = 'flex';
+        btnKemaskini.onclick = function(e) {
+            if(e) e.preventDefault();
+            document.getElementById('actionMenu').classList.remove('show');
+            document.getElementById('modalPreview').style.display = 'none';
+        };
+
+        const btnBatal = document.getElementById('menuBatal');
+        btnBatal.style.display = 'flex';
+        btnBatal.onclick = function(e) {
+            if(e) e.preventDefault();
+            document.getElementById('actionMenu').classList.remove('show');
+            document.getElementById('modalPreview').style.display = 'none';
+        };
     }
 }
 
@@ -6611,7 +6641,7 @@ function bukaPreviewPDF(jenisBorang) {
             isAkuanPrinted = false;
             isKenyataanPrinted = false;
             
-            document.getElementById('menuCetakAkuan').style.display = 'flex';
+    document.getElementById('menuCetakAkuan').style.display = 'flex';
     document.getElementById('menuCetakKenyataan').style.display = 'flex';
     if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none'; 
     document.getElementById('menuDaftar').style.display = 'none';
@@ -6624,6 +6654,23 @@ function bukaPreviewPDF(jenisBorang) {
     if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
     if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
     if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
+
+// RESET BUTANG KEMASKINI KEPADA FUNGSI ASAL BORANG
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        if(e) e.preventDefault();
+        kemaskiniDariPreview();
+    };
+
+    // RESET BUTANG BATAL KEPADA FUNGSI ASAL BORANG
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        if(e) e.preventDefault();
+        document.getElementById('modalPreview').style.display = 'none';
+        batalPemfailan();
+    };
 
 // Sembunyikan suis tandatangan
     tunjukSuisTandatangan(false);
@@ -6845,10 +6892,25 @@ function bukaPreviewUrus() {
     if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
     if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
 
-    // Tunjukkan Kemaskini, Daftar & Batal SAHAJA
-    document.getElementById('menuKemaskini').style.display = 'flex';
+// Tunjukkan Daftar
     document.getElementById('menuDaftar').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+
+    // RESET BUTANG KEMASKINI KEPADA FUNGSI ASAL
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        if(e) e.preventDefault();
+        kemaskiniDariPreview();
+    };
+
+    // RESET BUTANG BATAL KEPADA FUNGSI ASAL
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        if(e) e.preventDefault();
+        document.getElementById('modalPreview').style.display = 'none';
+        batalPemfailan();
+    };
 
 // Sembunyikan suis tandatangan
     tunjukSuisTandatangan(false);

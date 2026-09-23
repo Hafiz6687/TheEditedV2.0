@@ -2879,8 +2879,24 @@ function bukaPreviewTarikBalik() {
     const menuCetakG1 = document.getElementById('menuCetakG1');
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Akuan Penarikan';
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+        if (isMajikan) {
+            document.getElementById('modalTarikBalikMajikan').style.display = 'flex';
+        }
+    };
+
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
     document.getElementById('menuSelesai').style.display = 'none';
 
     menuCetakG1.onclick = function() {
@@ -7456,9 +7472,21 @@ function bukaPreviewAlamatTerkini() {
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Notis Alamat Terkini';
     
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
     menuCetakG1.onclick = function(e) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
@@ -7822,8 +7850,21 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Saman (Borang A)';
     
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
     menuCetakG1.onclick = function(e) {
         e.preventDefault();
@@ -7981,8 +8022,21 @@ function bukaPreviewSamanTampal() {
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Saman (Tampal)';
     
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
     menuCetakG1.onclick = function(e) {
         e.preventDefault();
@@ -8511,8 +8565,21 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Dokumen (Saman Memo)';
     
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
     menuCetakG1.onclick = function(e) {
         e.preventDefault();
@@ -8829,8 +8896,22 @@ const templateFooterHTML = `
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Notis Batal Kes';
     
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+        document.getElementById('modalBatalKes').style.display = 'flex';
+    };
+
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
     menuCetakG1.onclick = function(e) {
         e.preventDefault();

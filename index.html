@@ -3207,18 +3207,23 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
 
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `
-        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
-        <div class="notis-slogan">
-            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
         </div>
-        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
-            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
-        </div>
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
-        </div>
-        ${typeof skHTML !== 'undefined' ? skHTML : ''}
         <div class="notis-footer-line"></div>
     `;
 
@@ -6175,11 +6180,13 @@ if (memoriTuntutan.length === 0) { htmlJadualTuntutan = `<tr><td colspan="3" cla
                         <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><span style="text-transform: uppercase;">${cetakPengaduNama}</span><span>Pengadu</span></div>
                         <div style="text-align: center; margin-bottom: 20px;">Dan</div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 30px;"><span style="text-transform: uppercase;">${cetakDefendanNama}</span><span>Defendan</span></div>
-                        <div style="margin-top: 40px; margin-bottom: 40px;">
-                            <p style="text-align: justify; text-indent: 40px; margin-bottom: 30px;">Adalah dengan ini disahkan bahawa kes telah difailkan di Pejabat Tenaga Kerja Kluang No. <strong>${noKes}</strong></p>
-                            <div>Bertarikh pada : <strong>${tarikhHariIniFormat}</strong></div>
+                       <div style="page-break-inside: avoid;">
+                            <div style="margin-top: 40px; margin-bottom: 40px;">
+                                <p style="text-align: justify; text-indent: 40px; margin-bottom: 30px;">Adalah dengan ini disahkan bahawa kes telah difailkan di Pejabat Tenaga Kerja Kluang No. <strong>${noKes}</strong></p>
+                                <div>Bertarikh pada : <strong>${tarikhHariIniFormat}</strong></div>
+                            </div>
+                            <div style="margin-bottom: 60px; display: flex; justify-content: flex-end;"><div style="text-align: center;"><strong>MOHAMAD HAFIZ BIN ABU BAKAR</strong><br>b.p Ketua Pengarah Tenaga Kerja</div></div>
                         </div>
-                        <div style="margin-bottom: 60px; display: flex; justify-content: flex-end;"><div style="text-align: center;"><strong>MOHAMAD HAFIZ BIN ABU BAKAR</strong><br>b.p Ketua Pengarah Tenaga Kerja</div></div>
                         <div style="margin-top: 40px;"><strong style="text-decoration: underline;">PERHATIAN</strong><ol style="margin-top: 10px; margin-bottom: 0; padding-left: 20px; text-align: justify;"><li style="margin-bottom: 10px;">Pengadu adalah bertanggungjawab sepenuhnya terhadap kes yang difailkan; dan</li><li>Pengadu dikehendaki menghubungi Pejabat Tenaga Kerja Kluang (Unit Kes Buruh) ditalian 07-7721646/2646 atau emel ke jtkdkluang@mohr.gov.my sekiranya tidak menerima surat berkaitan tarikh dan masa pengurusan kes dalam tempoh 2 minggu dari tarikh kes difailkan.</li></ol></div>
                     </div>
                 </div>
@@ -7476,21 +7483,24 @@ function bukaPreviewAlamatTerkini() {
         </div>
     `;
 
-    const templateFooterHTML = `
-        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
-        <div class="notis-slogan">
-            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
         </div>
-        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        
-        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
-            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
-        </div>
-        
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
-        </div>
-        ${typeof skHTML !== 'undefined' ? skHTML : ''}
         <div class="notis-footer-line"></div>
     `;
 
@@ -7796,19 +7806,23 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </div>
     `;
 
-    const templateFooterHTML = `
-        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
-        <div class="notis-slogan">
-            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
-        </div>
-        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        
-        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
-            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
-        </div>
-        
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
         </div>
         <div class="notis-footer-line"></div>
     `;
@@ -7891,15 +7905,16 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.</div>
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+<div style="page-break-inside: avoid;">
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
 
         <!-- MUKA SURAT 2: NOTIS MAKLUMAN PENGADU -->
@@ -8106,18 +8121,19 @@ function bukaPreviewSamanTampal() {
                     DAN JUGA DIPERINTAHKAN bahawa penampalan sedemikian hendaklah dianggap penyampaian yang cukup dan sempurna akan Saman itu ke atas Defendan selepas tamat tempoh empat belas (14) hari dari tarikh tindakan terakhir penampalan tersebut.
                 </div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">
-                    Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong>
-                </div>
+<div style="page-break-inside: avoid;">
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">
+                        Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong>
+                    </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 60px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 60px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     `;
 
@@ -8538,15 +8554,23 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         </div>
     `;
 
-    const templateFooterHTML = `
-        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
-        <div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div>
-        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
-            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
-        </div>
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
         </div>
         <div class="notis-footer-line"></div>
     `;
@@ -8611,15 +8635,16 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.</div>
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+<div style="page-break-inside: avoid;">
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
 
         <!-- MUKA 3: NOTIS MAKLUMAN PENGADU -->
@@ -8943,24 +8968,25 @@ function bukaPreviewBatalKes(dataSimpanan = null) {
 
 // PENAMBAHAN KEMBALI TANDATANGAN PADA TEMPLATE FOOTER
 const templateFooterHTML = `
-        <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
-        <div class="notis-slogan">
-            " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
         </div>
-        <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
-        
-        <!-- TRICK TANDATANGAN -->
-        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
-            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
-        </div>
-        
-        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
-            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
-        </div>
-        ${typeof skHTML !== 'undefined' ? skHTML : ''}
         <div class="notis-footer-line"></div>
     `;
-
     const htmlNotisBatal = `
         <style>
             @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
@@ -9460,8 +9486,27 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
 
     // 2. Template Header & Footer
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
-    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
-
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
+        </div>
+        <div class="notis-footer-line"></div>
+    `;
+    
 // 3. Penyusunan Tajuk & Isi Custom
     let htmlTajuk = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: ${tajukRaw}</div>`;
     let htmlIsi = `<div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>`;
@@ -9976,22 +10021,41 @@ function bukaPreviewBorangC() {
         pPenalti = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
         
         // Suntik perenggan tambahan beserta tandatangan kali kedua (Format standard)
-        pBayarPejabatHTML = `
+pBayarPejabatHTML = `
             <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
-            <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
-                <div></div> 
-                <div style="text-align: center;">
-                    <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                    <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+            <div style="page-break-inside: avoid;">
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
+                    <div></div> 
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    </div>
                 </div>
             </div>
         `;
-    }
 
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
-    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
-
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
+        </div>
+        <div class="notis-footer-line"></div>
+    `;
     // M/S 1: BORANG C
     const htmlBorangC = `
         <div class="kertas-notis" id="kertasBorangCUtama" style="padding: 1.5cm 2.5cm !important;">
@@ -10030,15 +10094,19 @@ function bukaPreviewBorangC() {
                 ${pTempohBayaran}
                 ${pPenalti}
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahHari}</strong> haribulan <strong>${tarikhPerintahBulanTahun}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+
+<!-- DIBUNGKUS SUPAYA TARIKH & TANDATANGAN TIDAK TERPISAH -->
+                <div style="page-break-inside: avoid;">
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahHari}</strong> haribulan <strong>${tarikhPerintahBulanTahun}</strong></div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
-
                 ${pBayarPejabatHTML} <!-- SUNTIKAN BAHARU DI SINI -->
             </div>
         </div>
@@ -11054,8 +11122,26 @@ if (isAutoGroup) {
 const tH = new Date();
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
-    const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
-
+const templateFooterHTML = `
+        <!-- BUNGKUSAN FOOTER NOTIS -->
+        <div style="page-break-inside: avoid;">
+            <div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div>
+            <div class="notis-slogan">
+                " MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em>
+            </div>
+            <div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div>
+            
+            <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+                <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+            </div>
+            
+            <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
+            </div>
+            ${typeof skHTML !== 'undefined' ? skHTML : ''}
+        </div>
+        <div class="notis-footer-line"></div>
+    `;
     const htmlBorangC = `
         <div class="kertas-notis" id="kertasBorangCMou" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
@@ -11105,19 +11191,19 @@ const tH = new Date();
                     </div>
                 </div>
                 
-                <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
+<hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
                 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                <div style="page-break-inside: avoid;">
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
-
-            </div>
         </div>
     `;
 

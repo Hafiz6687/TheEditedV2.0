@@ -11220,8 +11220,8 @@ const templateFooterHTML = `
 const htmlMou = `
         <style>
             @media print {
-                /* MARGIN TOP & BOTTOM DIKECILKAN (0.5cm), KIRI KANAN KEKAL (1.27cm) */
-                @page { margin: 0.5cm 1.27cm; size: A4 portrait; }
+                /* MARGIN TOP DIUBAH KE 1.0cm, KIRI KANAN KEKAL 1.27cm */
+                @page { margin: 1.0cm 1.27cm; size: A4 portrait; }
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
@@ -11234,8 +11234,8 @@ const htmlMou = `
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             
-            /* PADDING ATAS BAWAH KERTAS MOU DIKECILKAN SUPAYA MUAT 1 PAGE */
-            #kertasMouDraf { padding: 0.5cm 1.27cm !important; }
+            /* PADDING ATAS KERTAS MOU DIUBAH KE 1.0cm */
+            #kertasMouDraf { padding: 1.0cm 1.27cm !important; }
             
             .notis-body-wrapper { padding: 0 1.23cm; }
             .jarak-tab { display: inline-block; width: 30px; }
@@ -11260,18 +11260,20 @@ const htmlMou = `
         <!-- MUKA 1: PERSETUJUAN BERSAMA -->
         <div class="kumpulan-mou">
             <div class="kertas-notis" id="kertasMouDraf">
-                <!-- LINE-HEIGHT DIKECILKAN SIKIT KEPADA 1.35 -->
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.35;">
                    <div style="text-align: center; margin-bottom: 5px; margin-top: 5px;"><img src="jata-negara.png" alt="Jata Negara" style="width: 90px; height: auto;"></div>
                     <div style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 5px;">PERSETUJUAN BERSAMA</div>
                     <div style="text-align: center; font-weight: bold; margin-bottom: 15px; text-transform: uppercase;">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}</div> 
-                    <div style="text-align: center; margin-bottom: 5px;">Antara</div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    
+                    <!-- JARAK 1 ENTER (20px) DITAMBAH -->
+                    <div style="text-align: center; margin-bottom: 20px;">Antara</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <div style="text-transform: uppercase; font-weight: bold;">${namaP}${teksDanLainLainCetak}</div><div>... Pengadu</div>
                     </div>
                     
-                    <div style="text-align: center; margin-bottom: 5px;">Dan</div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;"> <!-- Margin dikurangkan -->
+                    <!-- JARAK 1 ENTER (20px) DITAMBAH -->
+                    <div style="text-align: center; margin-bottom: 20px;">Dan</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 25px;"> 
                         <div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div>
                     </div>
 
@@ -11286,10 +11288,12 @@ const htmlMou = `
 
                     <!-- IKAT TANDATANGAN SUPAYA TAK TERPISAH -->
                     <div style="page-break-inside: avoid;">
-                        <div style="margin-bottom: 35px;">Di hadapan,</div> <!-- Kurangkan margin -->
+                        <!-- JARAK 1 ENTER ANTARA 'DI HADAPAN' & NAMA PEGAWAI DITAMBAH -->
+                        <div style="margin-bottom: 55px;">Di hadapan,</div> 
                         <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 15px;"> <!-- Kurangkan margin -->
+                        <!-- JARAK 1 ENTER ANTARA NAMA PEGAWAI & GARISAN TANDATANGAN DITAMBAH -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
                             <div style="text-align: center;">
                                 <div style="margin-bottom: 0;">.......................................................................</div>
                                 <div style="margin-bottom: 5px;">Tandatangan Pengadu</div>
@@ -11358,7 +11362,6 @@ const htmlMou = `
             </div>
         </div>
     `;
-
     document.getElementById('previewContent').innerHTML = htmlMou;
     document.getElementById('printArea').innerHTML = htmlMou;
 

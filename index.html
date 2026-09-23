@@ -603,6 +603,14 @@
                     <input type="text" id="bc_jumlah_perintah" readonly style="padding-left: 45px; width: 100%; box-sizing: border-box; font-weight: bold; color: var(--danger); background-color: #e2e8f0; cursor: not-allowed;" value="0.00">
                 </div>
             </div>
+            <!-- JUMLAH DIBAYAR DI PEJABAT (Hanya muncul jika Perintah Bayar) -->
+            <div class="form-group" style="grid-template-columns: 1fr; margin-bottom: 12px; display: none;" id="ruangan_bc_dibayar_pejabat">
+                <label style="text-align: left;">Jumlah Dibayar di Pejabat (RM)</label>
+                <div class="input-wrapper" style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-weight: 600;">RM</span>
+                    <input type="text" id="bc_dibayar_pejabat" placeholder="0.00" value="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onfocus="unformatDuit(this)" onblur="formatDuit(this)" style="padding-left: 45px; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="document.getElementById('modalBorangC').style.display='none'">Batal</button>
@@ -9634,7 +9642,8 @@ function bukaModalBorangC() {
     document.getElementById('bc_tarikh').value = '';
     document.getElementById('bc_jenis_perintah').value = '';
     document.getElementById('bc_jumlah_perintah').value = '0.00';
-
+    document.getElementById('bc_dibayar_pejabat').value = '0.00'; // <-- TAMBAH INI
+    document.getElementById('ruangan_bc_dibayar_pejabat').style.display = 'none'; // <-- TAMBAH INI
     const kes = memoriSenaraiKes[indexKesSemasa];
     let isMajikan = false; let isBerkumpulan = false;
     if (kes && kes.dataBorang && kes.dataBorang.inputs) {
@@ -9719,14 +9728,20 @@ function kawalSemakBorangC(cb, id) {
 function kawalJenisPerintahBorangC() {
     const jns = document.getElementById('bc_jenis_perintah').value;
     const semuaInput = document.querySelectorAll('.bc-amaun-input');
+    const ruanganBayarPejabat = document.getElementById('ruangan_bc_dibayar_pejabat');
 
     if (jns === 'Buang') {
+        ruanganBayarPejabat.style.display = 'none';
+        document.getElementById('bc_dibayar_pejabat').value = '0.00';
         semuaInput.forEach(inp => { inp.value = '0.00'; inp.disabled = true; inp.style.backgroundColor = '#e2e8f0'; });
     } else if (jns === 'Bayar') {
+        ruanganBayarPejabat.style.display = 'block'; // <-- MUNCULKAN FIELD INI
         semuaInput.forEach(inp => { 
             const cb = document.querySelector(`.bc-cb-tuntutan[value="${inp.dataset.id}"]`);
             if (cb && cb.checked) { inp.disabled = false; inp.style.backgroundColor = '#ffffff'; } 
         });
+    } else {
+        ruanganBayarPejabat.style.display = 'none';
     }
     kiraTotalBorangC();
 }
@@ -9817,7 +9832,11 @@ function bukaPreviewBorangC() {
     const tarikhPerintah = document.getElementById('bc_tarikh').value;
     const jenisPerintah = document.getElementById('bc_jenis_perintah').value; // Bayar atau Buang
     const jumlahPerintah = parseFloat(document.getElementById('bc_jumlah_perintah').value.replace(/,/g, '')) || 0;
-
+    
+    // Tarik nilai bayar di pejabat
+    const dibayarPejabatRaw = document.getElementById('bc_dibayar_pejabat').value || "0.00";
+    const jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
+    const jumDibayarPejabatStr = jumDibayarPejabatNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
     let tarikhPerintahCetak = "........................";
     if (tarikhPerintah) {
         let t = new Date(tarikhPerintah);
@@ -9861,13 +9880,13 @@ function bukaPreviewBorangC() {
         let bil = 1;
         for (let pId in dataPengadu) {
             let d = dataPengadu[pId];
-            tuntutanRowsHtml += `<tr><td style="border: 1px solid #000; padding: 4px; text-align: center;">${bil++}</td><td style="border: 1px solid #000; padding: 4px;">Pecahan Tuntutan bagi Pengadu: ${pId}</td><td style="border: 1px solid #000; padding: 4px; text-align: right;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${bil++}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">Pecahan Tuntutan bagi Pengadu: ${pId}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         }
     } else {
         checkedBoxes.forEach((cb, idx) => {
             let inp = document.getElementById(`bc_inp_amaun_${cb.value}`);
             let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
-            tuntutanRowsHtml += `<tr><td style="border: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border: 1px solid #000; padding: 4px;">${cb.dataset.jenis}</td><td style="border: 1px solid #000; padding: 4px; text-align: right;">RM ${val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${cb.dataset.jenis}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         });
     }
 
@@ -9944,9 +9963,24 @@ function bukaPreviewBorangC() {
 
     let pTempohBayaran = "";
     let pPenalti = "";
+    let pBayarPejabatHTML = ""; // <-- Variabel baharu
+
     if (jenisPerintah === 'Bayar') {
         pTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran penuh hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
         pPenalti = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
+        
+        // Suntik perenggan tambahan beserta tandatangan kali kedua (Format standard)
+        pBayarPejabatHTML = `
+            <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
+            <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
+                <div></div> 
+                <div style="text-align: center;">
+                    <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                    <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                </div>
+            </div>
+        `;
     }
 
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
@@ -9999,6 +10033,8 @@ function bukaPreviewBorangC() {
                         <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
                     </div>
                 </div>
+
+                ${pBayarPejabatHTML} <!-- SUNTIKAN BAHARU DI SINI -->
             </div>
         </div>
     `;

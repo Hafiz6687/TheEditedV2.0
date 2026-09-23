@@ -437,20 +437,64 @@
         .sortable-th:hover { background-color: #cbd5e1 !important; }
         .sort-icon { position: absolute; right: 8px; font-size: 0.85em; color: #94a3b8; top: 50%; transform: translateY(-50%); }
         
-        /* KELAS KHUSUS UNTUK CETAKAN ASING (Custom Print Media Queries) */
+/* KELAS KHUSUS UNTUK CETAKAN ASING (Custom Print Media Queries) */
         @media print {
-            .kertas-a4 { margin: 0; padding: 0; box-shadow: none; width: 100%; min-height: auto; page-break-after: always; }
-            .kertas-a4:last-child { page-break-after: auto; }
+            /* Tetapan Kertas A4 Utama (Borang Pendaftaran) */
+            .kertas-a4 { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always !important; }
+            .kertas-a4:last-child { page-break-after: auto !important; }
             @page { size: A4 portrait; margin: 1.5cm 2.5cm; }
-            body { background: white; margin: 0; padding: 0; font-family: Arial, sans-serif; color: black; }
+            
+            body { background: white !important; margin: 0 !important; padding: 0 !important; font-family: Arial, sans-serif; color: black !important; }
             body > *:not(#printArea) { display: none !important; }
-            #printArea { display: block !important; width: 100%; font-size: 11pt; line-height: 1.5; }
+            #printArea { display: block !important; width: 100% !important; font-size: 11pt; line-height: 1.5; }
 
             /* Logik sembunyikan muka surat berdasarkan pilihan cetakan */
             body.print-only-akuan .page-borang, body.print-only-akuan .page-kenyataan { display: none !important; }
-            
-            /* Sembunyikan AKUAN SAHAJA apabila cetak Kenyataan Tuntutan (Muka 1 & Muka 2 akan dicetak) */
             body.print-only-kenyataan .page-akuan { display: none !important; } 
+
+            /* ============================================================================ */
+            /* MASTER PRINT FIX: PASTIKAN SEMUA NOTIS/DOKUMEN 1:1 DENGAN PREVIEW */
+            /* ============================================================================ */
+            
+            /* 1. Buang 'double-margin' semasa print supaya margin tak menjadi ganda dua */
+            #printArea .kertas-notis, 
+            #printArea .kertas-tb, 
+            #printArea .g1-kertas {
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: auto !important;
+                display: block !important;
+                page-break-after: always !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* 2. Elakkan cetakan hasilkan kertas kosong ekstra pada hujung dokumen */
+            #printArea .kertas-notis:last-child, 
+            #printArea .kertas-tb:last-child, 
+            #printArea .g1-kertas:last-child {
+                page-break-after: auto !important;
+            }
+
+            /* 3. Buang padding dalaman yang menghimpit tulisan ke tengah */
+            #printArea .notis-body-wrapper {
+                padding: 0 !important;
+            }
+
+            /* 4. Paksa neutral pada mana-mana ID khusus supaya ia tunduk pada page margin */
+            #printArea [id^="kertas"] {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            /* 5. Pastikan fungsi page-break tidak tersekat oleh wrapper luar */
+            .kumpulan-pengadu, .kumpulan-defendan, .kumpulan-mou {
+                page-break-inside: auto !important;
+                display: block !important;
+            }
         }
     </style>
 </head>

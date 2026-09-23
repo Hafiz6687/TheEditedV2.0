@@ -3731,13 +3731,18 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
     if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
     
-// TETAPKAN BUTANG KEMASKINI TUTUP PREVIEW SAHAJA (KEKAL DI KAD SEBUTAN)
+// TETAPKAN BUTANG KEMASKINI TUTUP PREVIEW DAN BUKA KAD BERKAITAN
     const btnKemaskini = document.getElementById('menuKemaskini'); 
     btnKemaskini.style.display = 'flex';
     btnKemaskini.onclick = function(e) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none';
+        
+        // Panggil kad yang berkaitan untuk dikemaskini
+        if (typeof toggleKadUrus === 'function') {
+            toggleKadUrus(kunci);
+        }
     };
 
     // TETAPKAN BUTANG BATAL TUTUP PREVIEW SAHAJA
@@ -7132,22 +7137,8 @@ function janaTerusDariSejarah(kunci, tarikhHst, masaHst, pihak) {
         tarikhStr: tarikhHst, masaStr: masaHst, tindakan: c.tindakan, label: c.label, kunci: kunci, dariSejarah: true
     };
 
-    // Jana kandungan dokumen di belakang skrin
+    // BUKA PREVIEW SAHAJA (TANPA AUTO-PRINT)
     bukaPreviewNotisGenerik(kunci, tarikhHst, masaHst);
-
-    // Sembunyikan pop-up preview serta-merta
-    const modal = document.getElementById('modalPreview');
-    if (modal) modal.style.display = 'none';
-
-    // Tentukan dokumen mana yang patut dicetak (Pengadu / Defendan)
-    const jenisCetak = pihak === 'defendan' ? 'defendan' : 'pengadu';
-
-    // Terus tembak arahan print
-    setTimeout(() => {
-        document.body.classList.add('print-only-' + jenisCetak);
-        window.print();
-        document.body.classList.remove('print-only-' + jenisCetak);
-    }, 100);
 }
        
 // --- FUNGSI BARU: Memaparkan rekod ke dalam jadual ---
@@ -7911,13 +7902,18 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const menuCetakG1 = document.getElementById('menuCetakG1');
     menuCetakG1.style.display = 'flex';
     menuCetakG1.innerHTML = '🖨️ Cetak Saman (Borang A)';
-    
+
     const btnKemaskini = document.getElementById('menuKemaskini');
     btnKemaskini.style.display = 'flex';
     btnKemaskini.onclick = function(e) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none';
+        
+        // Panggil kad Saman Borang A
+        if (typeof toggleKadUrus === 'function') {
+            toggleKadUrus('saman_a');
+        }
     };
 
     const btnBatal = document.getElementById('menuBatal');
@@ -8633,6 +8629,11 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none';
+        
+        // Panggil kad Saman Memo Luar Kawasan
+        if (typeof toggleKadUrus === 'function') {
+            toggleKadUrus('saman_memo');
+        }
     };
 
     const btnBatal = document.getElementById('menuBatal');

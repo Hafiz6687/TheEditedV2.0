@@ -11220,13 +11220,17 @@ const templateFooterHTML = `
 const htmlMou = `
         <style>
             @media print {
-                /* MARGIN TOP DIUBAH KE 1.0cm, KIRI KANAN KEKAL 1.27cm */
+                /* MARGIN TOP: 1.0cm, KIRI KANAN: 1.27cm TETAP UNTUK PRINT */
                 @page { margin: 1.0cm 1.27cm; size: A4 portrait; }
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
-                .kertas-notis, #kertasMouDraf, #kertasBorangCMou, #kertasLampiranA { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; height: auto !important; min-height: auto !important; display: block !important; page-break-after: always; position: relative !important; box-sizing: border-box !important;}
+                
+                /* PAKSA KERTAS IKUT MARGIN @PAGE & PAGE BREAK BERFUNGSI */
+                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; height: auto !important; min-height: auto !important; display: block !important; page-break-after: always; position: relative !important; box-sizing: border-box !important;}
                 .kertas-notis:last-child { page-break-after: auto; }
+                
+                .notis-body-wrapper { padding: 0 !important; }
                 
                 body.print-only-mou .kumpulan-pengadu, body.print-only-mou .kumpulan-defendan { display: none !important; }
                 body.print-only-pengadu .kumpulan-mou, body.print-only-pengadu .kumpulan-defendan { display: none !important; }
@@ -11234,8 +11238,8 @@ const htmlMou = `
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             
-            /* PADDING ATAS KERTAS MOU DIUBAH KE 1.0cm */
-            #kertasMouDraf { padding: 1.0cm 1.27cm !important; }
+            /* PADDING ATAS BAWAH KERTAS PREVIEW: 1.0cm, KIRI KANAN: 1.27cm */
+            #kertasMouDraf, .kertas-notis-tambahan { padding: 1.0cm 1.27cm !important; }
             
             .notis-body-wrapper { padding: 0 1.23cm; }
             .jarak-tab { display: inline-block; width: 30px; }
@@ -11265,13 +11269,11 @@ const htmlMou = `
                     <div style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 5px;">PERSETUJUAN BERSAMA</div>
                     <div style="text-align: center; font-weight: bold; margin-bottom: 15px; text-transform: uppercase;">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}</div> 
                     
-                    <!-- JARAK 1 ENTER (20px) DITAMBAH -->
                     <div style="text-align: center; margin-bottom: 20px;">Antara</div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <div style="text-transform: uppercase; font-weight: bold;">${namaP}${teksDanLainLainCetak}</div><div>... Pengadu</div>
                     </div>
                     
-                    <!-- JARAK 1 ENTER (20px) DITAMBAH -->
                     <div style="text-align: center; margin-bottom: 20px;">Dan</div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 25px;"> 
                         <div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div>
@@ -11286,13 +11288,10 @@ const htmlMou = `
                     <div style="display: flex; margin-bottom: 10px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">5)</div><div>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.</div></div>
                     <div style="margin-bottom: 10px;">Bertarikh : <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
 
-                    <!-- IKAT TANDATANGAN SUPAYA TAK TERPISAH -->
                     <div style="page-break-inside: avoid;">
-                        <!-- JARAK 1 ENTER ANTARA 'DI HADAPAN' & NAMA PEGAWAI DITAMBAH -->
                         <div style="margin-bottom: 55px;">Di hadapan,</div> 
                         <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
 
-                        <!-- JARAK 1 ENTER ANTARA NAMA PEGAWAI & GARISAN TANDATANGAN DITAMBAH -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
                             <div style="text-align: center;">
                                 <div style="margin-bottom: 0;">.......................................................................</div>
@@ -11326,9 +11325,9 @@ const htmlMou = `
             ${htmlBorangC}
         </div>
 
-        <!-- MUKA 3 ATAU 4: NOTIS MAKLUMAN PENGADU -->
+        <!-- MUKA: NOTIS MAKLUMAN PENGADU -->
         <div class="kumpulan-pengadu">
-            <div class="kertas-notis" style="padding: 1.5cm 1.27cm !important;">
+            <div class="kertas-notis kertas-notis-tambahan">
                 ${templateHeaderHTML}
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
                     <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>
@@ -11344,9 +11343,9 @@ const htmlMou = `
             </div>
         </div>
 
-        <!-- MUKA 4 ATAU 5: NOTIS MAKLUMAN DEFENDAN -->
+        <!-- MUKA: NOTIS MAKLUMAN DEFENDAN -->
         <div class="kumpulan-defendan">
-            <div class="kertas-notis" style="padding: 1.5cm 1.27cm !important;">
+            <div class="kertas-notis kertas-notis-tambahan">
                 ${templateHeaderHTML}
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
                     <div class="notis-rujukan">Rujukan Kami : ${noKes}<br>Tarikh : ${tarikhSurat}</div>

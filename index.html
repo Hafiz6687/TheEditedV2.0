@@ -3745,7 +3745,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
                 body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
         <div class="kumpulan-pengadu">
@@ -7530,7 +7530,7 @@ const templateFooterHTML = `
             .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
             .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
             .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
-            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
+            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; }
             .jarak-tab { display: inline-block; width: 30px; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
             .notis-sign { margin-bottom: 50px; font-size: 10pt; }
@@ -7863,7 +7863,7 @@ const templateFooterHTML = `
             .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
             .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
             .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
-            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
+            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
             
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
@@ -8580,7 +8580,7 @@ const templateFooterHTML = `
         <style>
             @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
         <!-- MUKA 1: SURAT MEMO LUAR KAWASAN -->
@@ -8993,7 +8993,7 @@ const templateFooterHTML = `
         <style>
             @media print { @page { margin: 0; } body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } body > *:not(#printArea) { display: none !important; } #printArea { display: block !important; } .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } .kertas-notis:last-child { page-break-after: auto; } }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
         <div class="kertas-notis" id="kertasNotisBatal">
@@ -10169,7 +10169,7 @@ pBayarPejabatHTML = `
                 body.print-only-defendan #kertasBorangCUtama, body.print-only-defendan #kertasLampiranABorangC, body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
-            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
+            .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         ${htmlBorangC}
         ${lampiranA_HTML}
@@ -10749,9 +10749,8 @@ function bukaPreviewMou(dataSimpanan = null) {
     }
 
     let item3HTML = kaedahBayaran === 'Penuh' 
-        ? `<div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.</div></div>`
-        : `<div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran secara ansuran hendaklah dibuat atas nama Pengadu secara bank draf sebagaimana Lampiran A.</div></div>`;
-    let alamatD_Terkini_Inline = alamatD.replace(/<br>/gi, ', ').toUpperCase();
+        ? `<div style="display: flex; margin-bottom: 8px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran penuh hendaklah dibuat atas nama Pengadu secara bank draf sebelum <strong>${tarikhMOU14_Str}</strong>.</div></div>`
+        : `<div style="display: flex; margin-bottom: 8px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">3)</div><div>Bayaran secara ansuran hendaklah dibuat atas nama Pengadu secara bank draf sebagaimana Lampiran A.</div></div>`;    let alamatD_Terkini_Inline = alamatD.replace(/<br>/gi, ', ').toUpperCase();
     const arraySaman = tempatSamanRaw.split(',');
     let bandarSaman = "Kluang"; let negeriSaman = "Johor Darul Takzim";
     if (arraySaman.length >= 3) {
@@ -11186,20 +11185,19 @@ const templateFooterHTML = `
                 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-<div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+<div style="page-break-inside: avoid;">
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
                             <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
                 
-<hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
+                <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
                 
                 <div style="page-break-inside: avoid;">
                     <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
@@ -11212,7 +11210,8 @@ const templateFooterHTML = `
                         </div>
                     </div>
                 </div>
-        </div>
+            </div> <!-- Tutup notis-body-wrapper -->
+        </div> <!-- Tutup kertas-notis -->
     `;
 
     const htmlMou = `
@@ -11246,7 +11245,7 @@ const templateFooterHTML = `
             .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; }
             .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
             .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; }
-            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; }
+            .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; page-break-inside: avoid; }
             .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; }
             .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
@@ -11270,12 +11269,11 @@ const templateFooterHTML = `
 
                     <div style="text-align: justify; margin-bottom: 10px;">Dengan ini dipersetujui antara kedua-dua pihak yang menandatangani di bawah ini bahawa tuntutan dalam kes ini hendaklah diselesaikan dengan sepenuhnya.</div>
 
-                    <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">1)</div><div>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr})${teksDanLainLainKecil} wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.</div></div>
-                    <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">2)</div><div>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.</div></div>
+                    <div style="display: flex; margin-bottom: 8px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">1)</div><div>Bahawa defendan, <strong>${namaD}</strong> (${d_idStr}), dengan ini bersetuju secara bersumpah untuk membayar kepada pengadu <strong>${namaP}</strong> (${p_idStr})${teksDanLainLainKecil} wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian bagi kes.</div></div>
+                    <div style="display: flex; margin-bottom: 8px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">2)</div><div>Dan bahawa Pengadu dengan ini bersetuju secara sumpah untuk menerima wang berjumlah <strong>${jumRM}</strong> sebagai penyelesaian penuh dan muktamad bagi tuntutan kes ini dan tidak akan membuat apa-apa tuntutan yang sama terhadap Defendan.</div></div>
                     ${item3HTML}
-                    <div style="display: flex; margin-bottom: 8px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">4)</div><div>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.</div></div>
-                    <div style="display: flex; margin-bottom: 15px; text-align: justify;"><div style="width: 35px; flex-shrink: 0;">5)</div><div>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.</div></div>
-
+                    <div style="display: flex; margin-bottom: 8px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">4)</div><div>Dan berdasarkan persetujuan ini maka Ketua Pengarah Tenaga Kerja diminta merekodkan satu perintah.</div></div>
+                    <div style="display: flex; margin-bottom: 15px; text-align: justify; page-break-inside: avoid;"><div style="width: 35px; flex-shrink: 0;">5)</div><div>Kegagalan mematuhi Persetujuan Bersama ini boleh mengakibatkan tindakan penguatkuasaan di bawah Seksyen 69(4) Akta Kerja 1955.</div></div>
                     <div style="margin-bottom: 15px;">Bertarikh : <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
                     <div style="margin-bottom: 55px;">Di hadapan,</div>
                     <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>

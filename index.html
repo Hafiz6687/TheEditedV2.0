@@ -9838,9 +9838,15 @@ function bukaPreviewBorangC() {
     const jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
     const jumDibayarPejabatStr = jumDibayarPejabatNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
     let tarikhPerintahCetak = "........................";
+    let tarikhPerintahHari = ".......";
+    let tarikhPerintahBulanTahun = "........................";
     if (tarikhPerintah) {
         let t = new Date(tarikhPerintah);
-        if (!isNaN(t)) tarikhPerintahCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        if (!isNaN(t)) {
+            tarikhPerintahCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+            tarikhPerintahHari = `${t.getDate()}`;
+            tarikhPerintahBulanTahun = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        }
     }
 
     let alamatD_Terkini_Inline = alamatD.replace(/<br>/gi, ', ').toUpperCase();
@@ -10024,8 +10030,7 @@ function bukaPreviewBorangC() {
                 ${pTempohBayaran}
                 ${pPenalti}
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahCetak}</strong></div>
-                
+                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahHari}</strong> haribulan <strong>${tarikhPerintahBulanTahun}</strong></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
                     <div></div> 
                     <div style="text-align: center;">

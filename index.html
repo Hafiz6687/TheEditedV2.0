@@ -3715,10 +3715,23 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
     if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
     
-    const btnKemaskini = document.getElementById('menuKemaskini'); btnKemaskini.style.display = 'flex';
-    if (!btnKemaskini.dataset.hooked) { const oldK = btnKemaskini.onclick; btnKemaskini.onclick = function(e) { if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none'; if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none'; if(oldK) oldK(e); }; btnKemaskini.dataset.hooked = "true"; }
-    const btnBatal = document.getElementById('menuBatal'); btnBatal.style.display = 'flex';
-    if (!btnBatal.dataset.hooked) { const oldB = btnBatal.onclick; btnBatal.onclick = function(e) { if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none'; if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none'; if(oldB) oldB(e); }; btnBatal.dataset.hooked = "true"; }
+// TETAPKAN BUTANG KEMASKINI TUTUP PREVIEW SAHAJA (KEKAL DI KAD SEBUTAN)
+    const btnKemaskini = document.getElementById('menuKemaskini'); 
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+
+    // TETAPKAN BUTANG BATAL TUTUP PREVIEW SAHAJA
+    const btnBatal = document.getElementById('menuBatal'); 
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
 
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');
     if (radON) radON.checked = true;
@@ -9361,7 +9374,7 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     document.getElementById('previewContent').innerHTML = htmlNotisLengkap;
     document.getElementById('printArea').innerHTML = htmlNotisLengkap;
 
-    // Reset Menu Atas Kanan
+// Reset Menu Atas Kanan
     let actionMenu = document.getElementById('actionMenu');
     document.getElementById('menuCetakAkuan').style.display = 'none'; 
     document.getElementById('menuCetakKenyataan').style.display = 'none'; 
@@ -9371,12 +9384,16 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
     if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
 
+    // TUTUP KEBOCORAN BUTANG MOU YANG BIKIN SERABUT
+    if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
+    if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
+
     // FUNGSI CETAK KHAS UNTUK SEMUA PIHAK YANG DIPILIH
-window.cetakSemuaNotisLain = function() {
+    window.cetakSemuaNotisLain = function() {
         document.getElementById('actionMenu').classList.remove('show');
         window.print();
 
-        // BUNGKUS DATA NOTIS CUSTOM KE DALAM SEJARAH
         let rawData = { tajuk: tajukRaw, isi: isiRaw, penerima: senaraiPenerima };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
 
@@ -9385,7 +9402,7 @@ window.cetakSemuaNotisLain = function() {
         setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
     };
 
-    let btnPrintAll = document.getElementById('menuCetakNotisLainPengadu'); // Pinjam ID lama supaya tak serabut DOM
+    let btnPrintAll = document.getElementById('menuCetakNotisLainPengadu'); 
     if (!btnPrintAll) { btnPrintAll = document.createElement('a'); btnPrintAll.id = 'menuCetakNotisLainPengadu'; btnPrintAll.href = '#'; actionMenu.insertBefore(btnPrintAll, document.getElementById('menuBatal')); }
     
     btnPrintAll.style.display = 'flex'; 
@@ -9393,12 +9410,27 @@ window.cetakSemuaNotisLain = function() {
     btnPrintAll.innerHTML = '🖨️ Cetak Dokumen';
     btnPrintAll.onclick = function(e) { e.preventDefault(); window.cetakSemuaNotisLain(); };
 
-    // Sembunyikan butang defendan (kita hanya perlukan 1 butang Print All)
     let btnD = document.getElementById('menuCetakNotisLainDefendan');
     if (btnD) btnD.style.display = 'none';
 
-    document.getElementById('menuKemaskini').style.display = 'flex';
-    document.getElementById('menuBatal').style.display = 'flex';
+    // TETAPKAN BUTANG KEMASKINI SUPAYA PATAH BALIK KE POP-UP NOTIS LAIN (BUKAN MOU)
+    const btnKemaskini = document.getElementById('menuKemaskini');
+    btnKemaskini.style.display = 'flex';
+    btnKemaskini.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+        document.getElementById('modalNotisLain').style.display = 'flex'; // <-- KEMBALI KE MODAL YANG BETUL
+    };
+
+    // TETAPKAN BUTANG BATAL SUPAYA TUTUP PREVIEW SAHAJA
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
     
     tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';

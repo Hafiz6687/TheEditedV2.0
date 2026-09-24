@@ -9999,11 +9999,20 @@ if (jenisPerintah === 'Bayar') {
         
         pPenalti = `<div class="elak-potong" style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
 
-        // Suntik perenggan tambahan beserta tandatangan kali kedua (Format standard)
+// Suntik perenggan tambahan ke MUKA SURAT 2 (Menutup kertas pertama, buka kertas baru)
         pBayarPejabatHTML = `
-            <div class="elak-potong"> <!-- BERSAMBUNG SECARA NATURAL -->
-                <hr style="border: 0; border-top: 1px dashed #000; margin: 30px 0 20px 0;">
+            </div> <!-- Tutup notis-body-wrapper Muka 1 -->
+        </div> <!-- Tutup kertas-notis Muka 1 -->
+
+        <!-- MUKA SURAT 2 (KHAS UNTUK PENGESAHAN BAYARAN PEJABAT) -->
+        <div class="kertas-notis" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+                
+                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 20px 0;">Kes No. ${noKes} (Borang C)</div>
+                <hr style="border: 0; border-top: 1px dashed #000; margin: 0 0 30px 0;">
+                
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
                     <div></div> 
                     <div style="text-align: center;">
@@ -10011,7 +10020,7 @@ if (jenisPerintah === 'Bayar') {
                         <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
                     </div>
                 </div>
-            </div>
+            <!-- (Tag penutup </div></div> akan dilengkapkan secara automatik oleh template htmlBorangC asal di bawah) -->
         `;
     }
 

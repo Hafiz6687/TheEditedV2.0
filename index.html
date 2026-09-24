@@ -7726,6 +7726,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
     
+    // FORMAT TARIKH UNTUK BORANG A
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
     if (tarikhRaw && tarikhRaw !== "") {
@@ -7746,6 +7747,9 @@ function bukaPreviewSamanA(dataSimpanan = null) {
             masaSebutanText = `${jamFormat}.${minit} ${ampm}`;
         }
     }
+
+    // GUNA SISTEM FORMAT STANDARD UNTUK NOTIS PENGADU
+    const tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
 
     const tH = new Date();
     const tarikhSamanDD = tH.getDate();
@@ -7815,15 +7819,19 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         <div class="notis-footer-line"></div>
     `;
 
-const htmlSamanA = `
+    const htmlSamanA = `
         <style>
             @media print { 
-                @page { margin: 0; } 
+                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
+                
+                /* KAWALAN CETAKAN BERASINGAN SAMAN / NOTIS PENGADU */
+                body.print-only-pengadu .kumpulan-defendan { display: none !important; }
+                body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
             
             /* Tetapan Umum untuk Semua Kertas */
@@ -7858,90 +7866,94 @@ const htmlSamanA = `
         </style>
         
         <!-- MUKA SURAT 1: SAMAN BORANG A (UNTUK DEFENDAN) -->
-        <div class="kertas-notis" id="kertasSamanA">
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
-                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
-                <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
-                    BORANG A<br>SAMAN<br><span style="font-weight: normal; font-size: 10pt;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
-                </div>
+        <div class="kumpulan-defendan">
+            <div class="kertas-notis" id="kertasSamanA">
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25;">
+                    <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
+                    <div style="text-align: center; font-weight: bold; font-size: 10.5pt; margin-bottom: 25px; line-height: 1.25;">
+                        BORANG A<br>SAMAN<br><span style="font-weight: normal; font-size: 10pt;">(Di bawah seksyen 70 (c) Akta Kerja 1955)</span>
+                    </div>
 
-                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
-                <div style="text-align: center; margin-bottom: 10px;">Antara</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
-                <div style="text-align: center; margin-bottom: 10px;">Dan</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
+                    <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
+                    <div style="text-align: center; margin-bottom: 10px;">Antara</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}</div><div>... Pengadu</div></div>
+                    <div style="text-align: center; margin-bottom: 10px;">Dan</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD}</strong>.</div>
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
-                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
-                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Defendan yang dinamakan di atas <strong>${namaD}</strong> ${d_idStr} yang bermastautin (atau mempunyai tempat perniagaannya atau bekerja) di <strong>${alamatD}</strong>.</div>
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.25;">Kamu adalah dengan ini disaman untuk hadir di ${tempatSamanRaw} pada pukul <strong>${masaSebutanText}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> untuk menjawab aduan yang dibuat terhadap kamu oleh pengadu yang disebutkan di atas, bahawa:</div>
+                    <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pengadu membuat pengaduan sebagaimana lampiran.</div>
+                    <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Dengan itu pengadu ingin menuntut:</div>
 
-                <div style="margin-bottom: 15px;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; line-height: 1.25;">
-                        <thead>
-                            <tr>
-                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
-                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; background-color: #e2e8f0;">Jenis & Keterangan Tuntutan</th>
-                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Jumlah (RM)</th>
-                            </tr>
-                        </thead>
-                        <tbody>${htmlJadualTuntutan}</tbody>
-                    </table>
-                </div>
+                    <div style="margin-bottom: 15px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 10pt; line-height: 1.25;">
+                            <thead>
+                                <tr>
+                                    <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                                    <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; background-color: #e2e8f0;">Jenis & Keterangan Tuntutan</th>
+                                    <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 25%; background-color: #e2e8f0;">Jumlah (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>${htmlJadualTuntutan}</tbody>
+                        </table>
+                    </div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Sila ambil perhatian bahawa kamu boleh membawa saksi-saksi yang kamu ingin panggil bagi pihak kamu ke perbicaraan aduan di atas, dan bahawa kamu boleh memohon kepada Ketua Pengarah bagi saman-saman kepada orang-orang yang harus hadir dan memberi keterangan.</div>
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.</div>
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Sila ambil perhatian bahawa kamu boleh membawa saksi-saksi yang kamu ingin panggil bagi pihak kamu ke perbicaraan aduan di atas, dan bahawa kamu boleh memohon kepada Ketua Pengarah bagi saman-saman kepada orang-orang yang harus hadir dan memberi keterangan.</div>
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa dalam kemungkiran kehadiran kamu aduan tersebut akan dibicarakan dan diputuskan tanpa kehadiran kamu; dan bahawa kamu akan terikat dengan keputusan tersebut dan keputusan tersebut boleh dikuatkuasakan terhadap kamu menurut seksyen 70 (h) dan (i) Akta Kerja 1955.</div>
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan sila ambil perhatian selanjutnya bahawa walau apa pun peruntukkan yang terdahulu, jika kamu gagal mematuhi saman-saman yang di atas itu, maka menurut seksyen 80 dan 101 Akta Kerja 1955, kamu boleh didakwa bagi suatu kesalahan di bawah Bab X Kanun Keseksaan dan boleh dihukum di bawahnya.</div>
 
-                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
-                    <div></div> 
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
-                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSamanDD}</strong> haribulan <strong>${tarikhSamanMMYYYY}</strong></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; page-break-inside: avoid; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- MUKA SURAT 2: NOTIS MAKLUMAN PENGADU -->
-        <div class="kertas-notis" id="kertasNotisSamanPengadu">
-            ${templateHeaderHTML}
+        <div class="kumpulan-pengadu">
+            <div class="kertas-notis" id="kertasNotisSamanPengadu">
+                ${templateHeaderHTML}
 
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
-                <div class="notis-rujukan">
-                    Rujukan Kami : ${noKes}<br>
-                    Tarikh : ${tarikhSamanDD} ${tarikhSamanMMYYYY}
+                <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
+                    <div class="notis-rujukan">
+                        Rujukan Kami : ${noKes}<br>
+                        Tarikh : ${tarikhSamanDD} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}
+                    </div>
+
+                    <div class="notis-alamat">
+                        <strong>${namaP}</strong><br>
+                        ${alamatP || '[ALAMAT PENGADU]'}
+                    </div>
+
+                    <div style="margin-bottom: 15px;">Tuan,</div>
+
+                    <div class="notis-tajuk">
+                        KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>
+                        ANTARA PENGADU : ${namaP}<br>
+                        TERHADAP DEFENDAN : ${namaD}<br>
+                        PERKARA: NOTIS SEBUTAN KES (SAMAN)
+                    </div>
+                    <hr class="notis-garis-tajuk">
+
+                    <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+
+                    <div class="notis-isi" style="text-align: justify;">
+                        2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                    </div>
+
+                    <div class="notis-isi" style="text-align: justify;">
+                        3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.
+                    </div>
+
+                    ${perengganWakilKuasaHTML}
+
+                    ${templateFooterHTML}
                 </div>
-
-                <div class="notis-alamat">
-                    <strong>${namaP}</strong><br>
-                    ${alamatP || '[ALAMAT PENGADU]'}
-                </div>
-
-                <div style="margin-bottom: 15px;">Tuan,</div>
-
-                <div class="notis-tajuk">
-                    KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>
-                    ANTARA PENGADU : ${namaP}<br>
-                    TERHADAP DEFENDAN : ${namaD}<br>
-                    PERKARA: NOTIS SEBUTAN KES (SAMAN)
-                </div>
-                <hr class="notis-garis-tajuk">
-
-                <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-
-                <div class="notis-isi">
-                    2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhSebutanDD} ${tarikhSebutanMMYYYY} (${masaSebutanText})</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
-                </div>
-
-                <div class="notis-isi">
-                    3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.
-                </div>
-
-                ${perengganWakilKuasaHTML}
-
-                ${templateFooterHTML}
             </div>
         </div>
     `;
@@ -7949,17 +7961,74 @@ const htmlSamanA = `
     document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
+    // KAWALAN BUTANG MENU
+    let actionMenu = document.getElementById('actionMenu');
+
+    // Sembunyikan SEMUA butang yang tidak berkaitan
     document.getElementById('menuCetakAkuan').style.display = 'none';
     document.getElementById('menuCetakKenyataan').style.display = 'none';
     document.getElementById('menuDaftar').style.display = 'none';
     document.getElementById('menuSelesai').style.display = 'none';
+    
+    // TUTUP BUTANG LAMA / MOU YANG MENGGANGGU
+    if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none';
     if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
+    if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
+    if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
+    if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
+    if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
 
-    const menuCetakG1 = document.getElementById('menuCetakG1');
-    menuCetakG1.style.display = 'flex';
-    menuCetakG1.innerHTML = '🖨️ Cetak Saman (Borang A)';
+    // FUNGSI CETAK KHUSUS SAMAN (HIJAU BILA DITEKAN)
+    window.cetakDokumenSamanA = function(jenis) {
+        document.getElementById('actionMenu').classList.remove('show');
+        document.body.classList.add('print-only-' + jenis);
+        window.print();
+        document.body.classList.remove('print-only-' + jenis);
 
+        let tjk = '';
+        if (jenis === 'defendan') {
+            tjk = 'Saman (Borang A)';
+            document.getElementById('menuCetakSamanADefendan').innerHTML = '✅ Cetak Saman (Borang A)';
+            document.getElementById('menuCetakSamanADefendan').style.color = '#10b981';
+        } else if (jenis === 'pengadu') {
+            tjk = 'Notis Saman (Pengadu)';
+            document.getElementById('menuCetakSamanAPengadu').innerHTML = '✅ Cetak Notis Pengadu';
+            document.getElementById('menuCetakSamanAPengadu').style.color = '#10b981';
+        }
+
+        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen ${tjk} telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
+    };
+
+    // WUJUDKAN BUTANG: CETAK SAMAN (DEFENDAN)
+    let btnSamanDefendan = document.getElementById('menuCetakSamanADefendan');
+    if (!btnSamanDefendan) {
+        btnSamanDefendan = document.createElement('a');
+        btnSamanDefendan.id = 'menuCetakSamanADefendan';
+        btnSamanDefendan.href = '#';
+        actionMenu.insertBefore(btnSamanDefendan, document.getElementById('menuBatal'));
+    }
+    btnSamanDefendan.style.display = 'flex';
+    btnSamanDefendan.style.color = 'var(--text-main)';
+    btnSamanDefendan.innerHTML = '🖨️ Cetak Saman (Borang A)';
+    btnSamanDefendan.onclick = function(e) { e.preventDefault(); window.cetakDokumenSamanA('defendan'); };
+
+    // WUJUDKAN BUTANG: CETAK NOTIS PENGADU
+    let btnSamanPengadu = document.getElementById('menuCetakSamanAPengadu');
+    if (!btnSamanPengadu) {
+        btnSamanPengadu = document.createElement('a');
+        btnSamanPengadu.id = 'menuCetakSamanAPengadu';
+        btnSamanPengadu.href = '#';
+        actionMenu.insertBefore(btnSamanPengadu, document.getElementById('menuBatal'));
+    }
+    btnSamanPengadu.style.display = 'flex';
+    btnSamanPengadu.style.color = 'var(--text-main)';
+    btnSamanPengadu.innerHTML = '🖨️ Cetak Notis Pengadu';
+    btnSamanPengadu.onclick = function(e) { e.preventDefault(); window.cetakDokumenSamanA('pengadu'); };
+
+    // KEMASKINI BUTANG
     const btnKemaskini = document.getElementById('menuKemaskini');
     btnKemaskini.style.display = 'flex';
     btnKemaskini.onclick = function(e) {
@@ -7973,27 +8042,13 @@ const htmlSamanA = `
         }
     };
 
+    // BATAL BUTANG
     const btnBatal = document.getElementById('menuBatal');
     btnBatal.style.display = 'flex';
     btnBatal.onclick = function(e) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none';
-    };
-
-    menuCetakG1.onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('actionMenu').classList.remove('show');
-        window.print();
-        
-        let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
-        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
-        rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen Saman (Borang A) telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
-        
-        setTimeout(() => {
-            document.getElementById('modalPreview').style.display = 'none';
-            tukarView('senarai');
-        }, 500);
     };
 
     const radON = document.querySelector('input[name="radTandatangan"][value="ON"]');

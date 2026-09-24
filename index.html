@@ -9995,13 +9995,13 @@ function bukaPreviewBorangC() {
     let pBayarPejabatHTML = ""; // <-- Variabel baharu
 
 if (jenisPerintah === 'Bayar') {
-    pTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran penuh hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
-    
-    pPenalti = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
+        pTempohBayaran = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran penuh hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
+        
+        pPenalti = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
 
 // Suntik perenggan tambahan beserta tandatangan kali kedua (Format standard)
 pBayarPejabatHTML = `
-            <div style="page-break-inside: avoid;"> <!-- BERSAMBUNG SECARA NATURAL -->
+            <div style="page-break-inside: avoid; display: inline-block; width: 100%;"> <!-- BERSAMBUNG SECARA NATURAL -->
                 <hr style="border: 0; border-top: 1px dashed #000; margin: 30px 0 20px 0;">
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
@@ -10056,7 +10056,7 @@ pBayarPejabatHTML = `
                 ${pTempohBayaran}
                 ${pPenalti}
 
-<div style="page-break-inside: avoid;">
+<div style="page-break-inside: avoid; display: inline-block; width: 100%;">
     <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahCetak}</strong></div>
     
     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
@@ -10727,9 +10727,9 @@ function bukaPreviewMou(dataSimpanan = null) {
     let teksDanLainLainCetak = (isAutoGroup && bilDiwakili > 0) ? ` DAN ${bilDiwakili} YANG LAIN` : "";
     let teksDanLainLainKecil = (isAutoGroup && bilDiwakili > 0) ? ` dan ${bilDiwakili} yang lain` : "";
 
-let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
+let teksTempohBayaran = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
     if (isAutoGroup && kaedahBayaran === 'Ansuran') {
-        teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
+        teksTempohBayaran = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
     }
 
     let selectedIds = [];
@@ -11124,9 +11124,9 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
 
                 ${teksTempohBayaran}
                 
-<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
+<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
 
-                <div style="page-break-inside: avoid;">
+                <div style="page-break-inside: avoid; display: inline-block; width: 100%;">
                     <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
@@ -11138,7 +11138,7 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
                     </div>
                 </div>
                 
-                <div style="page-break-inside: avoid;"> <!-- BERSAMBUNG SECARA NATURAL -->
+                <div style="page-break-inside: avoid; display: inline-block; width: 100%;"> <!-- BERSAMBUNG SECARA NATURAL -->
                     <hr style="border: 0; border-top: 1px dashed #000; margin: 30px 0 20px 0;">
                     <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                     

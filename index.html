@@ -3122,6 +3122,9 @@ function formatTarikhMasaLengkap(tarikhRaw, masaRaw) {
     return `${tarikhStr}, ${masaStr}`;
 }
        
+// =========================================================================
+// FUNGSI GENERIK MENCETAK DAN PREVIEW NOTIS (Sebutan, Bicara, Keputusan)
+// =========================================================================
 function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
@@ -3173,7 +3176,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         alamatDefendanBersih = alamatD;
     }
 
-    // PEMBETULAN ISU 2: TARIKH & MASA SEBUTAN DITARIK DARIPADA INPUT BORANG JIKA TIADA HISTORI
     let tarikhRaw = tarikhHst;
     let masaRaw = masaHst;
 
@@ -3250,39 +3252,38 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             ${p2Defendan}
         `;
 
-} else if (kunci === 'sebutan_semula') {
-    // Tarik sebab yang dipilih dari modal (Gunakan 'defendan gagal hadir.' jika tiada)
-    let sebabTeks = window.tempSebabSebutanSemula || "defendan gagal hadir.";
+    } else if (kunci === 'sebutan_semula') {
+        let sebabTeks = window.tempSebabSebutanSemula || "defendan gagal hadir.";
 
-    let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
-    const sejarah = kes.sejarahTindakan || [];
-    
-    const rekodSebutanLama = [...sejarah].reverse().find(s => 
-        s.tindakan && (
-            s.tindakan.includes("Notis Sebutan") || 
-            s.tindakan.includes("Saman")
-        )
-    );
+        let tarikhMasaLamaGabung = "[Tarikh dan Masa Sebutan Terakhir]";
+        const sejarah = kes.sejarahTindakan || [];
+        
+        const rekodSebutanLama = [...sejarah].reverse().find(s => 
+            s.tindakan && (
+                s.tindakan.includes("Notis Sebutan") || 
+                s.tindakan.includes("Saman")
+            )
+        );
 
-    if (rekodSebutanLama && rekodSebutanLama.butiran) {
-        let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
-        let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
+        if (rekodSebutanLama && rekodSebutanLama.butiran) {
+            let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
+            let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
 
-        let tLama = matchTarikh ? matchTarikh[0] : null;
-        let mLama = matchMasa ? matchMasa[0] : null;
+            let tLama = matchTarikh ? matchTarikh[0] : null;
+            let mLama = matchMasa ? matchMasa[0] : null;
 
-        if (tLama && mLama) {
-            tarikhMasaLamaGabung = formatTarikhMasaLengkap(tLama, mLama);
+            if (tLama && mLama) {
+                tarikhMasaLamaGabung = formatTarikhMasaLengkap(tLama, mLama);
+            }
         }
-    }
 
-    tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
+        tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS SEBUTAN KES (PENETAPAN SEMULA)</div>`;
 
-    isiPengadu = `
-        <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-        <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun <strong>${sebabTeks}</strong>. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
-        <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
-    `;
+        isiPengadu = `
+            <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
+            <div class="notis-isi">2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaLamaGabung}</strong> namun <strong>${sebabTeks}</strong>. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> bagi tujuan serahan saman ke atas defendan. Tuan adalah dikehendaki hadir pada ketetapan tersebut. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.</div>
+            <div class="notis-isi">3.<span class="jarak-tab"></span>Sekiranya saman gagal diserahkan, tuan adalah dikehendaki mengemukakan alamat terkini defendan bagi tujuan serahan saman.</div>
+        `;
 
         let d_idStr = "(No. Pendaftaran/KP: ....................)";
         let inputs = (kes.dataBorang && kes.dataBorang.inputs) ? kes.dataBorang.inputs : {};
@@ -3350,7 +3351,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         const tarikhSamanDD = tH.getDate();
         const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
 
-        // PEMBETULAN ISU 1: ALAMAT DEFENDAN BERSIH TANPA TAG <br>
         tajukDefendan = '';
         isiDefendan = `
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0;">
@@ -3397,14 +3397,13 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
                 </div>
             </div>
         `;
-    
-} else if (kunci === 'bicara') {
+        
+    } else if (kunci === 'bicara') {
         const isMajikanCheck = (kes.dataBorang && kes.dataBorang.inputs && (kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true"));
         
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES</div>`;
         
-        // Pengekstrakan maklumat Pejabat dari Sidebar (Nama Pejabat, Bandar, Negeri)
         let ptkNamaPenuh = "PEJABAT TENAGA KERJA KLUANG";
         let ptkBandar = "KLUANG";
         let ptkNegeri = "JOHOR DARUL TAKZIM";
@@ -3421,7 +3420,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             }
         }
         
-        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
         const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
         const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         
@@ -3440,13 +3438,12 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Tuan dinasihatkan membawa bersama-sama dokumen/bukti (3 salinan) dan saksi-saksi berkenaan jika ada.</div>
             ${!isMajikanCheck ? `<div class="notis-isi" style="text-align: justify;">${p4_majikan_teks}</div>` : ''}
         `;
-        } else if (kunci === 'bicara_tangguh') {
+    } else if (kunci === 'bicara_tangguh') {
         const isMajikanCheck = (kes.dataBorang && kes.dataBorang.inputs && (kes.dataBorang.inputs['majikan'] === true || kes.dataBorang.inputs['majikan'] === "true"));
         
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES (TANGGUH)</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES (TANGGUH)</div>`;
         
-        // Pengekstrakan maklumat Pejabat dari Sidebar (Nama Pejabat, Bandar, Negeri)
         let ptkNamaPenuh = "PEJABAT TENAGA KERJA KLUANG";
         let ptkBandar = "KLUANG";
         let ptkNegeri = "JOHOR DARUL TAKZIM";
@@ -3463,7 +3460,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             }
         }
         
-        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
         const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
         const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         
@@ -3482,11 +3478,10 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Tuan dinasihatkan membawa bersama-sama dokumen/bukti (3 salinan) dan saksi-saksi berkenaan jika ada.</div>
             ${!isMajikanCheck ? `<div class="notis-isi" style="text-align: justify;">${p4_majikan_teks}</div>` : ''}
         `;
-        } else if (kunci === 'bicara_sambung') {
+    } else if (kunci === 'bicara_sambung') {
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES (SAMBUNG)</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS PERBICARAAN KES (SAMBUNG)</div>`;
         
-        // Pengekstrakan maklumat Pejabat dari Sidebar (Nama Pejabat, Bandar, Negeri)
         let ptkNamaPenuh = "PEJABAT TENAGA KERJA KLUANG";
         let ptkBandar = "KLUANG";
         let ptkNegeri = "JOHOR DARUL TAKZIM";
@@ -3503,7 +3498,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             }
         }
         
-        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
         const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
         const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
 
@@ -3516,11 +3510,10 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             <div class="notis-isi" style="text-align: justify;">Sila ambil perhatian bahawa perbicaraan kes tersebut di atas akan disambung kepada <strong>${tarikhMasaBaruGabung}</strong> di Mahkamah Buruh di <strong>${lokasiMahkamahCetak}</strong>.</div>
             <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Tuan adalah dikehendaki hadir pada tarikh dan masa tersebut dan adalah diingatkan bahawa kes ini akan dibicarakan dengan ketidakhadiran tuan jika tuan tidak hadir pada tarikh dan masa yang ditetapkan.</div>
         `;
-        } else if (kunci === 'keputusan') {
+    } else if (kunci === 'keputusan') {
         tajukPengadu = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS KEPUTUSAN KES</div>`;
         tajukDefendan = `<div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES SAMAN NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: NOTIS KEPUTUSAN KES</div>`;
         
-        // Pengekstrakan maklumat Pejabat dari Sidebar (Nama Pejabat, Bandar, Negeri)
         let ptkNamaPenuh = "PEJABAT TENAGA KERJA KLUANG";
         let ptkBandar = "KLUANG";
         let ptkNegeri = "JOHOR DARUL TAKZIM";
@@ -3537,7 +3530,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
             }
         }
         
-        // Gabungkan dan tukar format lokasi kepada Title Case khas untuk dalam perenggan
         const lokasiMahkamah = `${ptkNamaPenuh}, ${ptkBandar}, ${ptkNegeri}`;
         const lokasiMahkamahCetak = lokasiMahkamah.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
 
@@ -3577,7 +3569,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
                 ${isiDefendan}
             </div>
         `;
-        
     } else {
         mukaSuratDefendanHTML = `
             <div class="kertas-notis" id="kertasNotisDefendan">
@@ -3603,11 +3594,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         `;
     }
 
-// ==========================================================
-    // LOGIK CETAKAN BERKEMBAR (SALINAN PEGUAM AUTOMATIK)
-    // ==========================================================
-    
-    // 1. Ekstrak Maklumat Peguam Pengadu dari Memori
     let peguamPengaduHTML = '';
     if (kes.senaraiPerwakilan) {
         const peguamP = kes.senaraiPerwakilan.find(p => p.kategori === 'Peguam');
@@ -3616,7 +3602,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         }
     }
 
-    // 2. Ekstrak Maklumat Peguam Defendan dari Memori
     let peguamDefendanHTML = '';
     if (kes.senaraiPerwakilanDefendan) {
         const peguamD = kes.senaraiPerwakilanDefendan.find(p => p.kategori === 'Peguam');
@@ -3625,9 +3610,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         }
     }
 
-    // 3. BINA TEMPLAT SURAT PENGADU (MUKA SURAT 1)
     let suratPengaduLengkap = `
-        <!-- NOTIS KEPADA PENGADU (ASAL) -->
         <div class="kertas-notis" id="kertasNotisPengadu">
             ${templateHeaderHTML}
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -3642,10 +3625,8 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         </div>
     `;
 
-    // Jika Peguam Pengadu wujud, cantumkan salinan kedua ke dalam templat
     if (peguamPengaduHTML !== '') {
         suratPengaduLengkap += `
-        <!-- NOTIS KEPADA PEGUAM PENGADU (SALINAN BERKEMBAR) -->
         <div class="kertas-notis">
             ${templateHeaderHTML}
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -3661,21 +3642,15 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         `;
     }
 
-// 4. BINA TEMPLAT SURAT DEFENDAN (MUKA SURAT 2)
     let suratDefendanLengkap = '';
-    
     if (kunci === 'sebutan_semula') {
         suratDefendanLengkap = `
-        <!-- NOTIS KEPADA DEFENDAN (BORANG A - TIADA LETTERHEAD) -->
         <div class="kertas-notis" id="kertasNotisDefendan">
             ${isiDefendan}
         </div>
         `;
-        
-        // Salinan peguam juga dapat Borang A yang sama
         if (peguamDefendanHTML !== '') {
             suratDefendanLengkap += `
-            <!-- SALINAN PEGUAM DEFENDAN (BORANG A) -->
             <div class="kertas-notis" id="kertasNotisPeguamDefendan">
                 <div style="text-align: left; font-weight: bold; font-size: 9pt; margin-bottom: 15px; font-style: italic; color: #475569;">
                     *Salinan untuk Peguamcara Defendan:<br><span style="text-transform: uppercase;">${peguamDefendanHTML}</span>
@@ -3686,7 +3661,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         }
     } else {
         suratDefendanLengkap = `
-        <!-- NOTIS KEPADA DEFENDAN (ASAL) -->
         <div class="kertas-notis" id="kertasNotisDefendan">
             ${templateHeaderHTML}
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -3703,7 +3677,6 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
 
         if (peguamDefendanHTML !== '') {
             suratDefendanLengkap += `
-            <!-- NOTIS KEPADA PEGUAM DEFENDAN (SALINAN BERKEMBAR) -->
             <div class="kertas-notis">
                 ${templateHeaderHTML}
                 <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
@@ -3720,8 +3693,7 @@ function bukaPreviewNotisGenerik(kunci, tarikhHst = null, masaHst = null) {
         }
     }
 
-// 5. CANTUMKAN KESELURUHAN DOKUMEN
-const htmlNotisGenerik = `
+    const htmlNotisGenerik = `
         <style>
             ${cssSebutanSemulaKhas}
             #kertasNotisPeguamDefendan { padding: 1.5cm 2.5cm !important; }
@@ -3732,7 +3704,7 @@ const htmlNotisGenerik = `
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
                 
                 body.print-only-pengadu .kumpulan-defendan { display: none !important; }
@@ -3754,48 +3726,43 @@ const htmlNotisGenerik = `
     
     let actionMenu = document.getElementById('actionMenu');
 
+    // =======================================================
+    // ENJIN PEMBERSIH MENU (GOD-MODE WIPER)
+    // =======================================================
+    // Menyembunyikan semua "hantu" butang yang ditinggalkan oleh fungsi lain
+    Array.from(actionMenu.querySelectorAll('a')).forEach(btn => {
+        btn.style.display = 'none';
+    });
+    // =======================================================
+
     let btnNotisPengadu = document.getElementById('menuCetakNotisPengadu');
     if (!btnNotisPengadu) { btnNotisPengadu = document.createElement('a'); btnNotisPengadu.id = 'menuCetakNotisPengadu'; btnNotisPengadu.href = '#'; actionMenu.insertBefore(btnNotisPengadu, document.getElementById('menuBatal')); }
-    btnNotisPengadu.style.display = 'flex'; btnNotisPengadu.style.color = 'var(--text-main)'; btnNotisPengadu.innerHTML = '🖨️ Cetak ' + c.tindakan + ' Pengadu';
+    btnNotisPengadu.style.display = 'flex'; 
+    btnNotisPengadu.style.color = 'var(--text-main)'; 
+    btnNotisPengadu.innerHTML = '🖨️ Cetak ' + c.tindakan + ' Pengadu';
     btnNotisPengadu.onclick = function(e) { e.preventDefault(); window.cetakNotis('pengadu'); };
 
     let btnNotisDefendan = document.getElementById('menuCetakNotisDefendan');
     if (!btnNotisDefendan) { btnNotisDefendan = document.createElement('a'); btnNotisDefendan.id = 'menuCetakNotisDefendan'; btnNotisDefendan.href = '#'; actionMenu.insertBefore(btnNotisDefendan, document.getElementById('menuBatal')); }
-    btnNotisDefendan.style.display = 'flex'; btnNotisDefendan.style.color = 'var(--text-main)'; 
+    btnNotisDefendan.style.display = 'flex'; 
+    btnNotisDefendan.style.color = 'var(--text-main)'; 
     
-    // KAWALAN KHAS NAMA BUTANG UNTUK SEBUTAN SEMULA (DEFENDAN)
     if (kunci === 'sebutan_semula') {
         btnNotisDefendan.innerHTML = '🖨️ Cetak Borang A (Saman) Defendan';
     } else {
         btnNotisDefendan.innerHTML = '🖨️ Cetak ' + c.tindakan + ' Defendan';
     }
-    
     btnNotisDefendan.onclick = function(e) { e.preventDefault(); window.cetakNotis('defendan'); };
 
-    document.getElementById('menuCetakAkuan').style.display = 'none'; document.getElementById('menuCetakKenyataan').style.display = 'none'; document.getElementById('menuDaftar').style.display = 'none'; document.getElementById('menuSelesai').style.display = 'none';
-    const menuCetakG1 = document.getElementById('menuCetakG1'); if (menuCetakG1) menuCetakG1.style.display = 'none';
-    
-    // TUTUP KEBOCORAN BUTANG DINAMIK DARI FUNGSI LAIN
-    if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
-    if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
-    
-// TETAPKAN BUTANG KEMASKINI TUTUP PREVIEW DAN BUKA KAD BERKAITAN
     const btnKemaskini = document.getElementById('menuKemaskini'); 
     btnKemaskini.style.display = 'flex';
     btnKemaskini.onclick = function(e) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none';
-        
-        // Panggil kad yang berkaitan untuk dikemaskini
-        if (typeof toggleKadUrus === 'function') {
-            toggleKadUrus(kunci);
-        }
+        if (typeof toggleKadUrus === 'function') { toggleKadUrus(kunci); }
     };
 
-    // TETAPKAN BUTANG BATAL TUTUP PREVIEW SAHAJA
     const btnBatal = document.getElementById('menuBatal'); 
     btnBatal.style.display = 'flex';
     btnBatal.onclick = function(e) {

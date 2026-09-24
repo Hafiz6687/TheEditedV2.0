@@ -10746,9 +10746,9 @@ function bukaPreviewMou(dataSimpanan = null) {
     let teksDanLainLainCetak = (isAutoGroup && bilDiwakili > 0) ? ` DAN ${bilDiwakili} YANG LAIN` : "";
     let teksDanLainLainKecil = (isAutoGroup && bilDiwakili > 0) ? ` dan ${bilDiwakili} yang lain` : "";
 
-let teksTempohBayaran = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
-    if (isAutoGroup && kaedahBayaran === 'Ansuran') {
-        teksTempohBayaran = `<div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
+let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
+    if (kaedahBayaran === 'Ansuran') {
+        teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran hendaklah dibuat dalam tempoh 14 hari dari tarikh-tarikh sebagaimana dinyatakan di dalam Lampiran perintah ini.</div>`;
     }
 
     let selectedIds = [];

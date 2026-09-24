@@ -10112,7 +10112,11 @@ if (jenisPerintah === 'Bayar') {
 
 const htmlPenuh = `
         <style>
-            @media print { 
+            @media screen {
+                .elak-potong { display: inline-block; width: 100%; }
+            }
+            @media print {
+                .elak-potong { display: block !important; page-break-inside: avoid !important; break-inside: avoid !important; }
                 @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 

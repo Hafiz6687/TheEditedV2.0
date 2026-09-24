@@ -9971,7 +9971,7 @@ function bukaPreviewBorangC() {
         
 // Suntik perenggan tambahan beserta tandatangan kali kedua (Format standard)
         pBayarPejabatHTML = `
-            <div style="page-break-before: always;"> <!-- DIPINDAHKAN KE MUKA SURAT BARU -->
+                <div style="page-break-inside: avoid; margin-top: 30px;"> <!-- BERSAMBUNG SECARA NATURAL -->
                 <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
@@ -11100,9 +11100,8 @@ const tH = new Date();
                     </div>
                 </div>
                 
-<div style="page-break-before: always;"> <!-- DIPINDAHKAN KE MUKA SURAT BARU -->
-                    <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
-                    
+<div style="page-break-inside: avoid; margin-top: 30px;"> <!-- BERSAMBUNG SECARA NATURAL -->
+    <hr style="border: 0; border-top: 1px dashed #000; margin: 20px 0;">
                     <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">

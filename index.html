@@ -11345,7 +11345,62 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none'; 
-        document.getElementById('modalMou').style.display = 'flex'; 
+        
+        // 1. Panggil fungsi asal untuk bina semula senarai checkbox tuntutan
+        bukaModalMou(); 
+        
+        // 2. Jika ia dibuka dari Sejarah Tindakan, masukkan semula data ke dalam form
+        if (dataSimpanan) {
+            document.getElementById('mk_tarikh_mou').value = tarikhRaw || '';
+            document.getElementById('mk_jumlah_mou').value = jumlahRaw || '';
+            document.getElementById('mk_kaedah_mou').value = kaedahBayaran || '';
+            
+            const dibayarPejabatRaw = memoData.dibayarPejabat !== undefined ? memoData.dibayarPejabat : "0.00";
+            document.getElementById('mk_dibayar_pejabat').value = dibayarPejabatRaw;
+            
+            // Tick semula checkboxes tuntutan yang pernah dipilih
+            const allCbs = document.querySelectorAll('input[name="mou_tuntutan_cb"]');
+            allCbs.forEach(cb => {
+                cb.checked = selectedIds.includes(cb.value);
+            });
+
+            // Masukkan semula nilai persetujuan individu (jika ada)
+            for (let pId in jumlahIndividu) {
+                let inp = document.querySelector(`.input-mou-individu[data-id="${pId}"]`);
+                if(inp) inp.value = jumlahIndividu[pId];
+            }
+
+            // Buka dan masukkan jadual ansuran jika kaedah adalah Ansuran
+            if (kaedahBayaran === 'Ansuran') {
+                if (jenisAnsuran) {
+                    const r = document.querySelector(`input[name="jenis_jadual_ansuran"][value="${jenisAnsuran}"]`);
+                    if(r) r.checked = true;
+                }
+                
+                kawalAnsuranMou();
+                document.getElementById('mou_senarai_ansuran').innerHTML = ''; // Clear template asal
+                
+                if (ansuranDetails && ansuranDetails.length > 0) {
+                    ansuranDetails.forEach(ans => {
+                        tambahAnsuranMou(ans.tarikh, ans.amaun);
+                    });
+                }
+                
+                for (let pId in ansuranIndividuMap) {
+                    let ansList = ansuranIndividuMap[pId];
+                    if (ansList && ansList.length > 0) {
+                        let container = document.getElementById('senarai_ansuran_' + pId);
+                        if(container) {
+                            container.innerHTML = '';
+                            ansList.forEach(ans => {
+                                tambahAnsuranIndividu(pId, ans.tarikh, ans.amaun);
+                            });
+                        }
+                    }
+                }
+            }
+            semakButangMou();
+        }
     };
 
     const btnBatal = document.getElementById('menuBatal');

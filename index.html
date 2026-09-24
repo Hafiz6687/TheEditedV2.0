@@ -7699,25 +7699,23 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </tr>`;
     }
 
-    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
-    let tarikhSebutanAsalText = "[Tarikh Sebutan]";
-    let masaSebutanAsalText = "[Masa Sebutan]";
+    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES (DIBETULKAN FORMAT)
+    let tarikhMasaAsalGabung = "[Tarikh dan Masa Sebutan Terakhir]";
     
     const sejarah = kes.sejarahTindakan || [];
     const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
+    
     if (rekodSebutanLama && rekodSebutanLama.butiran) {
         let matchTarikh = rekodSebutanLama.butiran.match(/\b\d{4}-\d{2}-\d{2}\b/);
         let matchMasa = rekodSebutanLama.butiran.match(/\b\d{1,2}:\d{2}\b/);
-        if (matchTarikh) {
-            let tA = new Date(matchTarikh[0]);
-            if (!isNaN(tA)) tarikhSebutanAsalText = `${tA.getDate()} ${bulanMY[tA.getMonth()]} ${tA.getFullYear()}`;
-        }
-        if (matchMasa) {
-            let [jamA, minitA] = matchMasa[0].split(':');
-            let jamNumA = parseInt(jamA, 10);
-            let ampmA = jamNumA >= 12 ? "petang" : "pagi";
-            let jamFormatA = jamNumA % 12 || 12;
-            masaSebutanAsalText = `${jamFormatA}:${minitA} ${ampmA}`;
+        
+        let tLama = matchTarikh ? matchTarikh[0] : null;
+        let mLama = matchMasa ? matchMasa[0] : null;
+
+        if (tLama && mLama) {
+            tarikhMasaAsalGabung = formatTarikhMasaLengkap(tLama, mLama);
+        } else if (tLama) {
+            tarikhMasaAsalGabung = formatTarikhMasaLengkap(tLama, '-');
         }
     }
 
@@ -7943,7 +7941,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                     <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
 
                     <div class="notis-isi" style="text-align: justify;">
-                        2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhSebutanAsalText} (${masaSebutanAsalText})</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
+                        2.<span class="jarak-tab"></span>Sebagaimana yang tuan maklum, sebutan kes ditetapkan pada <strong>${tarikhMasaAsalGabung}</strong> namun defendan tidak hadir. Oleh itu, kes ini ditetapkan untuk sebutan semula pada <strong>${tarikhMasaBaruGabung}</strong> dengan saman ke atas defendan akan dikeluarkan. Tuan adalah dikehendaki hadir pada ketetapan tersebut dengan membawa bukti-bukti (3 salinan) mengenai tuntutan tuan. Sila ambil perhatian, kes akan dibatalkan sekiranya tuan gagal hadir.
                     </div>
 
                     <div class="notis-isi" style="text-align: justify;">

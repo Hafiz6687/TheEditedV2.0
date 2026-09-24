@@ -10971,6 +10971,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                     let kpCetak = d.kp ? `<br><span style="font-size: 0.85em; color: #475569;">No. Kad Pengenalan: ${d.kp}</span>` : '';
                     let unikTuntutan = [...new Set(d.tuntutanList)].join('<br>');
                     
+                    // TAMBAH: page-break-inside: avoid; supaya maklumat pekerja tak terpotong tengah-tengah
                     rowsPengadu += `
                     <tr style="page-break-inside: avoid;">
                         <td style="border: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">${bilP++}</td>
@@ -10996,6 +10997,7 @@ function bukaPreviewMou(dataSimpanan = null) {
                             if (!isNaN(t.getTime())) tarikhCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
                         }
 
+                        // TAMBAH: page-break-inside: avoid; supaya baris ansuran tak terpotong
                         rowsAnsuran += `
                         <tr style="page-break-inside: avoid;">
                             <td style="border: 1px solid #000; padding: 6px; text-align: center;">${idx + 1}</td>
@@ -11007,6 +11009,8 @@ function bukaPreviewMou(dataSimpanan = null) {
 
                 let totalAnsStr = totalAnsuranKira.toLocaleString('en-MY', { minimumFractionDigits: 2 });
 
+                // LOGIK KAWALAN MUKA SURAT UNTUK BAHAGIAN B
+                // Jika pengadu ramai (melebihi 10), paksa Bahagian B turun ke muka surat baharu sepenuhnya.
                 let jumlahPengadu = Object.keys(dataPengadu).length;
                 let gayaBahagianB = jumlahPengadu >= 10 ? 'page-break-before: always;' : 'page-break-inside: avoid; margin-top: 25px;';
 
@@ -11086,6 +11090,73 @@ function bukaPreviewMou(dataSimpanan = null) {
     const tarikhSurat = `${tH.getDate()} ${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
     const templateHeaderHTML = `<div class="notis-header"><div class="notis-header-kiri"><div class="notis-logo"><img src="jata-negara.png" alt="Logo Jata Negara"></div><div class="notis-jabatan"><div style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold;">PEJABAT TENAGA KERJA KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(KLUANG LABOUR OFFICE)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">(KEMENTERIAN SUMBER MANUSIA)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-style: italic; font-weight: bold;">(MINISTRY OF HUMAN RESOURCES)</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JALAN PEJABAT KERAJAAN</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">86000 KLUANG</div><div style="font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold;">JOHOR DARUL TAKZIM</div></div></div><div class="notis-hubungi"><table style="font-family: Arial, sans-serif; font-size: 8pt;"><tr><td class="kol-label">Telefon</td><td class="kol-titik">:</td><td>07-772 1646/2646</td></tr><tr><td class="kol-label">Telefax</td><td class="kol-titik">:</td><td>07-7737111</td></tr><tr><td class="kol-label">E-mel</td><td class="kol-titik">:</td><td>jtkdkluang@mohr.gov.my</td></tr><tr><td class="kol-label">Portal rasmi</td><td class="kol-titik">:</td><td>jtksm.mohr.gov.my</td></tr></table></div></div>`;
     const templateFooterHTML = `<div class="notis-isi" style="margin-top: 15px;">Sekian, terima kasih.</div><div class="notis-slogan">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div><div class="notis-sign" style="margin-bottom: 5px;">Saya yang menjalankan amanah,</div><div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;"><img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;"></div><div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span></div><div class="notis-footer-line"></div>`;
+
+    // SUNTIKAN SEMULA BORANG C
+    const htmlBorangC = `
+        <div class="kertas-notis" id="kertasBorangCMou" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 15px 0;">(Buruh 79—Pin. 12/91)</div>
+                <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 25px; line-height: 1.25;">
+                    BORANG C<br><span style="font-weight: normal; font-size: 11pt;">(Perintah di bawah seksyen 69 Akta Kerja 1955)</span>
+                </div>
+
+                <div style="text-align: center; font-weight: bold; margin-bottom: 20px;">Ketua Pengarah Tenaga Kerja Kes Saman No. ${noKes}</div>
+                <div style="text-align: center; margin-bottom: 10px;">Antara</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><div style="text-transform: uppercase; font-weight: bold;">${namaP}${teksDanLainLainCetak}</div><div>... Pengadu</div></div>
+                <div style="text-align: center; margin-bottom: 10px;">Dan</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
+
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>${bandarSaman}</strong>, Negeri <strong>${negeriSaman}</strong> pada <strong>${tarikhSebutanDD} haribulan ${tarikhSebutanMMYYYY}</strong> Bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
+                
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) beralamat di <strong>${alamatD_Terkini_Inline}</strong> membayar kepada pengadu melalui Penolong Pengarah Tenaga Kerja Kanan ${bandarSaman} bagi pihak <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} wang sebanyak <strong>${jumRM}</strong>.</div>
+                
+                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pecahan jenis bayaran adalah seperti berikut:</div>
+
+                <div style="margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; line-height: 1.25;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center; width: 5%; background-color: #e2e8f0;">Bil.</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: left; background-color: #e2e8f0;">Jenis & Keterangan Tuntutan</th>
+                                <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 30%; background-color: #e2e8f0;">Jumlah Perintah (RM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>${htmlJadualTuntutanMOU}</tbody>
+                    </table>
+                </div>
+
+                ${teksTuntutanDibuang}
+
+                ${teksTempohBayaran}
+                
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
+
+                <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; page-break-inside: avoid; line-height: 1.25;">
+                    <div></div> 
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                        <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;"> <!-- BERSAMBUNG SECARA NATURAL (Margin dibaiki ke hr) -->
+                    <hr style="border: 0; border-top: 1px dashed #000; margin: 30px 0 20px 0;">
+                    <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
+                        <div></div> 
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; text-transform: uppercase;">${namaPegawai}</div>
+                            <div style="margin-top: 5px;">Ketua Pengarah Tenaga Kerja</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    `;
 
     const htmlMou = `
         <style>
@@ -11180,6 +11251,9 @@ function bukaPreviewMou(dataSimpanan = null) {
             <!-- SISIPAN LAMPIRAN A (JIKA ADA) DI SINI -->
             ${htmlLampiranA}
             
+            <!-- SISIPAN BORANG C DI SINI -->
+            ${htmlBorangC}
+
         </div>
 
         <!-- MUKA 3 ATAU 4: NOTIS MAKLUMAN PENGADU -->

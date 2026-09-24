@@ -2861,7 +2861,7 @@ function bukaPreviewTarikBalik() {
     const htmlTarikBalik = `
         <style>
             @media print {
-                .kertas-tb { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; }
+                .kertas-tb { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; }
                 body { background: white; }
                 body > *:not(#printArea) { display: none !important; }
                 #printArea { display: block !important; }
@@ -3728,11 +3728,11 @@ const htmlNotisGenerik = `
             #kertasNotisPeguamDefendan .notis-body-wrapper { padding: 0 !important; }
             
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
                 
                 body.print-only-pengadu .kumpulan-defendan { display: none !important; }
@@ -7499,11 +7499,11 @@ function bukaPreviewAlamatTerkini() {
 const htmlNotisAlamat = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
@@ -7818,11 +7818,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
 const htmlSamanA = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
             }
             
@@ -8058,11 +8058,11 @@ function bukaPreviewSamanTampal() {
 const htmlSamanTampal = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
             }
             /* Font ditetapkan kepada 12pt */
@@ -8555,11 +8555,11 @@ function bukaPreviewSamanMemo(dataSimpanan = null) {
 const htmlSamanMemo = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; } 
             }
 
@@ -8973,11 +8973,11 @@ const templateFooterHTML = `
 const htmlNotisBatal = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; } 
             }
 
@@ -9574,11 +9574,11 @@ function bukaPreviewNotisLain(senaraiPenerima, tajukRaw, isiRaw) {
 const htmlNotisLengkap = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; } 
             }
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; padding: 1.5cm 1.27cm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
@@ -10101,11 +10101,11 @@ if (jenisPerintah === 'Bayar') {
 const htmlPenuh = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important;} 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important;} 
                 .kertas-notis:last-child { page-break-after: auto; } 
                 
                 body.print-only-borangc .kumpulan-pengadu, body.print-only-borangc .kumpulan-defendan { display: none !important; }
@@ -11140,11 +11140,11 @@ const tH = new Date();
 const htmlMou = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
                 
                 body.print-only-mou .kumpulan-pengadu, body.print-only-mou .kumpulan-defendan { display: none !important; }

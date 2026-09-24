@@ -10114,7 +10114,7 @@ function bukaPreviewBorangC() {
     if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisLainDefendan')) document.getElementById('menuCetakNotisLainDefendan').style.display = 'none';
 
-    window.cetakDokumenBorangC = function(jenis) {
+window.cetakDokumenBorangC = function(jenis) {
         document.getElementById('actionMenu').classList.remove('show');
         document.body.classList.add('print-only-' + jenis);
         window.print();
@@ -10126,8 +10126,6 @@ function bukaPreviewBorangC() {
         else if (jenis === 'defendan') { tjk = 'Notis Borang C (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
         
         rekodSejarahTindakan(indexKesSemasa, "Perintah (Borang C)", `Dokumen ${tjk} telah dicetak.`);
-        
-        setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
     };
 
     // Re-use ID MOU buttons untuk elak semak memori
@@ -11266,7 +11264,7 @@ const tH = new Date();
     if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisLainDefendan')) document.getElementById('menuCetakNotisLainDefendan').style.display = 'none';
 
-    window.cetakDokumenMou = function(jenis) {
+window.cetakDokumenMou = function(jenis) {
         document.getElementById('actionMenu').classList.remove('show');
         document.body.classList.add('print-only-' + jenis);
         window.print();
@@ -11280,8 +11278,6 @@ const tH = new Date();
         let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails, jumlahIndividu: jumlahIndividu, ansuranIndividu: ansuranIndividuMap, jenisAnsuran: jenisAnsuran };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
-        
-        setTimeout(() => { document.getElementById('modalPreview').style.display = 'none'; tukarView('senarai'); }, 500);
     };
 
     let btnMouMain = document.getElementById('menuCetakMouMain');

@@ -7699,9 +7699,8 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         </tr>`;
     }
 
-    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES (DIBETULKAN FORMAT)
+    // TARIK TARIKH & MASA SEBUTAN ASAL DARIPADA SEJARAH KES
     let tarikhMasaAsalGabung = "[Tarikh dan Masa Sebutan Terakhir]";
-    
     const sejarah = kes.sejarahTindakan || [];
     const rekodSebutanLama = [...sejarah].reverse().find(s => s.tindakan && s.tindakan.includes("Notis Sebutan"));
     
@@ -7724,7 +7723,6 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const masaRaw = memoData.masa !== undefined ? memoData.masa : document.getElementById('mk_masa_saman')?.value;
     const tempatSamanRaw = memoData.tempat !== undefined ? memoData.tempat : (document.getElementById('mk_tempat_saman')?.value || 'Pejabat Tenaga Kerja Kluang, Jalan Pejabat Kerajaan, 86000 Kluang, Johor Darul Takzim');
     
-    // FORMAT TARIKH UNTUK BORANG A
     let tarikhSebutanDD = ".......";
     let tarikhSebutanMMYYYY = "........................";
     if (tarikhRaw && tarikhRaw !== "") {
@@ -7746,9 +7744,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         }
     }
 
-    // GUNA SISTEM FORMAT STANDARD UNTUK NOTIS PENGADU
     const tarikhMasaBaruGabung = formatTarikhMasaLengkap(tarikhRaw, masaRaw);
-
     const tH = new Date();
     const tarikhSamanDD = tH.getDate();
     const tarikhSamanMMYYYY = `${bulanMY[tH.getMonth()]} ${tH.getFullYear()}`;
@@ -7756,7 +7752,7 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // LOGIK DINAMIK MUKA SURAT 2 UNTUK PENGADU (PERENGGAN 4 & 5)
+    // LOGIK DINAMIK MUKA SURAT 2 UNTUK PENGADU
     let perengganWakilKuasaHTML = '';
     if (isMajikan) {
         perengganWakilKuasaHTML = `
@@ -7820,11 +7816,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     const htmlSamanA = `
         <style>
             @media print { 
-                @page { size: A4 portrait; margin: 1.5cm 1.27cm; } 
+                @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
                 #printArea { display: block !important; } 
-                .kertas-notis { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
+                .kertas-notis { margin: 0 !important; padding: 1.5cm 1.27cm !important; box-shadow: none !important; width: 100% !important; min-height: 297mm !important; page-break-after: always; position: relative !important; box-sizing: border-box !important; } 
                 .kertas-notis:last-child { page-break-after: auto; }
                 
                 /* KAWALAN CETAKAN BERASINGAN SAMAN / NOTIS PENGADU */
@@ -7832,14 +7828,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
                 body.print-only-defendan .kumpulan-pengadu { display: none !important; }
             }
             
-            /* Tetapan Umum untuk Semua Kertas */
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.3; box-sizing: border-box; position: relative; }
             
-            /* MUKA 1 (BORANG A - TIADA LETTERHEAD): Padding terus 2.5cm dari tepi */
             #kertasSamanA { padding: 1.5cm 2.5cm !important; }
             #kertasSamanA .notis-body-wrapper { padding: 0 !important; }
             
-            /* MUKA 2 (NOTIS PENGADU - ADA LETTERHEAD): Padding luar 1.27cm, wrapper dalam 1.23cm = 2.5cm */
             #kertasNotisSamanPengadu { padding: 1.5cm 1.27cm !important; }
             #kertasNotisSamanPengadu .notis-body-wrapper { padding: 0 1.23cm !important; }
             
@@ -7959,7 +7952,9 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     document.getElementById('previewContent').innerHTML = htmlSamanA;
     document.getElementById('printArea').innerHTML = htmlSamanA;
 
-    // KAWALAN BUTANG MENU
+    // =========================================================================
+    // KAWALAN BUTANG MENU YANG TELAH DICUCI BERSIH (TIADA KEBOCORAN)
+    // =========================================================================
     let actionMenu = document.getElementById('actionMenu');
 
     // Sembunyikan SEMUA butang yang tidak berkaitan
@@ -7970,12 +7965,14 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     
     // TUTUP BUTANG LAMA / MOU YANG MENGGANGGU
     if(document.getElementById('menuCetakG1')) document.getElementById('menuCetakG1').style.display = 'none';
-    if(document.getElementById('menuCetakNotisPengadu')) document.getElementById('menuCetakNotisPengadu').style.display = 'none';
-    if(document.getElementById('menuCetakNotisDefendan')) document.getElementById('menuCetakNotisDefendan').style.display = 'none';
     if(document.getElementById('menuCetakMouMain')) document.getElementById('menuCetakMouMain').style.display = 'none';
     if(document.getElementById('menuCetakMouPengadu')) document.getElementById('menuCetakMouPengadu').style.display = 'none';
     if(document.getElementById('menuCetakMouDefendan')) document.getElementById('menuCetakMouDefendan').style.display = 'none';
     if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
+
+    // JIKA BUTANG LAMA YANG BOCOR MASIH WUJUD, KITA GHAIBKAN TERUS
+    if(document.getElementById('menuCetakSamanADefendan')) document.getElementById('menuCetakSamanADefendan').style.display = 'none';
+    if(document.getElementById('menuCetakSamanAPengadu')) document.getElementById('menuCetakSamanAPengadu').style.display = 'none';
 
     // FUNGSI CETAK KHUSUS SAMAN (HIJAU BILA DITEKAN)
     window.cetakDokumenSamanA = function(jenis) {
@@ -7987,12 +7984,12 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         let tjk = '';
         if (jenis === 'defendan') {
             tjk = 'Saman (Borang A)';
-            document.getElementById('menuCetakSamanADefendan').innerHTML = '✅ Cetak Saman (Borang A)';
-            document.getElementById('menuCetakSamanADefendan').style.color = '#10b981';
+            document.getElementById('menuCetakNotisDefendan').innerHTML = '✅ Cetak Saman (Borang A)';
+            document.getElementById('menuCetakNotisDefendan').style.color = '#10b981';
         } else if (jenis === 'pengadu') {
             tjk = 'Notis Saman (Pengadu)';
-            document.getElementById('menuCetakSamanAPengadu').innerHTML = '✅ Cetak Notis Pengadu';
-            document.getElementById('menuCetakSamanAPengadu').style.color = '#10b981';
+            document.getElementById('menuCetakNotisPengadu').innerHTML = '✅ Cetak Notis Pengadu';
+            document.getElementById('menuCetakNotisPengadu').style.color = '#10b981';
         }
 
         let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw };
@@ -8000,11 +7997,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
         rekodSejarahTindakan(indexKesSemasa, "Saman (Borang A)", `Dokumen ${tjk} telah dijana dan dicetak. [DATA_SAMANA:${d64}]`);
     };
 
-    // WUJUDKAN BUTANG: CETAK SAMAN (DEFENDAN)
-    let btnSamanDefendan = document.getElementById('menuCetakSamanADefendan');
+    // WUJUDKAN BUTANG: GUNA SEMULA ID NOTIS DEFENDAN (TAK CIPTA ID BARU)
+    let btnSamanDefendan = document.getElementById('menuCetakNotisDefendan');
     if (!btnSamanDefendan) {
         btnSamanDefendan = document.createElement('a');
-        btnSamanDefendan.id = 'menuCetakSamanADefendan';
+        btnSamanDefendan.id = 'menuCetakNotisDefendan';
         btnSamanDefendan.href = '#';
         actionMenu.insertBefore(btnSamanDefendan, document.getElementById('menuBatal'));
     }
@@ -8013,11 +8010,11 @@ function bukaPreviewSamanA(dataSimpanan = null) {
     btnSamanDefendan.innerHTML = '🖨️ Cetak Saman (Borang A)';
     btnSamanDefendan.onclick = function(e) { e.preventDefault(); window.cetakDokumenSamanA('defendan'); };
 
-    // WUJUDKAN BUTANG: CETAK NOTIS PENGADU
-    let btnSamanPengadu = document.getElementById('menuCetakSamanAPengadu');
+    // WUJUDKAN BUTANG: GUNA SEMULA ID NOTIS PENGADU (TAK CIPTA ID BARU)
+    let btnSamanPengadu = document.getElementById('menuCetakNotisPengadu');
     if (!btnSamanPengadu) {
         btnSamanPengadu = document.createElement('a');
-        btnSamanPengadu.id = 'menuCetakSamanAPengadu';
+        btnSamanPengadu.id = 'menuCetakNotisPengadu';
         btnSamanPengadu.href = '#';
         actionMenu.insertBefore(btnSamanPengadu, document.getElementById('menuBatal'));
     }

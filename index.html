@@ -10098,12 +10098,19 @@ if (jenisPerintah === 'Bayar') {
     let kandunganNotisDefendan = `<div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini. Tuan adalah dikehendaki mematuhi arahan bayaran sebagaimana dinyatakan di dalam perintah tersebut.</div>`;
 
     if (jenisPerintah === 'Bayar') {
-        let isiPerintahBayar = `
+        let isiPerintahBayarPengadu = `
                     <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan.</div>
                     <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Mana-mana pihak yang tidak berpuashati dengan perintah yang dibuat boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh 14 hari dari tarikh perintah dikeluarkan dengan mengemukakan 7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012) dan Fi Praecipe rayuan sebanyak RM400.00 secara draf bank atau wang pos atas nama Ketua Pengarah Tenaga Kerja Semenanjung Malaysia ke pejabat ini untuk tindakan selanjutnya.</div>
                     <div class="notis-isi" style="text-align: justify;">4.<span class="jarak-tab"></span>Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah untuk pemantauan ke atas bayaran perintah atau tindakan penguatkuasaan perintah.</div>`;
-        kandunganNotisPengadu = isiPerintahBayar;
-        kandunganNotisDefendan = isiPerintahBayar;
+        
+        let isiPerintahBayarDefendan = `
+                    <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan.</div>
+                    <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Mana-mana pihak yang tidak berpuashati dengan perintah yang dibuat boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh 14 hari dari tarikh perintah dikeluarkan dengan mengemukakan 7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012) dan Fi Praecipe rayuan sebanyak RM400.00 secara draf bank atau wang pos atas nama Ketua Pengarah Tenaga Kerja Semenanjung Malaysia ke pejabat ini untuk tindakan selanjutnya.</div>
+                    <div class="notis-isi" style="text-align: justify;">4.<span class="jarak-tab"></span>Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan dan tuan gagal mematuhi perintah, tindakan PENDAKWAAN ke atas pihak tuan akan dijalankan sebagaimana seksyen 69(4) Akta Kerja 1955 dan apabila disabitkan, boleh didenda tidak melebihi lima puluh ribu ringgit; dan juga, dalam hal kesalahan berterusan, boleh dikenakan denda harian tidak melebihi satu ribu ringgit setiap hari kesalahan itu berterusan selepas sabitan.</div>
+                    <div class="notis-isi" style="text-align: justify;">5.<span class="jarak-tab"></span>Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan dan sekiranya bayaran perintah tersebut dibuat secara terus kepada pengadu, kes adalah dianggap sebagai selesai dengan syarat bukti bayaran hendaklah dikemukakan ke pejabat ini secara serahan tangan atau email ke hafizabubakar@mohr.gov.my untuk perhatian En. Mohamad Hafiz bin Abu Bakar.</div>`;
+
+        kandunganNotisPengadu = isiPerintahBayarPengadu;
+        kandunganNotisDefendan = isiPerintahBayarDefendan;
     }
 
     const htmlNotisP = `

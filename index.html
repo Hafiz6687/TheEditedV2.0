@@ -9704,7 +9704,7 @@ function bukaModalBorangC() {
             containerTuntutan.innerHTML += `
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin: 5px 0; padding-bottom:5px; border-bottom:1px dashed #cbd5e1;">
                     <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.85em; font-weight:500; color:var(--text-main); flex:1;">
-                        <input type="checkbox" class="bc-cb-tuntutan" value="${valId}" data-jenis="${item.jenis}" checked onchange="kawalSemakBorangC(this, '${valId}'); semakButangBorangC();" style="margin-top:2px; width:15px; height:15px; cursor:pointer;">
+                        <input type="checkbox" class="bc-cb-tuntutan" value="${valId}" data-jenis="${item.jenis}" data-ket="${item.keterangan.replace(/"/g, '&quot;')}" checked onchange="kawalSemakBorangC(this, '${valId}'); semakButangBorangC();" style="margin-top:2px; width:15px; height:15px; cursor:pointer;">
                         <span style="line-height:1.2;"><strong>${item.jenis}</strong> ${ketCetak}<br><span style="color:#64748b;">Asal: RM ${jumAsal}</span></span>
                     </label>
                     <div style="display:flex; align-items:center; gap:5px;">
@@ -9895,19 +9895,20 @@ function bukaPreviewBorangC(dataSimpanan = null) {
     if (memoData) {
         senaraiTuntutanDipilih = memoData.tuntutanList || [];
     } else {
-        const checkedBoxes = document.querySelectorAll('.bc-cb-tuntutan:checked');
-        checkedBoxes.forEach(cb => {
-            let id = cb.value;
-            let inp = document.getElementById(`bc_inp_amaun_${id}`);
-            let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
-            let jenis = cb.dataset.jenis;
-            let namaPemilik = cb.closest('div').previousElementSibling?.innerText || `PENGADU`;
-            if(namaPemilik.includes('KETERANGAN')) namaPemilik = "PENGADU"; 
-            senaraiTuntutanDipilih.push({ id: id, val: val, jenis: jenis, namaPemilik: namaPemilik });
-        });
-    }
+            const checkedBoxes = document.querySelectorAll('.bc-cb-tuntutan:checked');
+            checkedBoxes.forEach(cb => {
+                let id = cb.value;
+                let inp = document.getElementById(`bc_inp_amaun_${id}`);
+                let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
+                let jenis = cb.dataset.jenis;
+                let ket = cb.dataset.ket || "";
+                let namaPemilik = cb.closest('div').previousElementSibling?.innerText || `PENGADU`;
+                if(namaPemilik.includes('KETERANGAN')) namaPemilik = "PENGADU"; 
+                senaraiTuntutanDipilih.push({ id: id, val: val, jenis: jenis, ket: ket, namaPemilik: namaPemilik });
+            });
+        }
 
-    if (isAutoGroup) {
+if (isAutoGroup) {
         senaraiTuntutanDipilih.forEach(item => {
             let id = item.id;
             let val = item.val;
@@ -9918,7 +9919,8 @@ function bukaPreviewBorangC(dataSimpanan = null) {
                 dataPengadu[pId] = { tuntutanList: [], jumlah: 0, namaPemilik: item.namaPemilik };
             }
             dataPengadu[pId].jumlah += val;
-            dataPengadu[pId].tuntutanList.push(`• <strong>${item.jenis}</strong>`);
+            let ketCetak = (!item.ket || item.ket === "(Keterangan Berbeza)") ? "" : item.ket;
+            dataPengadu[pId].tuntutanList.push(`• <strong>${item.jenis}</strong> <span style="font-size: 0.9em; color: #333;">${ketCetak}</span>`);
         });
 
         let bil = 1;
@@ -9928,7 +9930,8 @@ function bukaPreviewBorangC(dataSimpanan = null) {
         }
     } else {
         senaraiTuntutanDipilih.forEach((item, idx) => {
-            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${item.val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+            let ketCetak = (!item.ket || item.ket === "(Keterangan Berbeza)") ? "" : item.ket;
+            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${ketCetak}</span></td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${item.val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         });
     }
 

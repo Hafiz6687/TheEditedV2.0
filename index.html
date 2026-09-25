@@ -9919,6 +9919,15 @@ function bukaPreviewBorangC() {
         });
     }
 
+    // KIRA JUMLAH MUKA SURAT BORANG C
+    let totalCPages = 1;
+    if (jenisPerintah === 'Bayar') totalCPages++;
+    if (jenisPerintah === 'Bayar' && isAutoGroup) totalCPages++;
+    
+    let ms1 = `<div style="position: absolute; bottom: 15mm; right: 2.5cm; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold;">Muka Surat 1/${totalCPages}</div>`;
+    let ms2 = `<div style="position: absolute; bottom: 15mm; right: 2.5cm; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold;">Muka Surat 2/${totalCPages}</div>`;
+    let ms3 = `<div style="position: absolute; bottom: 15mm; right: 2.5cm; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold;">Muka Surat 3/${totalCPages}</div>`;
+
     // JIKA JENIS PERINTAH = BUANG
     let perengganPerintah = "";
     if (jenisPerintah === 'Buang') {
@@ -9986,6 +9995,7 @@ function bukaPreviewBorangC() {
                         </tbody>
                     </table>
                 </div>
+                ${ms3}
             </div>`;
     }
 
@@ -10001,13 +10011,14 @@ if (jenisPerintah === 'Bayar') {
 // Suntik perenggan tambahan ke MUKA SURAT 2 (Menutup kertas pertama, buka kertas baru)
         pBayarPejabatHTML = `
             </div> <!-- Tutup notis-body-wrapper Muka 1 -->
+            ${ms1}
         </div> <!-- Tutup kertas-notis Muka 1 -->
 
         <!-- MUKA SURAT 2 (KHAS UNTUK PENGESAHAN BAYARAN PEJABAT) -->
-        <div class="kertas-notis" style="padding: 1.5cm 2.5cm !important; page-break-before: always;">
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.25; padding: 0 !important;">
+        <div class="kertas-notis" style="padding: 1.5cm 2.5cm !important; page-break-before: always; position: relative;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.25; padding: 0 !important;">
                 
-                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 20px 0;">Kes No. ${noKes} (Borang C)</div>
+                <div style="text-align: right; font-weight: bold; font-size: 10pt; margin: 0 0 20px 0;">(Buruh 79—Pin. 12/91)</div>
                 <hr style="border: 0; border-top: 1px dashed #000; margin: 0 0 30px 0;">
                 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
@@ -10078,6 +10089,7 @@ if (jenisPerintah === 'Bayar') {
 
                 ${pBayarPejabatHTML} <!-- SUNTIKAN BAHARU DI SINI -->
             </div>
+            ${jenisPerintah === 'Bayar' ? ms2 : ms1}
         </div>
     `;
 

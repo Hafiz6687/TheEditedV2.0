@@ -7239,7 +7239,9 @@ if ((tdk.includes("Notis") && !tdk.includes("Notis Custom")) || tdk.includes("Bo
                 btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewAlamatTerkini()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk.includes("Perintah (Borang C)")) {
-                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBorangC()">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
+                let dMatch = btr.match(/\[DATA_BORANGC:(.*?)\]/);
+                let param = dMatch ? `'${dMatch[1]}'` : 'null';
+                btnJana = `<div style="display: flex; gap: 5px; justify-content: center;"><button class="btn-edit-tbl" style="background-color: #0ea5e9; font-size: 0.85em; padding: 6px 12px;" onclick="bukaPreviewBorangC(${param})">📄 Jana</button><button class="btn-delete-tbl" style="font-size: 0.85em; padding: 6px 10px;" onclick="hapusSejarahTindakan(${index}, ${originalIndex})" title="Hapus Sejarah">🗑️</button></div>`;
             }
             else if (tdk.includes("MOU")) {
                 let dMatch = btr.match(/\[DATA_MOU:(.*?)\]/);
@@ -9813,12 +9815,16 @@ function tindakanBorangC() {
     }
 }
 
-function bukaPreviewBorangC() {
+function bukaPreviewBorangC(dataSimpanan = null) {
     const kes = memoriSenaraiKes[indexKesSemasa];
     if (!kes) return;
 
     const bulanMY = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
 
+    let memoData = null;
+    if (dataSimpanan && dataSimpanan !== 'null') {
+        try { memoData = JSON.parse(decodeURIComponent(escape(atob(dataSimpanan)))); } catch(e){}
+    }
     let noKes = kes.noKes.split('<br>')[0].trim();
     let namaP = "", alamatP = "", namaD = "", alamatD = "";
     let p_idStr = "", d_idStr = "";
@@ -9857,13 +9863,13 @@ function bukaPreviewBorangC() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'MOHAMAD HAFIZ BIN ABU BAKAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // Data dari Modal Borang C
-    const tarikhPerintah = document.getElementById('bc_tarikh').value;
-    const jenisPerintah = document.getElementById('bc_jenis_perintah').value; // Bayar atau Buang
-    const jumlahPerintah = parseFloat(document.getElementById('bc_jumlah_perintah').value.replace(/,/g, '')) || 0;
+    // Data dari Modal Borang C atau Memori Sejarah
+    const tarikhPerintah = memoData ? memoData.tarikh : document.getElementById('bc_tarikh').value;
+    const jenisPerintah = memoData ? memoData.jenis : document.getElementById('bc_jenis_perintah').value; 
+    const jumlahPerintah = memoData ? memoData.jumlah : (parseFloat(document.getElementById('bc_jumlah_perintah').value.replace(/,/g, '')) || 0);
     
     // Tarik nilai bayar di pejabat
-    const dibayarPejabatRaw = document.getElementById('bc_dibayar_pejabat').value || "0.00";
+    const dibayarPejabatRaw = memoData ? memoData.dibayarPejabat : (document.getElementById('bc_dibayar_pejabat').value || "0.00");
     const jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
     const jumDibayarPejabatStr = jumDibayarPejabatNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
     let tarikhPerintahCetak = "........................";
@@ -9884,38 +9890,45 @@ function bukaPreviewBorangC() {
     let bilDiwakili = bilP_total > 1 ? bilP_total - 1 : 0;
     let teksDanLainLainKecil = (isAutoGroup && bilDiwakili > 0) ? ` dan ${bilDiwakili} yang lain` : "";
 
-    const checkedBoxes = document.querySelectorAll('.bc-cb-tuntutan:checked');
-    
-    if (isAutoGroup) {
+    let senaraiTuntutanDipilih = [];
+
+    if (memoData) {
+        senaraiTuntutanDipilih = memoData.tuntutanList || [];
+    } else {
+        const checkedBoxes = document.querySelectorAll('.bc-cb-tuntutan:checked');
         checkedBoxes.forEach(cb => {
             let id = cb.value;
             let inp = document.getElementById(`bc_inp_amaun_${id}`);
             let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
+            let jenis = cb.dataset.jenis;
+            let namaPemilik = cb.closest('div').previousElementSibling?.innerText || `PENGADU`;
+            if(namaPemilik.includes('KETERANGAN')) namaPemilik = "PENGADU"; 
+            senaraiTuntutanDipilih.push({ id: id, val: val, jenis: jenis, namaPemilik: namaPemilik });
+        });
+    }
+
+    if (isAutoGroup) {
+        senaraiTuntutanDipilih.forEach(item => {
+            let id = item.id;
+            let val = item.val;
             let pParts = id.split('_'); 
             let pId = pParts[0] === 'ketua' ? 'ketua' : pParts[0] + '_' + pParts[1]; 
             
-            // Nama pemilik (Agak kompleks sikit untuk tarik balik dari UI, kita buat simple je - guna dataset jika perlu. Atau kita tarik terus dari HTML parent)
-            let namaPemilik = cb.closest('div').previousElementSibling?.innerText || `PENGADU`;
-            if(namaPemilik.includes('KETERANGAN')) namaPemilik = "PENGADU"; // fallback jika salah tarik
-            
             if (!dataPengadu[pId]) {
-                dataPengadu[pId] = { tuntutanList: [], jumlah: 0 };
+                dataPengadu[pId] = { tuntutanList: [], jumlah: 0, namaPemilik: item.namaPemilik };
             }
             dataPengadu[pId].jumlah += val;
-            dataPengadu[pId].tuntutanList.push(`• <strong>${cb.dataset.jenis}</strong>`);
+            dataPengadu[pId].tuntutanList.push(`• <strong>${item.jenis}</strong>`);
         });
 
-        // BINA JADUAL M/S 1 (Borang C - Ringkasan Pukal/Group)
         let bil = 1;
         for (let pId in dataPengadu) {
             let d = dataPengadu[pId];
             tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${bil++}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">Pecahan Tuntutan bagi Pengadu: ${pId}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${d.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         }
     } else {
-        checkedBoxes.forEach((cb, idx) => {
-            let inp = document.getElementById(`bc_inp_amaun_${cb.value}`);
-            let val = parseFloat(inp.value.replace(/,/g, '')) || 0;
-            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${cb.dataset.jenis}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+        senaraiTuntutanDipilih.forEach((item, idx) => {
+            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${item.val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         });
     }
 
@@ -10196,7 +10209,10 @@ window.cetakDokumenBorangC = function(jenis) {
         else if (jenis === 'pengadu') { tjk = 'Notis Borang C (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
         else if (jenis === 'defendan') { tjk = 'Notis Borang C (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
         
-        rekodSejarahTindakan(indexKesSemasa, "Perintah (Borang C)", `Dokumen ${tjk} telah dicetak.`);
+        let rawData = { tarikh: tarikhPerintah, jenis: jenisPerintah, jumlah: jumlahPerintah, dibayarPejabat: dibayarPejabatRaw, tuntutanList: senaraiTuntutanDipilih };
+        let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+        
+        rekodSejarahTindakan(indexKesSemasa, "Perintah (Borang C)", `Dokumen ${tjk} telah dicetak. [DATA_BORANGC:${d64}]`);
     };
 
     // Re-use ID MOU buttons untuk elak semak memori

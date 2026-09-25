@@ -10188,6 +10188,11 @@ const htmlPenuh = `
     if(document.getElementById('menuCetakNotisLainPengadu')) document.getElementById('menuCetakNotisLainPengadu').style.display = 'none';
     if(document.getElementById('menuCetakNotisLainDefendan')) document.getElementById('menuCetakNotisLainDefendan').style.display = 'none';
 
+    // PENANDA (FLAGS) UNTUK SEMAK STATUS CETAKAN BORANG C
+    window.isBorangCPrinted = false;
+    window.isBorangCPengaduPrinted = false;
+    window.isBorangCDefendanPrinted = false;
+
 window.cetakDokumenBorangC = function(jenis) {
         document.getElementById('actionMenu').classList.remove('show');
         document.body.classList.add('print-only-' + jenis);
@@ -10195,14 +10200,31 @@ window.cetakDokumenBorangC = function(jenis) {
         document.body.classList.remove('print-only-' + jenis);
 
         let tjk = '';
-        if (jenis === 'borangc') { tjk = 'Perintah (Borang C)'; document.getElementById('menuCetakMouMain').innerHTML = '✅ Cetak Perintah (Borang C)'; document.getElementById('menuCetakMouMain').style.color = '#10b981'; }
-        else if (jenis === 'pengadu') { tjk = 'Notis Borang C (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
-        else if (jenis === 'defendan') { tjk = 'Notis Borang C (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
+        if (jenis === 'borangc') { 
+            tjk = 'Perintah (Borang C)'; document.getElementById('menuCetakMouMain').innerHTML = '✅ Cetak Perintah (Borang C)'; document.getElementById('menuCetakMouMain').style.color = '#10b981'; 
+            window.isBorangCPrinted = true;
+        }
+        else if (jenis === 'pengadu') { 
+            tjk = 'Notis Borang C (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; 
+            window.isBorangCPengaduPrinted = true;
+        }
+        else if (jenis === 'defendan') { 
+            tjk = 'Notis Borang C (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; 
+            window.isBorangCDefendanPrinted = true;
+        }
         
         let rawData = { tarikh: tarikhPerintah, jenis: jenisPerintah, jumlah: jumlahPerintah, dibayarPejabat: dibayarPejabatRaw, tuntutanList: senaraiTuntutanDipilih };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         
         rekodSejarahTindakan(indexKesSemasa, "Perintah (Borang C)", `Dokumen ${tjk} telah dicetak. [DATA_BORANGC:${d64}]`);
+
+        // SEMAKAN: Jika ketiga-tiga dokumen telah dicetak, auto-tutup & kembali ke Senarai Tugasan
+        if (window.isBorangCPrinted && window.isBorangCPengaduPrinted && window.isBorangCDefendanPrinted) {
+            setTimeout(() => {
+                document.getElementById('modalPreview').style.display = 'none';
+                tukarView('senarai');
+            }, 500);
+        }
     };
 
     // Re-use ID MOU buttons untuk elak semak memori

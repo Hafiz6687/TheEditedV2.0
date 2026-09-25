@@ -9923,8 +9923,10 @@ function bukaPreviewBorangC() {
     let totalCPages = 1;
     if (jenisPerintah === 'Bayar' && isAutoGroup) totalCPages++; // Tambah 1 jika ada Lampiran A
     
-    let ms1 = `<div style="position: absolute; bottom: 15mm; right: 2.5cm; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold;">Muka Surat 1/${totalCPages}</div>`;
-    let ms2 = `<div style="position: absolute; bottom: 15mm; right: 2.5cm; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold;">Muka Surat 2/${totalCPages}</div>`;
+    // Bebaskan dari posisi 'absolute' supaya ia berada di hujung kertas secara natural. 
+    // Ini membenarkan kertas putih di skrin memanjang sepenuhnya tanpa memotong tulisan.
+    let ms1 = `<div style="text-align: right; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 30px;">Muka Surat 1/${totalCPages}</div>`;
+    let ms2 = `<div style="text-align: right; font-size: 10pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 30px;">Muka Surat 2/${totalCPages}</div>`;
     // JIKA JENIS PERINTAH = BUANG
     let perengganPerintah = "";
     if (jenisPerintah === 'Buang') {
@@ -10140,7 +10142,7 @@ if (jenisPerintah === 'Bayar') {
 const htmlPenuh = `
         <style>
             @media screen {
-                .elak-potong { display: inline-block; width: 100%; }
+                .elak-potong { display: block; width: 100%; }
             }
             @media print {
                 .elak-potong { display: block !important; page-break-inside: avoid !important; break-inside: avoid !important; }

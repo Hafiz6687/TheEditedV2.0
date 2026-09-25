@@ -10016,13 +10016,12 @@ function bukaPreviewBorangC(dataSimpanan = null) {
     let pBayarPejabatHTML = ""; // <-- Variabel baharu
 
 if (jenisPerintah === 'Bayar') {
-        pTempohBayaran = `<div class="elak-potong" style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran penuh hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
+        pTempohBayaran = `<div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Dan selanjutnya diperintahkan bahawa pembayaran penuh hendaklah dibuat dalam tempoh 14 hari dari tarikh perintah ini.</div>`;
         
-        pPenalti = `<div class="elak-potong" style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
+        pPenalti = `<div style="page-break-inside: avoid; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>`;
 
-// Gunakan wrapper elak-potong untuk bersambung secara natural (Auto-muat ke page sebelah jika tak muat)
         pBayarPejabatHTML = `
-            <div class="elak-potong"> <!-- BERSAMBUNG SECARA NATURAL -->
+            <div style="page-break-inside: avoid; display: inline-block; width: 100%;"> <!-- GAYA MOU: BERSAMBUNG SECARA NATURAL -->
                 <hr style="border: 0; border-top: 1px dashed #000; margin: 30px 0 20px 0;">
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Adalah dengan ini diperakui bahawa jumlah wang sebanyak <strong>RM${jumDibayarPejabatStr}</strong> bagi penyelesaian penuh/sebahagian daripada perintah ini telah dibayar di Pejabat ini.</div>
                 
@@ -10078,7 +10077,7 @@ if (jenisPerintah === 'Bayar') {
                 ${pTempohBayaran}
                 ${pPenalti}
 
-<div class="elak-potong">
+<div style="page-break-inside: avoid;">
                     <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahCetak}</strong></div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
@@ -10154,11 +10153,7 @@ if (jenisPerintah === 'Bayar') {
 
 const htmlPenuh = `
         <style>
-            @media screen {
-                .elak-potong { display: block; width: 100%; }
-            }
             @media print {
-                .elak-potong { display: block !important; page-break-inside: avoid !important; break-inside: avoid !important; }
                 @page { margin: 0; } 
                 body { background: white; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
                 body > *:not(#printArea) { display: none !important; } 
@@ -10169,12 +10164,7 @@ const htmlPenuh = `
                 body.print-only-borangc .kumpulan-pengadu, body.print-only-borangc .kumpulan-defendan { display: none !important; }
                 body.print-only-pengadu #kertasBorangCUtama, body.print-only-pengadu #kertasLampiranABorangC, body.print-only-pengadu .kumpulan-defendan { display: none !important; }
                 body.print-only-defendan #kertasBorangCUtama, body.print-only-defendan #kertasLampiranABorangC, body.print-only-defendan .kumpulan-pengadu { display: none !important; }
-                /* Waktu Print: Kita matikan inline-block supaya tak potong kertas */
-                .elak-potong { display: block !important; page-break-inside: avoid !important; break-inside: avoid !important; }
             }
-            
-            /* Waktu Skrin (Preview): Kita guna block supaya kertas memanjang natural */
-            .elak-potong { display: block; width: 100%; }
             
             .kertas-notis { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: Arial, Helvetica, sans-serif; color: black; font-size: 10pt; line-height: 1.4; box-sizing: border-box; position: relative; }
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }

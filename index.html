@@ -10093,7 +10093,19 @@ if (jenisPerintah === 'Bayar') {
         </div>
     `;
 
-    // M/S TERAKHIR: NOTIS PENGADU & DEFENDAN
+// M/S TERAKHIR: NOTIS PENGADU & DEFENDAN
+    let kandunganNotisPengadu = `<div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini untuk makluman dan rujukan pihak tuan.</div>`;
+    let kandunganNotisDefendan = `<div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini. Tuan adalah dikehendaki mematuhi arahan bayaran sebagaimana dinyatakan di dalam perintah tersebut.</div>`;
+
+    if (jenisPerintah === 'Bayar') {
+        let isiPerintahBayar = `
+                    <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan.</div>
+                    <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Mana-mana pihak yang tidak berpuashati dengan perintah yang dibuat boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh 14 hari dari tarikh perintah dikeluarkan dengan mengemukakan 7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012) dan Fi Praecipe rayuan sebanyak RM400.00 secara draf bank atau wang pos atas nama Ketua Pengarah Tenaga Kerja Semenanjung Malaysia ke pejabat ini untuk tindakan selanjutnya.</div>
+                    <div class="notis-isi" style="text-align: justify;">4.<span class="jarak-tab"></span>Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah untuk pemantauan ke atas bayaran perintah atau tindakan penguatkuasaan perintah.</div>`;
+        kandunganNotisPengadu = isiPerintahBayar;
+        kandunganNotisDefendan = isiPerintahBayar;
+    }
+
     const htmlNotisP = `
         <div class="kumpulan-pengadu">
             <div class="kertas-notis" style="padding: 1.5cm 1.27cm !important; page-break-before: always;">
@@ -10105,7 +10117,7 @@ if (jenisPerintah === 'Bayar') {
                     <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: MAKLUMAN PERINTAH (BORANG C)</div>
                     <hr class="notis-garis-tajuk">
                     <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-                    <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini untuk makluman dan rujukan pihak tuan.</div>
+                    ${kandunganNotisPengadu}
                     ${templateFooterHTML}
                 </div>
             </div>
@@ -10123,7 +10135,7 @@ if (jenisPerintah === 'Bayar') {
                     <div class="notis-tajuk">KETUA PENGARAH TENAGA KERJA KES NO. ${noKes}<br>ANTARA PENGADU : ${namaP}<br>TERHADAP DEFENDAN : ${namaD}<br>PERKARA: MAKLUMAN PERINTAH (BORANG C)</div>
                     <hr class="notis-garis-tajuk">
                     <div class="notis-isi">Dengan hormatnya merujuk kepada perkara di atas.</div>
-                    <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini. Tuan adalah dikehendaki mematuhi arahan bayaran sebagaimana dinyatakan di dalam perintah tersebut.</div>
+                    ${kandunganNotisDefendan}
                     ${templateFooterHTML}
                 </div>
             </div>

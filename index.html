@@ -10283,7 +10283,36 @@ window.cetakDokumenBorangC = function(jenis) {
         e.preventDefault();
         document.getElementById('actionMenu').classList.remove('show');
         document.getElementById('modalPreview').style.display = 'none'; 
-        document.getElementById('modalBorangC').style.display = 'flex'; // Balik ke pop-up Borang C
+        
+        // 1. Panggil fungsi asal untuk bina semula senarai checkbox tuntutan
+        bukaModalBorangC(); 
+        
+        // 2. Jika ia dibuka dari Sejarah Tindakan, masukkan semula data ke dalam form
+        if (dataSimpanan && memoData) {
+            document.getElementById('bc_tarikh').value = memoData.tarikh || '';
+            document.getElementById('bc_jenis_perintah').value = memoData.jenis || '';
+            document.getElementById('bc_dibayar_pejabat').value = memoData.dibayarPejabat || '0.00';
+            
+            // Untick semua kotak dahulu sebelum memuatkan memori
+            const allCbs = document.querySelectorAll('.bc-cb-tuntutan');
+            allCbs.forEach(cb => cb.checked = false);
+            
+            // Tick semula kotak yang pernah dipilih dan masukkan nilai amaun
+            if (memoData.tuntutanList) {
+                memoData.tuntutanList.forEach(t => {
+                    let cb = document.querySelector(`.bc-cb-tuntutan[value="${t.id}"]`);
+                    if (cb) cb.checked = true;
+                    
+                    let inp = document.getElementById(`bc_inp_amaun_${t.id}`);
+                    if (inp) {
+                        inp.value = parseFloat(t.val).toLocaleString('en-MY', {minimumFractionDigits: 2});
+                    }
+                });
+            }
+            
+            kawalJenisPerintahBorangC();
+            semakButangBorangC();
+        }
     };
 
     const btnBatal = document.getElementById('menuBatal');

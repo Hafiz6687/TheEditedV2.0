@@ -1151,6 +1151,9 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaModalMou()">
                             <span>🤝 MOU</span>
                         </button>
+                        <button class="btn-terapung" style="background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaPreviewPeringatanMOU()">
+                            <span>⚠️ Peringatan<br>Bayaran MOU</span>
+                        </button>
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('saman_a')">
                             <span>📄 Saman<br>(Borang A)</span>
                         </button>
@@ -1175,6 +1178,9 @@ Portal rasmi : jtksm.mohr.gov.my
                         <button class="btn-terapung" style="background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaModalBorangC()">
                             <span>⚖️ Perintah<br>(Borang C)</span>
                         </button>
+                         <button class="btn-terapung" style="background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaPreviewPeringatanBorangC()">
+                            <span>⚠️ Peringatan<br>Bayaran Perintah</span>
+                        </button>
                         <button class="btn-terapung" style="background-color: var(--card-header-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="toggleKadUrus('alamat')">
                             <span>📍 Alamat Terkini<br>Defendan</span>
                         </button>
@@ -1186,7 +1192,7 @@ Portal rasmi : jtksm.mohr.gov.my
                         </button>
                         <button class="btn-terapung" style="background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 8px; font-size: 0.85em; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; height: 60px; line-height: 1.3;" onclick="bukaModalNotisLain()">
                             <span>📝 Notis<br>(Lain-lain)</span>
-                        </button>
+                        </button>                                         
                     </div>
                 </div>
             </div>
@@ -11591,7 +11597,65 @@ function janaSemulaNotisLain(dataSimpanan) {
         bukaModalNotisLain();
     }
 }
-       // =========================================================
+
+// =========================================================
+// FUNGSI PREVIEW PERINGATAN BAYARAN (MOU & BORANG C)
+// =========================================================
+function bukaPreviewPeringatanMOU() {
+    const htmlPeringatan = `
+        <div class="kertas-a4" style="padding: 2cm 2.5cm; text-align: center; background: white; font-family: Arial, sans-serif;">
+            <h2 style="color: #b45309; margin-bottom: 20px;">[ PREVIEW: SURAT PERINGATAN BAYARAN MOU ]</h2>
+            <p style="font-size: 11pt; color: #475569;"><em>Nota: Struktur dan isi kandungan notis Peringatan Bayaran MOU akan dikemaskini dan dimasukkan di sini kelak.</em></p>
+        </div>
+    `;
+    document.getElementById('previewContent').innerHTML = htmlPeringatan;
+    document.getElementById('printArea').innerHTML = htmlPeringatan;
+    
+    // Cuci butang menu supaya tak bocor dari fungsi lain
+    let actionMenu = document.getElementById('actionMenu');
+    Array.from(actionMenu.querySelectorAll('a')).forEach(btn => btn.style.display = 'none');
+    
+    // Hanya buka butang Batal sahaja untuk fungsi sementara ini
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+    
+    tunjukSuisTandatangan(false);
+    document.getElementById('modalPreview').style.display = 'flex';
+}
+
+function bukaPreviewPeringatanBorangC() {
+    const htmlPeringatan = `
+        <div class="kertas-a4" style="padding: 2cm 2.5cm; text-align: center; background: white; font-family: Arial, sans-serif;">
+            <h2 style="color: #b45309; margin-bottom: 20px;">[ PREVIEW: SURAT PERINGATAN BAYARAN PERINTAH (BORANG C) ]</h2>
+            <p style="font-size: 11pt; color: #475569;"><em>Nota: Struktur dan isi kandungan notis Peringatan Bayaran Perintah (Borang C) akan dikemaskini dan dimasukkan di sini kelak.</em></p>
+        </div>
+    `;
+    document.getElementById('previewContent').innerHTML = htmlPeringatan;
+    document.getElementById('printArea').innerHTML = htmlPeringatan;
+    
+    // Cuci butang menu supaya tak bocor dari fungsi lain
+    let actionMenu = document.getElementById('actionMenu');
+    Array.from(actionMenu.querySelectorAll('a')).forEach(btn => btn.style.display = 'none');
+    
+    // Hanya buka butang Batal sahaja untuk fungsi sementara ini
+    const btnBatal = document.getElementById('menuBatal');
+    btnBatal.style.display = 'flex';
+    btnBatal.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('actionMenu').classList.remove('show');
+        document.getElementById('modalPreview').style.display = 'none';
+    };
+    
+    tunjukSuisTandatangan(false);
+    document.getElementById('modalPreview').style.display = 'flex';
+}
+
+// =========================================================
 // FUNGSI SORTING JADUAL SENARAI TUGASAN
 // =========================================================
 let sortCol = '';

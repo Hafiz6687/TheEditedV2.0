@@ -9873,9 +9873,15 @@ function bukaPreviewBorangC(dataSimpanan = null) {
     const jumDibayarPejabatNum = parseFloat(dibayarPejabatRaw.replace(/,/g, '')) || 0;
     const jumDibayarPejabatStr = jumDibayarPejabatNum.toLocaleString('en-MY', { minimumFractionDigits: 2 });
     let tarikhPerintahCetak = "........................";
+    let tarikhPerintahDD = ".......";
+    let tarikhPerintahMMYYYY = "........................";
     if (tarikhPerintah) {
         let t = new Date(tarikhPerintah);
-        if (!isNaN(t)) tarikhPerintahCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        if (!isNaN(t)) {
+            tarikhPerintahCetak = `${t.getDate()} ${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+            tarikhPerintahDD = t.getDate();
+            tarikhPerintahMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+        }
     }
 
     let alamatD_Terkini_Inline = alamatD.replace(/<br>/gi, ', ').toUpperCase();
@@ -10088,7 +10094,7 @@ if (isPanjang) {
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>Kluang</strong>, Negeri <strong>Johor Darul Takzim</strong> pada <strong>${tarikhPerintahCetak}</strong> Bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>Kluang</strong>, Negeri <strong>Johor Darul Takzim</strong> pada <strong>${tarikhPerintahDD}</strong> haribulan <strong>${tarikhPerintahMMYYYY}</strong> bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
                 
                 ${perengganPerintah}
                 
@@ -11234,7 +11240,7 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
                 <div style="text-align: center; margin-bottom: 10px;">Dan</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="text-transform: uppercase; font-weight: bold;">${namaD}</div><div>... Defendan</div></div>
 
-                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>${bandarSaman}</strong>, Negeri <strong>${negeriSaman}</strong> pada <strong>${tarikhSebutanDD} haribulan ${tarikhSebutanMMYYYY}</strong> Bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
+                <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Bahawasanya aduan dalam kes buruh No. <strong>${noKes}</strong> di atas telah didengar dan diputuskan di dalam Mahkamah Buruh di <strong>${bandarSaman}</strong>, Negeri <strong>${negeriSaman}</strong> pada <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong> bagi pihak Ketua Pengarah dengan ini membuat perintah yang berikut, bahawa:-</div>
                 
                 <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) beralamat di <strong>${alamatD_Terkini_Inline}</strong> membayar kepada pengadu melalui Penolong Pengarah Tenaga Kerja Kanan ${bandarSaman} bagi pihak <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} wang sebanyak <strong>${jumRM}</strong>.</div>
                 

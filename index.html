@@ -11480,6 +11480,11 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
     });
     // =======================================================
 
+    // PENANDA (FLAGS) UNTUK SEMAK STATUS CETAKAN MOU
+    window.isMouPrinted = false;
+    window.isMouPengaduPrinted = false;
+    window.isMouDefendanPrinted = false;
+
     window.cetakDokumenMou = function(jenis) {
         document.getElementById('actionMenu').classList.remove('show');
         document.body.classList.add('print-only-' + jenis);
@@ -11487,13 +11492,36 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
         document.body.classList.remove('print-only-' + jenis);
 
         let tjk = '';
-        if (jenis === 'mou') { tjk = 'Persetujuan Bersama'; document.getElementById('menuCetakMouMain').innerHTML = '✅ Cetak Persetujuan Bersama'; document.getElementById('menuCetakMouMain').style.color = '#10b981'; }
-        else if (jenis === 'pengadu') { tjk = 'Notis MOU (Pengadu)'; document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; }
-        else if (jenis === 'defendan') { tjk = 'Notis MOU (Defendan)'; document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; }
+        if (jenis === 'mou') { 
+            tjk = 'Persetujuan Bersama'; 
+            document.getElementById('menuCetakMouMain').innerHTML = '✅ Cetak Persetujuan Bersama'; 
+            document.getElementById('menuCetakMouMain').style.color = '#10b981'; 
+            window.isMouPrinted = true;
+        }
+        else if (jenis === 'pengadu') { 
+            tjk = 'Notis MOU (Pengadu)'; 
+            document.getElementById('menuCetakMouPengadu').innerHTML = '✅ Cetak Notis Pengadu'; 
+            document.getElementById('menuCetakMouPengadu').style.color = '#10b981'; 
+            window.isMouPengaduPrinted = true;
+        }
+        else if (jenis === 'defendan') { 
+            tjk = 'Notis MOU (Defendan)'; 
+            document.getElementById('menuCetakMouDefendan').innerHTML = '✅ Cetak Notis Defendan'; 
+            document.getElementById('menuCetakMouDefendan').style.color = '#10b981'; 
+            window.isMouDefendanPrinted = true;
+        }
         
         let rawData = { tarikh: tarikhRaw, masa: masaRaw, tempat: tempatSamanRaw, jumlah: jumlahRaw, kaedah: kaedahBayaran, dibayarPejabat: jumDibayarPejabatStr, selectedIds: selectedIds, ansuranDetails: ansuranDetails, jumlahIndividu: jumlahIndividu, ansuranIndividu: ansuranIndividuMap, jenisAnsuran: jenisAnsuran };
         let d64 = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
         rekodSejarahTindakan(indexKesSemasa, "MOU / Persetujuan Bersama", `Dokumen ${tjk} telah dicetak. [DATA_MOU:${d64}]`);
+
+        // SEMAKAN: Jika ketiga-tiga dokumen telah dicetak, auto-tutup & kembali ke Senarai Tugasan
+        if (window.isMouPrinted && window.isMouPengaduPrinted && window.isMouDefendanPrinted) {
+            setTimeout(() => {
+                document.getElementById('modalPreview').style.display = 'none';
+                tukarView('senarai');
+            }, 500);
+        }
     };
 
     let btnMouMain = document.getElementById('menuCetakMouMain');

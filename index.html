@@ -9914,17 +9914,32 @@ function bukaPreviewBorangC(dataSimpanan = null) {
             });
         }
 
-if (isAutoGroup) {
+let totalTuntutanAsal = 0; // Khas untuk merekod jumlah tuntutan asal apabila Perintah Buang
+
+    if (isAutoGroup) {
         senaraiTuntutanDipilih.forEach(item => {
             let id = item.id;
             let val = item.val;
             let pParts = id.split('_'); 
             let pId = pParts[0] === 'ketua' ? 'ketua' : pParts[0] + '_' + pParts[1]; 
             
+            // Ekstrak Nilai Asal Tuntutan
+            let asalVal = 0;
+            if (pParts[0] === 'ketua') {
+                let sK = kes.dataBorang ? (kes.dataBorang.tuntutanKetua || []) : memoriTuntutanKetua;
+                if(sK[pParts[1]]) asalVal = parseFloat(sK[pParts[1]].jumlah) || 0;
+            } else if (pParts[0] === 'tambahan') {
+                let sT = kes.dataBorang?.tuntutanTambahan ? kes.dataBorang.tuntutanTambahan[pParts[1]] : memoriTuntutanTambahan[pParts[1]];
+                if(sT && sT[pParts[2]]) asalVal = parseFloat(sT[pParts[2]].jumlah) || 0;
+            }
+            
+            let finalVal = (jenisPerintah === 'Buang') ? asalVal : val;
+            totalTuntutanAsal += asalVal;
+
             if (!dataPengadu[pId]) {
                 dataPengadu[pId] = { tuntutanList: [], jumlah: 0, namaPemilik: item.namaPemilik };
             }
-            dataPengadu[pId].jumlah += val;
+            dataPengadu[pId].jumlah += finalVal;
             let ketCetak = (!item.ket || item.ket === "(Keterangan Berbeza)") ? "" : item.ket;
             dataPengadu[pId].tuntutanList.push(`• <strong>${item.jenis}</strong> <span style="font-size: 0.9em; color: #333;">${ketCetak}</span>`);
         });
@@ -9936,8 +9951,16 @@ if (isAutoGroup) {
         }
     } else {
         senaraiTuntutanDipilih.forEach((item, idx) => {
+            // Ekstrak Nilai Asal Tuntutan
+            let asalVal = 0;
+            let sBiasa = kes.dataBorang ? (kes.dataBorang.tuntutanBiasa || []) : memoriTuntutan;
+            if(sBiasa[item.id]) asalVal = parseFloat(sBiasa[item.id].jumlah) || 0;
+
+            let finalVal = (jenisPerintah === 'Buang') ? asalVal : item.val;
+            totalTuntutanAsal += asalVal;
+
             let ketCetak = (!item.ket || item.ket === "(Keterangan Berbeza)") ? "" : item.ket;
-            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${ketCetak}</span></td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${item.val.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
+            tuntutanRowsHtml += `<tr><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px;">${item.jenis} <span style="font-size: 0.9em; color: #333;">${ketCetak}</span></td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right;">RM ${finalVal.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`;
         });
     }
 
@@ -9959,7 +9982,7 @@ if (isAutoGroup) {
     let perengganPerintah = "";
     if (jenisPerintah === 'Buang') {
         perengganPerintah = `
-            <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan tuntutan <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} terhadap <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) wang sebanyak <strong>RM ${jumlahPerintah.toLocaleString('en-MY', {minimumFractionDigits:2})}</strong> ditolak.</div>
+            <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan tuntutan <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} terhadap <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) wang sebanyak <strong>RM ${totalTuntutanAsal.toLocaleString('en-MY', {minimumFractionDigits:2})}</strong> ditolak.</div>
         `;
     } else {
         perengganPerintah = `
@@ -10108,8 +10131,7 @@ if (isPanjang) {
                                 <th style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; width: 30%; background-color: #e2e8f0;">Amaun (RM)</th>
                             </tr>
                         </thead>
-                        <tbody>${tuntutanRowsHtml}</tbody>
-                        ${jenisPerintah === 'Bayar' ? `<tr><td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH KESELURUHAN PERINTAH</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; background-color: #e2e8f0;">RM ${jumlahPerintah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>` : ''}
+                        <tbody>${tuntutanRowsHtml}</tbody>${jenisPerintah === 'Bayar' ? `<tr><td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH KESELURUHAN PERINTAH</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; background-color: #e2e8f0;">RM ${jumlahPerintah.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>` : `<tr><td colspan="2" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; padding-right: 15px; background-color: #e2e8f0;">JUMLAH KESELURUHAN TUNTUTAN</td><td style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px; text-align: right; font-weight: bold; background-color: #e2e8f0;">RM ${totalTuntutanAsal.toLocaleString('en-MY', {minimumFractionDigits: 2})}</td></tr>`}
                     </table>
                 </div>
 
@@ -10141,7 +10163,7 @@ if (isPanjang) {
         
     let kandunganNotisDefendan = `
         <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan/puan.</div>
-        <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Untuk makluman, sekiranya pengadu tidak berpuashati dengan perintah yang dibuat, pengadu boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh <strong>14 hari</strong> dari tarikh Perintah dikeluarkan dengan mengemukakan <strong>7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012)</strong> dan <strong><em>fi praecipe</em></strong> <strong>rayuan sebanyak RM400.00 dibayar secara kiriman wang pos atau bank draf kepada Ketua Pengarah Tenaga Kerja Semenanjung Malaysia</strong>. Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah dianggap sebagai <strong>selesai</strong>.</div>`;
+        <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Untuk makluman, sekiranya pengadu tidak berpuashati dengan perintah yang dibuat, pengadu boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh <strong>14 hari</strong> dari tarikh Perintah dikeluarkan. Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah dianggap sebagai <strong>selesai</strong>.</div>`;
 
     if (jenisPerintah === 'Bayar') {
         let isiPerintahBayarPengadu = `

@@ -9959,9 +9959,8 @@ if (isAutoGroup) {
     let perengganPerintah = "";
     if (jenisPerintah === 'Buang') {
         perengganPerintah = `
-            <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini memerintahkan bahawa aduan dan tuntutan yang dikemukakan oleh Pengadu <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} terhadap Defendan adalah <strong>ditolak dan dibuang</strong>.</div>
+            <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan tuntutan <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} terhadap <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) wang sebanyak <strong>RM ${jumlahPerintah.toLocaleString('en-MY', {minimumFractionDigits:2})}</strong> ditolak.</div>
         `;
-        tuntutanRowsHtml = `<tr><td colspan="3" style="border: 1px solid #000; padding: 4px; text-align: center;">Tuntutan Ditolak / Dibuang.</td></tr>`;
     } else {
         perengganPerintah = `
             <div style="text-indent: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.25;">Saya <strong>${namaPegawai}</strong>, dengan ini perintahkan <strong>${namaD.toUpperCase()}</strong> (${d_idStr}) beralamat di <strong>${alamatD_Terkini_Inline}</strong> membayar kepada pengadu melalui Penolong Pengarah Tenaga Kerja Kanan Kluang bagi pihak <strong>${namaP.toUpperCase()}</strong> (${p_idStr})${teksDanLainLainKecil} wang sebanyak <strong>RM ${jumlahPerintah.toLocaleString('en-MY', {minimumFractionDigits:2})}</strong>.</div>
@@ -10098,8 +10097,8 @@ if (isPanjang) {
                 
                 ${perengganPerintah}
                 
-                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">Pecahan jenis tuntutan adalah seperti berikut:</div>
-
+                <div style="text-align: justify; margin-bottom: 10px; line-height: 1.25;">${jenisPerintah === 'Bayar' ? 'Pecahan jenis tuntutan yang diperintah bayar adalah seperti berikut:' : 'Pecahan jenis tuntutan diperintah tolak adalah seperti berikut:'}</div>
+                
                 <div style="margin-bottom: 15px;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 10pt; line-height: 1.25;">
                         <thead>
@@ -10136,8 +10135,13 @@ if (isPanjang) {
     `;
 
 // M/S TERAKHIR: NOTIS PENGADU & DEFENDAN
-    let kandunganNotisPengadu = `<div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini untuk makluman dan rujukan pihak tuan.</div>`;
-    let kandunganNotisDefendan = `<div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini dilampirkan salinan Perintah (Borang C) yang telah dikeluarkan oleh Pejabat ini. Tuan adalah dikehendaki mematuhi arahan bayaran sebagaimana dinyatakan di dalam perintah tersebut.</div>`;
+    let kandunganNotisPengadu = `
+        <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan/puan.</div>
+        <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Mana-mana pihak yang tidak berpuashati dengan perintah yang dibuat boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh <strong>14 hari</strong> dari tarikh Perintah dikeluarkan dengan mengemukakan <strong>7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012)</strong> dan <strong><em>fi praecipe</em></strong> <strong>rayuan sebanyak RM400.00 dibayar secara kiriman wang pos atau bank draf kepada Ketua Pengarah Tenaga Kerja Semenanjung Malaysia</strong>. Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah dianggap sebagai <strong>selesai</strong>.</div>`;
+        
+    let kandunganNotisDefendan = `
+        <div class="notis-isi" style="text-align: justify;">2.<span class="jarak-tab"></span>Bersama-sama ini disertakan perintah untuk makluman dan tindakan tuan/puan.</div>
+        <div class="notis-isi" style="text-align: justify;">3.<span class="jarak-tab"></span>Untuk makluman, sekiranya pengadu tidak berpuashati dengan perintah yang dibuat, pengadu boleh mengemukakan rayuan ke Mahkamah Tinggi dalam tempoh <strong>14 hari</strong> dari tarikh Perintah dikeluarkan dengan mengemukakan <strong>7 salinan notis rayuan (Borang 111, Aturan 55 Kaedah-kaedah Mahkamah 2012)</strong> dan <strong><em>fi praecipe</em></strong> <strong>rayuan sebanyak RM400.00 dibayar secara kiriman wang pos atau bank draf kepada Ketua Pengarah Tenaga Kerja Semenanjung Malaysia</strong>. Jika tiada apa-apa rayuan diterima dalam tempoh yang ditetapkan, kes adalah dianggap sebagai <strong>selesai</strong>.</div>`;
 
     if (jenisPerintah === 'Bayar') {
         let isiPerintahBayarPengadu = `

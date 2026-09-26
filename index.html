@@ -11630,18 +11630,28 @@ function bukaPreviewPeringatanMOU() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // EKSTRAK DATA MOU
-    let jumlahRaw = kes.dataBorang?.inputs?.['mk_jumlah_mou'] || "0.00";
-    let jumPersetujuanFormatted = parseFloat(jumlahRaw.replace(/,/g, '')) || 0;
-    let jumRM = `RM ${jumPersetujuanFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
-
-    let tarikhRaw = kes.dataBorang?.inputs?.['mk_tarikh_mou'] || "";
+    // ENJIN EKSTRAK DATA MOU DARI SEJARAH TINDAKAN
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
-    if (tarikhRaw) {
-        let t = new Date(tarikhRaw);
-        if (!isNaN(t.getTime())) {
-            tarikhDD = t.getDate();
-            tarikhMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+    let jumRM = "RM 0.00";
+
+    const rekodMOU = (kes.sejarahTindakan || []).slice().reverse().find(s => s.tindakan && s.tindakan.includes("MOU"));
+    if (rekodMOU && rekodMOU.butiran) {
+        let dMatch = rekodMOU.butiran.match(/\[DATA_MOU:(.*?)\]/);
+        if (dMatch && dMatch[1]) {
+            try {
+                let memoData = JSON.parse(decodeURIComponent(escape(atob(dMatch[1]))));
+                if (memoData.jumlah) {
+                    let jumPersetujuanFormatted = parseFloat(memoData.jumlah.toString().replace(/,/g, '')) || 0;
+                    jumRM = `RM ${jumPersetujuanFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
+                }
+                if (memoData.tarikh) {
+                    let t = new Date(memoData.tarikh);
+                    if (!isNaN(t.getTime())) {
+                        tarikhDD = t.getDate();
+                        tarikhMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+                    }
+                }
+            } catch(e) { console.error("Ralat extract MOU:", e); }
         }
     }
 
@@ -11687,12 +11697,13 @@ function bukaPreviewPeringatanMOU() {
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
+        <!-- MUKA 1: KANDUNGAN UTAMA -->
         <div class="kertas-notis">
             ${templateHeaderHTML}
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
                 
                 <div style="display: grid; grid-template-columns: 1fr auto; align-items: end; margin-top: 10px; margin-bottom: 20px;">
-                    <div style="font-size: 14pt; font-weight: bold; text-decoration: underline; text-align: left; padding-bottom: 2px;">PERINGATAN</div>
+                    <div style="font-size: 17.5pt; font-weight: bold; text-decoration: underline; text-align: left; padding-bottom: 2px;">PERINGATAN</div>
                     <div style="text-align: right; font-size: 10pt; line-height: 1.4;">
                         Rujukan Kami : ${noKes}<br>
                         Tarikh : ${tarikhSurat}
@@ -11714,13 +11725,18 @@ function bukaPreviewPeringatanMOU() {
                 </div>
                 
                 <div style="margin-left: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.4;">
-                    <strong>i.<span style="display:inline-block; width: 18px;"></span>Tuan telah melakukan kesalahan di bawah Seksyen 69(4) Akta Kerja 1955 dan boleh didakwa dan sabit kesalahan denda maksimum RM50,000.00 dan bayaran dendan RM1,000.00 setiap hari kelewatan yang berterusan setelah disabitkan kesalahan;</strong>
+                    <strong>i.<span style="display:inline-block; width: 18px;"></span>Tuan telah melakukan kesalahan di bawah Seksyen 69(4) Akta Kerja 1955 dan boleh didakwa dan sabit kesalahan denda maksimum RM50,000.00 dan bayaran denda RM1,000.00 setiap hari kelewatan yang berterusan setelah disabitkan kesalahan;</strong>
                 </div>
                 
                 <div style="margin-left: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.4;">
                     ii.<span style="display:inline-block; width: 14px;"></span>Tindakan Mahkamah untuk menguatkuasakan perintah kes ini akan diambil terhadap tuan tanpa sebarang rujukan kepada tuan.
                 </div>
-
+            </div>
+        </div>
+        
+        <!-- MUKA 2: KANDUNGAN TAMBAHAN & TANDATANGAN (FUNGSI LIMPAHAN) -->
+        <div class="kertas-notis" style="page-break-before: always;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1.5cm;">
                 <div class="notis-isi" style="text-align: justify;">
                     4.<span class="jarak-tab"></span>Sekiranya perintah telah dipatuhi, tuan dikehendaki mengemukakan bukti pematuhan kepada pejabat ini atau email ke <u><strong>hafizabubakar@mohr.gov.my</strong></u> untuk perhatian En. Mohamad Hafiz bin Abu Bakar dalam tempoh 14 hari dari tarikh surat ini. Sila hubungi Unit Kes Buruh ditalian 07-7721646 ext. 133 untuk tujuan atau sebarang pertanyaan.
                 </div>
@@ -11732,11 +11748,9 @@ function bukaPreviewPeringatanMOU() {
     document.getElementById('previewContent').innerHTML = htmlPeringatan;
     document.getElementById('printArea').innerHTML = htmlPeringatan;
     
-    // Cuci butang menu supaya tak bocor dari fungsi lain
     let actionMenu = document.getElementById('actionMenu');
     Array.from(actionMenu.querySelectorAll('a')).forEach(btn => btn.style.display = 'none');
     
-    // Butang Cetak untuk Peringatan MOU
     let btnCetakPeringatan = document.getElementById('menuCetakG1');
     if (btnCetakPeringatan) {
         btnCetakPeringatan.style.display = 'flex';
@@ -11791,18 +11805,28 @@ function bukaPreviewPeringatanBorangC() {
     let namaPegawaiRaw = document.getElementById('namaProfilEdit') ? document.getElementById('namaProfilEdit').innerText.replace(/\n/g, ' ').trim() : 'PEGAWAI PENDENGAR';
     const namaPegawai = namaPegawaiRaw.toUpperCase();
 
-    // EKSTRAK DATA BORANG C
-    let jumlahRaw = kes.dataBorang?.inputs?.['bc_jumlah_perintah'] || "0.00";
-    let jumPerintahFormatted = parseFloat(jumlahRaw.replace(/,/g, '')) || 0;
-    let jumRM = `RM ${jumPerintahFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
-
-    let tarikhRaw = kes.dataBorang?.inputs?.['bc_tarikh'] || "";
+    // ENJIN EKSTRAK DATA BORANG C DARI SEJARAH TINDAKAN
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
-    if (tarikhRaw) {
-        let t = new Date(tarikhRaw);
-        if (!isNaN(t.getTime())) {
-            tarikhDD = t.getDate();
-            tarikhMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+    let jumRM = "RM 0.00";
+
+    const rekodBC = (kes.sejarahTindakan || []).slice().reverse().find(s => s.tindakan && s.tindakan.includes("Perintah (Borang C)"));
+    if (rekodBC && rekodBC.butiran) {
+        let dMatch = rekodBC.butiran.match(/\[DATA_BORANGC:(.*?)\]/);
+        if (dMatch && dMatch[1]) {
+            try {
+                let memoData = JSON.parse(decodeURIComponent(escape(atob(dMatch[1]))));
+                if (memoData.jumlah) {
+                    let jumPerintahFormatted = parseFloat(memoData.jumlah.toString().replace(/,/g, '')) || 0;
+                    jumRM = `RM ${jumPerintahFormatted.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`;
+                }
+                if (memoData.tarikh) {
+                    let t = new Date(memoData.tarikh);
+                    if (!isNaN(t.getTime())) {
+                        tarikhDD = t.getDate();
+                        tarikhMMYYYY = `${bulanMY[t.getMonth()]} ${t.getFullYear()}`;
+                    }
+                }
+            } catch(e) { console.error("Ralat extract Borang C:", e); }
         }
     }
 
@@ -11848,12 +11872,13 @@ function bukaPreviewPeringatanBorangC() {
             .notis-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 15px; } .notis-header-kiri { display: flex; align-items: flex-start; gap: 15px; flex: 1; } .notis-logo { flex-shrink: 0; } .notis-logo img { width: 120px; height: auto; display: block; } .notis-jabatan { text-align: left; line-height: 1.2; } .notis-hubungi { flex-shrink: 0; width: 200px; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.3; } .notis-hubungi table { width: 100%; border: none; font-size: 8pt; border-collapse: collapse; } .notis-hubungi td { padding: 1px 0; vertical-align: top; border: none; } .kol-label { width: 40%; white-space: nowrap; } .kol-titik { width: 5%; text-align: center; } .notis-body-wrapper { padding: 0 1.23cm; } .notis-rujukan { text-align: right; width: 100%; font-size: 10pt; margin-top: 10px; margin-bottom: 20px; } .notis-alamat { margin-bottom: 20px; font-size: 10pt; text-transform: uppercase; line-height: 1.3; } .notis-tajuk { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; } .notis-garis-tajuk { border: 0; border-top: 1px solid #000; margin-top: 5px; margin-bottom: 15px; } .notis-isi { text-align: justify; font-size: 10pt; margin-bottom: 15px; } .jarak-tab { display: inline-block; width: 30px; } .notis-slogan { font-weight: bold; margin-bottom: 30px; font-size: 10pt; line-height: 1.4; } .notis-sign { margin-bottom: 50px; font-size: 10pt; } .notis-footer-line { position: absolute; bottom: 15mm; left: 2.5cm; right: 2.5cm; border-bottom: 1px solid #555; }
         </style>
         
+        <!-- MUKA 1: KANDUNGAN UTAMA -->
         <div class="kertas-notis">
             ${templateHeaderHTML}
             <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt;">
                 
                 <div style="display: grid; grid-template-columns: 1fr auto; align-items: end; margin-top: 10px; margin-bottom: 20px;">
-                    <div style="font-size: 14pt; font-weight: bold; text-decoration: underline; text-align: left; padding-bottom: 2px;">PERINGATAN</div>
+                    <div style="font-size: 17.5pt; font-weight: bold; text-decoration: underline; text-align: left; padding-bottom: 2px;">PERINGATAN</div>
                     <div style="text-align: right; font-size: 10pt; line-height: 1.4;">
                         Rujukan Kami : ${noKes}<br>
                         Tarikh : ${tarikhSurat}
@@ -11875,13 +11900,18 @@ function bukaPreviewPeringatanBorangC() {
                 </div>
                 
                 <div style="margin-left: 40px; text-align: justify; margin-bottom: 8px; line-height: 1.4;">
-                    <strong>i.<span style="display:inline-block; width: 18px;"></span>Tuan telah melakukan kesalahan di bawah Seksyen 69(4) Akta Kerja 1955 dan boleh didakwa dan sabit kesalahan denda maksimum RM50,000.00 dan bayaran dendan RM1,000.00 setiap hari kelewatan yang berterusan setelah disabitkan kesalahan;</strong>
+                    <strong>i.<span style="display:inline-block; width: 18px;"></span>Tuan telah melakukan kesalahan di bawah Seksyen 69(4) Akta Kerja 1955 dan boleh didakwa dan sabit kesalahan denda maksimum RM50,000.00 dan bayaran denda RM1,000.00 setiap hari kelewatan yang berterusan setelah disabitkan kesalahan;</strong>
                 </div>
                 
                 <div style="margin-left: 40px; text-align: justify; margin-bottom: 15px; line-height: 1.4;">
                     ii.<span style="display:inline-block; width: 14px;"></span>Tindakan Mahkamah untuk menguatkuasakan perintah kes ini akan diambil terhadap tuan tanpa sebarang rujukan kepada tuan.
                 </div>
+            </div>
+        </div>
 
+        <!-- MUKA 2: KANDUNGAN TAMBAHAN & TANDATANGAN (FUNGSI LIMPAHAN) -->
+        <div class="kertas-notis" style="page-break-before: always;">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1.5cm;">
                 <div class="notis-isi" style="text-align: justify;">
                     4.<span class="jarak-tab"></span>Sekiranya perintah telah dipatuhi, tuan dikehendaki mengemukakan bukti pematuhan kepada pejabat ini atau email ke <u><strong>hafizabubakar@mohr.gov.my</strong></u> untuk perhatian En. Mohamad Hafiz bin Abu Bakar dalam tempoh 14 hari dari tarikh surat ini. Sila hubungi Unit Kes Buruh ditalian 07-7721646 ext. 133 untuk tujuan atau sebarang pertanyaan.
                 </div>
@@ -11894,11 +11924,9 @@ function bukaPreviewPeringatanBorangC() {
     document.getElementById('previewContent').innerHTML = htmlPeringatan;
     document.getElementById('printArea').innerHTML = htmlPeringatan;
     
-    // Cuci butang menu supaya tak bocor dari fungsi lain
     let actionMenu = document.getElementById('actionMenu');
     Array.from(actionMenu.querySelectorAll('a')).forEach(btn => btn.style.display = 'none');
     
-    // Butang Cetak untuk Peringatan Borang C
     let btnCetakPeringatan = document.getElementById('menuCetakG1');
     if (btnCetakPeringatan) {
         btnCetakPeringatan.style.display = 'flex';
@@ -11920,7 +11948,7 @@ function bukaPreviewPeringatanBorangC() {
         document.getElementById('modalPreview').style.display = 'none';
     };
     
-    tunjukSuisTandatangan(true); // Bukakan suis tandatangan memandangkan ini surat rasmi
+    tunjukSuisTandatangan(true);
     document.getElementById('modalPreview').style.display = 'flex';
 }
 

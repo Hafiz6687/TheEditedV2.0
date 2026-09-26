@@ -11668,7 +11668,6 @@ function bukaPreviewPeringatanMOU() {
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
     let jumRM = "RM 0.00";
 
-    // Cari terus butiran yang mengandungi data MOU supaya tak terkeliru dengan log Peringatan MOU
     const rekodMOU = (kes.sejarahTindakan || []).slice().reverse().find(s => s.butiran && s.butiran.includes("[DATA_MOU:"));
     if (rekodMOU && rekodMOU.butiran) {
         let dMatch = rekodMOU.butiran.match(/\[DATA_MOU:(.*?)\]/);
@@ -11711,16 +11710,17 @@ function bukaPreviewPeringatanMOU() {
         <div class="notis-slogan" style="margin-top: 15px; margin-bottom: 25px;">" MALAYSIA MADANI "<br>" BERKHIDMAT UNTUK NEGARA "<br><em>"Pekerja MADANI Kesuma Bangsa"</em></div>
         <div class="notis-sign" style="margin-bottom: 10px;">Saya yang menjalankan amanah,</div>
         
-        <div style="position: relative; height: 80px; margin-top: 10px;">
-            <div class="gambar-sign" style="position: absolute; z-index: 2; pointer-events: none; top: -45px; left: 0;">
-                <img src="tandatangan.png" alt="Tandatangan" style="height: 130px; width: auto; mix-blend-mode: multiply; display: block;">
-            </div>
-            <div class="teks-nama-sign" style="position: absolute; bottom: 0; left: 0; font-weight: bold; text-transform: uppercase; z-index: 1; line-height: 1.3;">
-                ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
-            </div>
+        <div class="gambar-sign" style="position: relative; z-index: 2; pointer-events: none;">
+            <img src="tandatangan.png" alt="Tandatangan" style="height: 135px; width: auto; mix-blend-mode: multiply; display: block; margin-top: -25px;">
+        </div>
+        
+        <div class="teks-nama-sign" style="font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; margin-top: -40px;">
+            ${namaPegawai}<br><span style="font-weight: normal; text-transform: none;">b.p Ketua Pengarah Tenaga Kerja</span>
         </div>
         
         ${skHTML}
+        <!-- Garisan Bawah Khusus Muka Surat 2 -->
+        <div class="notis-footer-line"></div>
     `;
 
     const htmlPeringatan = `
@@ -11776,28 +11776,23 @@ function bukaPreviewPeringatanMOU() {
                     4.<span class="jarak-tab"></span>Sekiranya perintah telah dipatuhi, tuan dikehendaki mengemukakan bukti pematuhan kepada pejabat ini atau email ke <u><strong>hafizabubakar@mohr.gov.my</strong></u> untuk perhatian En. Mohamad Hafiz bin Abu Bakar dalam tempoh 14 hari dari tarikh surat ini. Sila hubungi Unit Kes Buruh ditalian 07-7721646 ext. 133 untuk tujuan pembayaran atau sebarang pertanyaan.
                 </div>
             </div>
-            <!-- Garisan tetap di bawah Muka 1 -->
+            <!-- Garisan tetap di bawah kertas 1 -->
             <div class="notis-footer-line"></div>
         </div>
 
         <!-- MUKA SURAT 2 -->
-        <div class="kertas-notis" style="page-break-before: always;">
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1cm;">
+        <div class="kertas-notis">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1.5cm;">
                 ${templateFooterHTML}
             </div>
-            <!-- Garisan tetap di bawah Muka 2 -->
-            <div class="notis-footer-line"></div>
         </div>
     `;
-    
     document.getElementById('previewContent').innerHTML = htmlPeringatan;
     document.getElementById('printArea').innerHTML = htmlPeringatan;
     
-    // Cuci butang menu supaya tak bocor dari fungsi lain
     let actionMenu = document.getElementById('actionMenu');
     Array.from(actionMenu.querySelectorAll('a')).forEach(btn => btn.style.display = 'none');
     
-    // Butang Cetak untuk Peringatan MOU
     let btnCetakPeringatan = document.getElementById('menuCetakG1');
     if (btnCetakPeringatan) {
         btnCetakPeringatan.style.display = 'flex';
@@ -11856,7 +11851,6 @@ function bukaPreviewPeringatanBorangC() {
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
     let jumRM = "RM 0.00";
 
-    // Cari terus butiran yang mengandungi data Borang C supaya tak terkeliru dengan log Peringatan Borang C
     const rekodBC = (kes.sejarahTindakan || []).slice().reverse().find(s => s.butiran && s.butiran.includes("[DATA_BORANGC:"));
     if (rekodBC && rekodBC.butiran) {
         let dMatch = rekodBC.butiran.match(/\[DATA_BORANGC:(.*?)\]/);
@@ -11909,6 +11903,8 @@ function bukaPreviewPeringatanBorangC() {
         </div>
         
         ${skHTML}
+        <!-- Garisan Bawah Khusus Muka Surat 2 -->
+        <div class="notis-footer-line"></div>
     `;
 
     const htmlPeringatan = `
@@ -11964,17 +11960,15 @@ function bukaPreviewPeringatanBorangC() {
                     4.<span class="jarak-tab"></span>Sekiranya perintah telah dipatuhi, tuan dikehendaki mengemukakan bukti pematuhan kepada pejabat ini atau email ke <u><strong>hafizabubakar@mohr.gov.my</strong></u> untuk perhatian En. Mohamad Hafiz bin Abu Bakar dalam tempoh 14 hari dari tarikh surat ini. Sila hubungi Unit Kes Buruh ditalian 07-7721646 ext. 133 untuk tujuan pembayaran atau sebarang pertanyaan.
                 </div>
             </div>
-            <!-- Garisan diletakkan pada div utama kertas pertama supaya kekal di bawah -->
+            <!-- Garisan tetap di bawah kertas 1 -->
             <div class="notis-footer-line"></div>
         </div>
 
         <!-- MUKA SURAT 2 -->
-        <div class="kertas-notis" style="page-break-before: always;">
-            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1cm;">
+        <div class="kertas-notis">
+            <div class="notis-body-wrapper" style="font-family: Arial, sans-serif; font-size: 10pt; padding-top: 1.5cm;">
                 ${templateFooterHTML}
             </div>
-            <!-- Garisan diletakkan pada div utama kertas kedua supaya kekal di bawah -->
-            <div class="notis-footer-line"></div>
         </div>
     `;
     

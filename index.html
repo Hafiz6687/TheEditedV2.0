@@ -10118,7 +10118,7 @@ if (isPanjang) {
                 ${pPenalti}
 
 <div> <!-- Dibuang page-break kerana isPanjang sudah mengawal selia ruang -->
-                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhPerintahCetak}</strong></div>
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: ${tarikhPerintahDD} haribulan ${tarikhPerintahMMYYYY}</div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 55px; line-height: 1.25;">
                     <div></div> 
@@ -11266,7 +11266,8 @@ let teksTempohBayaran = `<div style="page-break-inside: avoid; text-indent: 40px
 <div style="page-break-inside: avoid; display: inline-block; width: 100%; text-indent: 40px; text-align: justify; margin-bottom: 25px; line-height: 1.25;">Dan adalah diperintahkan lagi iaitu sebagai penalti bayaran lewat, faedah atas kadar 8% setahun hendaklah dikenakan ke atas semua bayaran tertunggak dan faedah itu dikira bermula hari ke 31 sehingga penyelesaian penuh.</div>
 
                 <div style="page-break-inside: avoid;">
-                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: <strong>${tarikhSebutanDD}</strong> haribulan <strong>${tarikhSebutanMMYYYY}</strong></div>
+                    <div style="text-align: justify; margin-bottom: 0; line-height: 1.25;">Bertarikh pada: ${tarikhSebutanDD} haribulan ${tarikhSebutanMMYYYY}</div>
+                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; line-height: 1.25;">
                         <div></div> 
                         <div style="text-align: center;">

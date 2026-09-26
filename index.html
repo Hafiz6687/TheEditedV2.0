@@ -11668,7 +11668,8 @@ function bukaPreviewPeringatanMOU() {
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
     let jumRM = "RM 0.00";
 
-    const rekodMOU = (kes.sejarahTindakan || []).slice().reverse().find(s => s.tindakan && s.tindakan.includes("MOU"));
+    // Cari terus butiran yang mengandungi data MOU supaya tak terkeliru dengan log Peringatan MOU
+    const rekodMOU = (kes.sejarahTindakan || []).slice().reverse().find(s => s.butiran && s.butiran.includes("[DATA_MOU:"));
     if (rekodMOU && rekodMOU.butiran) {
         let dMatch = rekodMOU.butiran.match(/\[DATA_MOU:(.*?)\]/);
         if (dMatch && dMatch[1]) {
@@ -11855,7 +11856,8 @@ function bukaPreviewPeringatanBorangC() {
     let tarikhDD = ".......", tarikhMMYYYY = "........................";
     let jumRM = "RM 0.00";
 
-    const rekodBC = (kes.sejarahTindakan || []).slice().reverse().find(s => s.tindakan && s.tindakan.includes("Perintah (Borang C)"));
+    // Cari terus butiran yang mengandungi data Borang C supaya tak terkeliru dengan log Peringatan Borang C
+    const rekodBC = (kes.sejarahTindakan || []).slice().reverse().find(s => s.butiran && s.butiran.includes("[DATA_BORANGC:"));
     if (rekodBC && rekodBC.butiran) {
         let dMatch = rekodBC.butiran.match(/\[DATA_BORANGC:(.*?)\]/);
         if (dMatch && dMatch[1]) {
